@@ -1,0 +1,349 @@
+/* --- IZOLARE TOTALĂ: Toate regulile încep cu .admin-wrapper --- */
+
+.admin-wrapper {
+  --adm-gold: #d4af37;
+  --adm-gold-hover: #b59020;
+  --adm-dark-bg: #121212;
+  --adm-card-bg: #1e1e1e;
+  --adm-text-main: #ffffff;
+  --adm-text-muted: #aaaaaa;
+  --adm-border: #333333;
+  --adm-success: #2ecc71;
+  --adm-danger: #e74c3c;
+  
+  background-color: var(--adm-dark-bg);
+  min-height: 100vh;
+  color: var(--adm-text-main);
+  font-family: 'Roboto', sans-serif;
+  display: flex;
+  flex-direction: column;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 10;
+}
+
+/* NAVBAR */
+.admin-wrapper .top-navbar {
+  background-color: rgba(30, 30, 30, 0.95);
+  backdrop-filter: blur(10px);
+  border-bottom: 1px solid var(--adm-gold);
+  padding: 0 30px; height: 70px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 100;
+}
+.admin-wrapper .nav-left { display: flex; align-items: center; gap: 20px; }
+.admin-wrapper .nav-brand { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; color: var(--adm-gold); letter-spacing: 1px; }
+
+.admin-wrapper .btn-back-dash {
+  background: transparent; border: 1px solid var(--adm-gold); color: var(--adm-gold);
+  padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s;
+}
+.admin-wrapper .btn-back-dash:hover { background: rgba(212, 175, 55, 0.1); }
+
+.admin-wrapper .nav-actions { display: flex; gap: 15px; }
+.admin-wrapper .btn-icon {
+  background: transparent; border: 1px solid var(--adm-border); color: var(--adm-text-main);
+  width: 40px; height: 40px; border-radius: 8px; cursor: pointer; font-size: 18px;
+  display: flex; align-items: center; justify-content: center; transition: 0.3s;
+}
+.admin-wrapper .btn-icon:hover { border-color: var(--adm-gold); color: var(--adm-gold); }
+.admin-wrapper .btn-icon.logout:hover { border-color: var(--adm-danger); color: var(--adm-danger); }
+.admin-wrapper .spinning { animation: spin 1s linear infinite; }
+@keyframes spin { 100% { transform: rotate(360deg); } }
+
+/* GRID 50/50 */
+.admin-wrapper .dashboard-grid {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 30px;
+  max-width: 1800px; margin: 0 auto; width: 100%; height: calc(100vh - 70px);
+  overflow: hidden; box-sizing: border-box;
+}
+
+/* CALENDAR */
+.admin-wrapper .sidebar-calendar { height: 100%; display: flex; flex-direction: column; }
+.admin-wrapper .calendar-card-premium {
+  background: var(--adm-card-bg); border: 1px solid var(--adm-border); border-radius: 12px;
+  padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); height: 100%; display: flex; flex-direction: column;
+}
+.admin-wrapper .month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+.admin-wrapper .month-title { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--adm-gold); text-align: center; }
+.admin-wrapper .month-title span { display: block; font-size: 14px; color: var(--adm-text-muted); font-family: 'Roboto', sans-serif; }
+.admin-wrapper .month-header button {
+  background: transparent; border: 1px solid var(--adm-border); color: #fff; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: 0.3s;
+}
+.admin-wrapper .month-header button:hover { border-color: var(--adm-gold); color: var(--adm-gold); }
+.admin-wrapper .weekdays-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 12px; color: var(--adm-text-muted); margin-bottom: 15px; font-weight: bold; }
+.admin-wrapper .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; flex: 1; align-content: start; }
+.admin-wrapper .day-cell {
+  aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  border-radius: 8px; cursor: pointer; font-size: 16px; position: relative; background: #252525; transition: 0.2s;
+}
+.admin-wrapper .day-cell:hover:not(.empty) { background: #333; border: 1px solid var(--adm-gold); }
+.admin-wrapper .day-cell.empty { background: transparent; cursor: default; }
+.admin-wrapper .day-cell.active { background: var(--adm-gold); color: #000; font-weight: bold; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+.admin-wrapper .day-cell .dot { width: 5px; height: 5px; background-color: var(--adm-gold); border-radius: 50%; position: absolute; bottom: 8px; }
+.admin-wrapper .day-cell.active .dot { background-color: #000; }
+
+/* LISTA ORE */
+.admin-wrapper .schedule-area {
+  background: var(--adm-card-bg); border: 1px solid var(--adm-border); border-radius: 12px;
+  display: flex; flex-direction: column; overflow: hidden;
+}
+.admin-wrapper .schedule-header {
+  padding: 20px; border-bottom: 1px solid var(--adm-border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2);
+}
+.admin-wrapper .header-left { display: flex; align-items: center; gap: 20px; }
+.admin-wrapper .schedule-header h2 { font-family: 'Oswald', sans-serif; color: var(--adm-text-main); margin: 0; font-size: 24px; text-transform: capitalize; }
+.admin-wrapper .btn-block-day {
+  background: transparent; border: 1px solid var(--adm-danger); color: var(--adm-danger);
+  padding: 8px 15px; font-size: 12px; font-weight: bold; border-radius: 4px;
+  cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
+}
+.admin-wrapper .btn-block-day:hover { background: var(--adm-danger); color: #fff; box-shadow: 0 0 10px rgba(231, 76, 60, 0.4); }
+.admin-wrapper .task-count { background: var(--adm-gold); color: #000; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
+.admin-wrapper .slots-list { padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+
+/* SLOT CARD */
+.admin-wrapper .slot-card {
+  display: flex; align-items: center; background: #252525; border-radius: 8px; padding: 15px;
+  border-left: 4px solid transparent; transition: transform 0.2s;
+}
+.admin-wrapper .slot-card:hover { transform: translateX(5px); }
+.admin-wrapper .slot-card.free { border-left-color: var(--adm-text-muted); opacity: 0.7; }
+.admin-wrapper .slot-card.occupied { border-left-color: var(--adm-success); background: rgba(46, 204, 113, 0.05); }
+.admin-wrapper .slot-card.blocked { border-left-color: var(--adm-gold); background: rgba(212, 175, 55, 0.05); }
+.admin-wrapper .slot-time { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: bold; color: var(--adm-text-main); width: 80px; }
+.admin-wrapper .slot-content { flex: 1; display: flex; flex-direction: column; gap: 5px; }
+.admin-wrapper .status-label { color: var(--adm-text-muted); font-style: italic; font-size: 14px; }
+.admin-wrapper .slot-main-info { display: flex; align-items: center; gap: 10px; }
+.admin-wrapper .client-name { font-weight: bold; font-size: 16px; color: var(--adm-text-main); }
+.admin-wrapper .client-phone { color: var(--adm-gold); text-decoration: none; font-size: 14px; }
+.admin-wrapper .client-msg { font-size: 13px; color: #888; font-style: italic; }
+.admin-wrapper .badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; }
+.admin-wrapper .badge.client { background: var(--adm-success); color: #000; }
+.admin-wrapper .badge.blocat { background: var(--adm-gold); color: #000; }
+.admin-wrapper .action-btn {
+  width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; font-size: 20px;
+  display: flex; align-items: center; justify-content: center; margin-left: 15px; transition: 0.3s;
+}
+.admin-wrapper .btn-add { background: #333; color: var(--adm-gold); border: 1px solid var(--adm-border); }
+.admin-wrapper .btn-add:hover { background: var(--adm-gold); color: #000; }
+.admin-wrapper .btn-del { background: rgba(231, 76, 60, 0.1); color: var(--adm-danger); }
+.admin-wrapper .btn-del:hover { background: var(--adm-danger); color: #fff; }
+
+/* --- MODAL POPUPS (SMECHERE) --- */
+.admin-wrapper .modal-backdrop {
+  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+  z-index: 1000; display: flex; align-items: center; justify-content: center;
+  animation: fadeIn 0.3s ease;
+}
+
+.admin-wrapper .modal-box {
+  background: #181818; border: 1px solid var(--adm-gold); padding: 40px;
+  width: 90%; max-width: 450px; border-radius: 12px; position: relative;
+  box-shadow: 0 0 50px rgba(212, 175, 55, 0.15); text-align: center;
+  animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.admin-wrapper .btn-close-modal {
+  position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #555; font-size: 20px; cursor: pointer;
+}
+.admin-wrapper .btn-close-modal:hover { color: var(--adm-gold); }
+
+.admin-wrapper .modal-box h3 { color: var(--adm-gold); font-family: 'Oswald', sans-serif; font-size: 28px; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }
+
+.admin-wrapper .input-group { margin-bottom: 20px; text-align: left; }
+.admin-wrapper .input-group label { display: block; color: #888; font-size: 12px; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
+.admin-wrapper .input-group input {
+  width: 100%; padding: 15px; background: #252525; border: 1px solid #444; border-radius: 6px;
+  color: #fff; font-size: 16px; outline: none; box-sizing: border-box;
+}
+.admin-wrapper .input-group input:focus { border-color: var(--adm-gold); background: #000; }
+
+.admin-wrapper .modal-actions { display: flex; gap: 15px; margin-top: 30px; }
+.admin-wrapper .btn-gold { flex: 1; background: var(--adm-gold); color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 6px; text-transform: uppercase; transition: 0.3s; }
+.admin-wrapper .btn-gold:hover { background: var(--adm-gold-hover); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
+.admin-wrapper .btn-dark { flex: 1; background: transparent; border: 1px solid var(--adm-gold); color: var(--adm-gold); padding: 15px; cursor: pointer; border-radius: 6px; font-weight: bold; transition: 0.3s; }
+.admin-wrapper .btn-dark:hover { background: rgba(212, 175, 55, 0.1); }
+
+/* --- CSS SPECIAL PENTRU CONFIRMARE (NOU) --- */
+.admin-wrapper .confirm-box {
+  border-color: var(--adm-danger); /* Bordură Roșie */
+  box-shadow: 0 0 50px rgba(231, 76, 60, 0.15); /* Halou Roșu */
+}
+
+.admin-wrapper .confirm-title {
+  color: var(--adm-danger) !important;
+  font-size: 24px;
+}
+
+.admin-wrapper .confirm-msg {
+  color: #ccc; font-size: 16px; margin-bottom: 20px; line-height: 1.5;
+}
+
+.admin-wrapper .btn-confirm-yes {
+  flex: 1; background: var(--adm-danger); color: #fff; border: none; padding: 15px;
+  font-weight: bold; cursor: pointer; border-radius: 6px; text-transform: uppercase; transition: 0.3s;
+}
+.admin-wrapper .btn-confirm-yes:hover { background: #c0392b; box-shadow: 0 0 15px rgba(231, 76, 60, 0.4); }
+
+.admin-wrapper .btn-confirm-no {
+  flex: 1; background: transparent; border: 1px solid #555; color: #aaa; padding: 15px;
+  font-weight: bold; cursor: pointer; border-radius: 6px; text-transform: uppercase; transition: 0.3s;
+}
+.admin-wrapper .btn-confirm-no:hover { border-color: #fff; color: #fff; }
+
+/* RESPONSIVE */
+/* --- RESPONSIVE: TABLETE & TELEFOANE LATE (Până la 1200px) --- */
+@media (max-width: 1200px) {
+  
+  /* 1. LAYOUT - Trecem pe o singură coloană mai devreme */
+  .admin-wrapper .dashboard-grid {
+    grid-template-columns: 1fr; /* Una sub alta */
+    height: auto; /* Lăsăm înălțimea să crească cât e nevoie */
+    overflow: visible; /* Să putem da scroll pe toată pagina */
+    padding: 20px;
+    gap: 30px;
+  }
+  
+  /* 2. CALENDARUL - Îl lăsăm să fie mare și aerisit */
+  .admin-wrapper .sidebar-calendar {
+    width: 100%;
+    max-width: 600px; /* Să nu se lățească infinit pe tablete */
+    margin: 0 auto 30px auto; /* Centrat */
+    max-height: none; /* Fără limită de înălțime */
+  }
+
+  .admin-wrapper .calendar-card-premium {
+    height: auto; /* Să se muleze pe conținut */
+    min-height: 400px; /* Înălțime minimă garantată */
+  }
+
+  /* 3. ZILELE (Pătrățelele) - FIXUL PENTRU "SARE PESTE" */
+  .admin-wrapper .days-grid {
+    gap: 10px; /* Spațiu mai mare între zile */
+  }
+
+  .admin-wrapper .day-cell {
+    aspect-ratio: 1/1; /* Păstrează forma pătrată */
+    min-height: 50px; /* CRITIC: Nu lăsăm să fie mai mic de 50px */
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* Punctul programării - Să fie vizibil clar */
+  .admin-wrapper .day-cell .dot {
+    width: 8px; /* Punct mai mare */
+    height: 8px;
+    bottom: 6px;
+    background-color: var(--adm-gold);
+    box-shadow: 0 0 5px rgba(0,0,0,0.8); /* Umbră puternică să se vadă */
+    z-index: 2; /* Să fie peste orice */
+  }
+
+  /* 4. LISTA ORE - Scrollabil intern */
+  .admin-wrapper .schedule-area {
+    max-height: 600px; /* Pe tablete limităm lista să nu fie infinită */
+  }
+}
+
+/* --- RESPONSIVE: TELEFOANE MOBILE (Sub 600px) --- */
+@media (max-width: 600px) {
+  
+  /* NAVBAR MARE (Cum ai cerut) */
+  .admin-wrapper .top-navbar {
+    height: 80px; 
+    padding: 0 15px;
+  }
+
+  .admin-wrapper .nav-brand {
+    font-size: 18px;
+  }
+
+  /* Butoanele de sus URIAȘE */
+  .admin-wrapper .btn-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 24px;
+  }
+
+  /* Calendar Compact dar Sigur */
+  .admin-wrapper .day-cell {
+    min-height: 45px; /* Pe mobil acceptăm 45px */
+    font-size: 14px;
+  }
+  
+  .admin-wrapper .day-cell .dot {
+    width: 6px;
+    height: 6px;
+  }
+
+  /* Header-ul Zilei pe Mobil */
+  .admin-wrapper .schedule-header {
+    flex-direction: column;
+    gap: 15px;
+  }
+
+  .admin-wrapper .header-left {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .admin-wrapper .btn-block-day {
+    width: 100%;
+    justify-content: center;
+    padding: 14px; /* Buton "gras" să-l nimerești */
+    font-size: 14px;
+  }
+}/* --- FORȚARE NAVBAR MARE PE TELEFON & TABLETĂ --- */
+@media (max-width: 1024px) {
+  
+  /* 1. BARA DE SUS - O facem înaltă de 90px (era 70px) */
+  .admin-wrapper .top-navbar {
+    height: 90px !important; 
+    padding: 0 15px !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  /* 2. TITLUL (AGENDA ANDREI) - Să se vadă clar */
+  .admin-wrapper .nav-brand {
+    font-size: 26px !important;
+    font-weight: 900 !important;
+    white-space: nowrap; /* Să nu treacă pe rândul doi */
+  }
+
+  /* 3. BUTOANELE (Refresh și Logout) - LE FACEM GIGANTICE */
+  .admin-wrapper .btn-icon {
+    width: 55px !important;  /* Lățime mare */
+    height: 55px !important; /* Înălțime mare */
+    font-size: 28px !important; /* Iconița (săgeata/power) mare */
+    border-width: 2px !important; /* Bordură mai groasă */
+    margin-left: 5px !important; /* Spațiu între ele */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+  }
+
+  /* 4. BUTONUL "PANOU" (Înapoi) */
+  .admin-wrapper .btn-back-dash {
+    padding: 12px 15px !important; /* Buton gras */
+    font-size: 14px !important;
+    height: auto !important;
+    border-width: 2px !important;
+  }
+
+  /* 5. ZONA DE ACȚIUNI DREAPTA */
+  .admin-wrapper .nav-actions {
+    gap: 10px !important; /* Spațiu între butoanele mari */
+  }
+  
+  /* 6. ZONA STÂNGA (Brand + buton înapoi) */
+  .admin-wrapper .nav-left {
+    gap: 10px !important;
+  }
+}

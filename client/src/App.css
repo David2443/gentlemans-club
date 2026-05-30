@@ -1,0 +1,3407 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Poppins:wght@300;400;600&display=swap');
+
+/* RESETARE */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Poppins', sans-serif;
+  background-color: #0b0b0b; /* Negru profund */
+  color: #fff;
+  overflow-x: hidden;
+}
+
+/* --- 1. NAVBAR --- */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  padding: 20px 50px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 1000;
+  transition: all 0.4s ease-in-out;
+  background: transparent;
+}
+
+.navbar.scrolled {
+  background-color: rgba(0, 0, 0, 0.95);
+  padding: 15px 50px;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+  animation: slideDown 0.5s ease;
+}
+
+@keyframes slideDown {
+  from { transform: translateY(-100%); }
+  to { transform: translateY(0); }
+}
+
+.logo {
+  font-family: 'Oswald', sans-serif;
+  font-size: 28px;
+  font-weight: 700;
+  color: #fff;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+.nav-links {
+  display: flex; /* Asigură că linkurile stau în linie */
+}
+
+.nav-links a {
+  color: #fff;
+  text-decoration: none;
+  margin-left: 30px;
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  position: relative;
+  transition: 0.3s;
+}
+
+.nav-links a::after {
+  content: '';
+  position: absolute;
+  width: 0;
+  height: 2px;
+  bottom: -5px;
+  left: 0;
+  background-color: #d4af37;
+  transition: width 0.3s;
+}
+
+.nav-links a:hover::after {
+  width: 100%;
+}
+
+.nav-links a:hover {
+  color: #d4af37;
+}
+
+/* --- 2. HERO SECTION --- */
+.hero {
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  background-image: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.8)), 
+    url('https://images.unsplash.com/photo-1585747860715-2ba37e788b70?q=80&w=2074&auto=format&fit=crop');
+  background-attachment: fixed;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.hero h1 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 5rem;
+  text-transform: uppercase;
+  margin-bottom: 20px;
+  line-height: 1.1;
+  text-shadow: 2px 2px 10px rgba(0,0,0,0.8);
+}
+
+.hero p {
+  font-size: 1.2rem;
+  color: #ccc;
+  margin-bottom: 40px;
+  letter-spacing: 1px;
+  max-width: 600px;
+}
+
+.btn-gold {
+  padding: 15px 40px;
+  background: transparent;
+  border: 2px solid #d4af37;
+  color: #d4af37;
+  font-family: 'Oswald', sans-serif;
+  font-size: 16px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.3s;
+  text-decoration: none;
+  display: inline-block; /* Important pentru linkuri */
+}
+
+.btn-gold:hover {
+  background: #d4af37;
+  color: #000;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
+/* --- 4. GALERIE COMPACTĂ (MOSAIC STYLE) --- */
+/* --- 4. GALERIE PREMIUM (REPARATĂ) --- */
+.gallery-section {
+  padding: 80px 20px;
+  background-color: #0b0b0b;
+  text-align: center; /* Asta centrează titlurile */
+}
+
+/* Titlurile Galeriei */
+.gallery-section h2.section-title {
+  color: #fff;
+  font-family: 'Oswald', sans-serif;
+  font-size: 36px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.gallery-section p.section-subtitle {
+  color: #888;
+  margin-bottom: 40px;
+}
+
+/* ZONA DE BUTOANE (FILTRE) - Aici era problema ta */
+.gallery-filters {
+  display: flex;
+  justify-content: center; /* Le pune pe mijloc */
+  gap: 15px; /* Spațiu între ele */
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+
+.filter-btn {
+  background: transparent;
+  border: 1px solid #444;
+  color: #aaa;
+  padding: 12px 30px; /* Mai mari */
+  border-radius: 50px; /* Rotunde */
+  cursor: pointer;
+  font-family: 'Oswald', sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: all 0.3s ease;
+}
+
+/* Butonul când pui mouse-ul SAU când e activ */
+.filter-btn:hover, 
+.filter-btn.active {
+  background: #d4af37; /* Auriu */
+  color: #000;         /* Text negru */
+  border-color: #d4af37;
+  transform: translateY(-3px); /* Se ridică puțin */
+  box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3); /* Strălucește */
+}
+
+/* GRID-UL DE POZE (MOSAIC) */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr); /* 4 pe rând pe PC */
+  gap: 15px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.gallery-item {
+  position: relative;
+  height: 300px; /* Înălțime fixă ca să fie egale */
+  border-radius: 8px;
+  overflow: hidden;
+  cursor: pointer;
+  background-color: #1a1a1a; /* Fundal gri dacă nu se încarcă poza */
+}
+
+.gallery-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover; /* Umple pătratul perfect */
+  transition: transform 0.5s ease;
+}
+
+/* Overlay la Hover */
+.gallery-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: 0.3s ease;
+}
+
+.gallery-item:hover .gallery-overlay { opacity: 1; }
+.gallery-item:hover img { transform: scale(1.1); }
+
+.overlay-text {
+  color: #d4af37;
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  text-transform: uppercase;
+  border-bottom: 2px solid #d4af37;
+}
+
+/* --- RESPONSIVE PENTRU MOBIL (TELEFON) --- */
+@media (max-width: 768px) {
+  
+  /* 1. GRILA DE 2 POZE */
+  .gallery-grid {
+    display: grid;
+    /* Aici e secretul: repeat(2, 1fr) înseamnă 2 coloane egale */
+    grid-template-columns: repeat(2, 1fr) !important; 
+    gap: 8px; /* Spațiu mic între ele, să arate compact */
+    padding: 0 5px; /* Puțin spațiu la marginea ecranului */
+  }
+
+  /* 2. CARDURILE (POZELE) */
+  .gallery-item {
+    height: 180px; /* Înălțime fixă, să fie pătrate */
+  }
+
+  /* 3. ASCUNDEM TEXTUL PE MOBIL (Opțional) */
+  /* Pe telefon e enervant să ai text peste poză, mai bine îl lași curat */
+  .gallery-overlay {
+    opacity: 0; 
+  }
+  
+  /* Sau, dacă vrei neapărat text, fă-l mic jos */
+  /*
+  .gallery-overlay {
+    opacity: 1;
+    background: linear-gradient(to top, rgba(0,0,0,0.8), transparent);
+    justify-content: flex-end;
+    padding-bottom: 5px;
+  }
+  .overlay-text {
+    font-size: 10px;
+  }
+  */
+}
+
+/* --- 5. ECHIPA (MODERN SYSTEM) --- */
+.team-section {
+  padding: 100px 20px;
+  background-color: #080808;
+  text-align: center;
+}
+
+.team-section .section-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 3rem;
+  color: #fff;
+  text-transform: uppercase;
+  margin-bottom: 10px;
+}
+
+.team-section .section-subtitle {
+  color: #d4af37;
+  letter-spacing: 2px;
+  margin-bottom: 60px;
+  font-weight: 300;
+}
+
+/* Containerul care permite scroll pe mobil */
+.team-slider {
+  display: flex;
+  gap: 25px;
+  overflow-x: auto; /* Permite scroll orizontal */
+  padding: 20px 10px 40px 10px;
+  scroll-snap-type: x mandatory; /* Face cardurile să se "magnetizeze" la scroll */
+  scrollbar-width: none; /* Ascunde scrollbar pe Firefox */
+}
+
+.team-slider::-webkit-scrollbar {
+  display: none; /* Ascunde scrollbar pe Chrome/Safari */
+}
+
+.team-card {
+  flex: 0 0 280px; /* Lățime fixă pentru carduri pe mobil */
+  scroll-snap-align: center;
+  perspective: 1000px;
+}
+
+.card-inner {
+  position: relative;
+  height: 400px;
+  border-radius: 15px;
+  overflow: hidden;
+  background: #1a1a1a;
+  transition: transform 0.5s ease;
+  border: 1px solid #222;
+}
+
+.card-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: grayscale(100%); /* Efect artistic alb-negru */
+  transition: 0.5s ease;
+}
+
+.team-card:hover .card-inner img {
+  filter: grayscale(0%);
+  transform: scale(1.1);
+}
+
+/* Info de pe Card */
+.card-info {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  padding: 30px 20px;
+  background: linear-gradient(to top, rgba(0,0,0,1) 0%, transparent 100%);
+  text-align: left;
+}
+
+.card-info h3 {
+  color: #fff;
+  margin: 0;
+  font-size: 1.5rem;
+  font-family: 'Oswald', sans-serif;
+}
+
+.card-info span {
+  color: #d4af37;
+  font-size: 0.9rem;
+  display: block;
+  margin-bottom: 15px;
+}
+
+.btn-profile {
+  color: #fff;
+  text-decoration: none;
+  font-size: 0.8rem;
+  border: 1px solid #d4af37;
+  padding: 5px 15px;
+  border-radius: 4px;
+  transition: 0.3s;
+}
+
+.btn-profile:hover {
+  background: #d4af37;
+  color: #000;
+}
+
+/* Ajustări pentru DESKTOP */
+@media (min-width: 1024px) {
+  .team-slider {
+    justify-content: center; /* Centrează frizerii pe ecrane mari */
+    overflow: visible;
+  }
+  .team-card {
+    flex: 0 1 300px;
+  }
+  .team-card:hover .card-inner {
+    transform: translateY(-15px); /* Ridică cardul la hover */
+    box-shadow: 0 20px 40px rgba(212, 175, 55, 0.2);
+  }
+}
+/* --- 5. ABOUT US "MANIFESTO" (Luxury Style) --- */
+.about-premium {
+  padding: 120px 20px;
+  background-color: #0b0b0b;
+  display: flex;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Fundal subtil cu text uriaș în spate (Efect vizual) */
+.about-bg-text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-family: 'Oswald', sans-serif;
+  font-size: 20vw; /* Uriaș */
+  color: rgba(255, 255, 255, 0.03); /* Aproape invizibil */
+  font-weight: bold;
+  pointer-events: none;
+  z-index: 0;
+  white-space: nowrap;
+}
+
+.about-container {
+  display: flex;
+  align-items: center;
+  max-width: 1200px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+/* Imaginea din stânga */
+.about-image-wrapper {
+  flex: 1;
+  position: relative;
+  padding-right: 50px; /* Facem loc textului să intre peste ea */
+}
+
+.about-img-main {
+  width: 100%;
+  height: 600px;
+  object-fit: cover;
+  filter: grayscale(100%) contrast(1.1);
+  box-shadow: 0 30px 60px rgba(0,0,0,0.8);
+  transition: 0.5s;
+}
+
+.about-image-wrapper:hover .about-img-main {
+  filter: grayscale(0%) contrast(1);
+}
+
+/* Cadrul auriu gol (Design Element) */
+.gold-frame {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 100%;
+  height: 100%;
+  border: 2px solid #d4af37;
+  z-index: -1; /* În spatele pozei */
+  transition: 0.3s;
+}
+
+.about-image-wrapper:hover .gold-frame {
+  top: -30px;
+  left: -30px;
+}
+
+/* Badge-ul care se rotește */
+.experience-badge {
+  position: absolute;
+  bottom: -40px;
+  right: 20px;
+  width: 120px;
+  height: 120px;
+  background: #d4af37;
+  color: #000;
+  border-radius: 50%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Oswald', sans-serif;
+  font-weight: bold;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+  animation: spinBadge 10s linear infinite;
+}
+
+@keyframes spinBadge {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Partea de Text (Dreapta) */
+.about-content {
+  flex: 1;
+  padding-left: 40px;
+  position: relative;
+}
+
+/* Linia verticală */
+.about-content::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 10%;
+  height: 80%;
+  width: 2px;
+  background: #d4af37;
+}
+
+.about-subtitle {
+  color: #d4af37;
+  font-size: 14px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  font-weight: bold;
+  margin-bottom: 20px;
+  display: block;
+}
+
+.about-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 50px;
+  color: #fff;
+  line-height: 1.1;
+  margin-bottom: 30px;
+}
+
+.about-desc {
+  color: #888;
+  font-size: 16px;
+  line-height: 1.8;
+  margin-bottom: 40px;
+}
+
+/* Lista de beneficii cu iconițe */
+.about-features {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.feature-item {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.feature-icon {
+  font-size: 24px;
+  color: #d4af37;
+}
+
+.feature-text {
+  color: #ddd;
+  font-weight: 500;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+/* Semnătura */
+.signature-img {
+  height: 60px;
+  margin-top: 40px;
+  opacity: 0.7;
+  filter: invert(1); /* O facem albă */
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .about-container { flex-direction: column; }
+  .about-image-wrapper { padding-right: 0; margin-bottom: 50px; width: 100%; }
+  .about-content { padding-left: 0; border-left: none; }
+  .about-content::before { display: none; }
+  .about-title { font-size: 36px; }
+}
+
+/* --- FOOTER GENERAL --- */
+.bomba-footer {
+  background-color: #050505;
+  color: #fff;
+  padding: 60px 0 20px 0;
+  position: relative;
+  border-top: 1px solid #d4af3733;
+}
+
+/* Efectul de Fade/Gradient la începutul footer-ului */
+.footer-top-wave {
+  position: absolute;
+  top: -50px;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  background: linear-gradient(to top, #050505, transparent);
+}
+
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 40px;
+  padding: 0 20px;
+}
+
+/* --- STILURI SECȚIUNI --- */
+.footer-section h3 {
+  font-family: 'Oswald', sans-serif;
+  color: #d4af37;
+  letter-spacing: 2px;
+  margin-bottom: 25px;
+  font-size: 1.2rem;
+}
+
+.footer-logo {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 3px;
+  margin-bottom: 10px;
+}
+
+.footer-logo span { color: #d4af37; }
+
+.footer-section ul { list-style: none; padding: 0; }
+.footer-section ul li {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  color: #888;
+  font-size: 0.95rem;
+}
+
+.closed { color: #ff4d4d; font-weight: bold; }
+
+/* --- BUTOANE CONTACT MOBIL --- */
+.footer-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.footer-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 15px;
+  border-radius: 8px;
+  text-decoration: none;
+  font-weight: bold;
+  font-family: 'Oswald', sans-serif;
+  transition: 0.3s;
+}
+
+.footer-btn.call { background: #d4af37; color: #000; }
+.footer-btn.map { border: 1px solid #d4af37; color: #d4af37; }
+
+/* --- OPTIMIZARE MOBIL (BOMBA) --- */
+@media (max-width: 768px) {
+  .footer-container {
+    grid-template-columns: 1fr; /* Totul pe un rând */
+    text-align: center;
+    gap: 50px;
+  }
+
+  .footer-section ul li {
+    justify-content: center;
+    gap: 20px;
+  }
+
+  .footer-actions {
+    max-width: 300px;
+    margin: 0 auto 20px auto;
+  }
+
+  .footer-logo { font-size: 2.2rem; }
+  
+  .footer-socials {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 15px;
+  }
+
+  .social-icon {
+    width: 45px;
+    height: 45px;
+    background: #111;
+    border: 1px solid #333;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    color: #d4af37;
+    text-decoration: none;
+  }
+}
+
+.footer-copyright {
+  text-align: center;
+  margin-top: 60px;
+  padding-top: 20px;
+  border-top: 1px solid #111;
+  font-size: 0.8rem;
+  color: #444;
+}
+/* --- REVIEWS SECTION --- */
+.reviews-section {
+  padding: 100px 20px;
+  background-color: #0b0b0b;
+}
+
+.reviews-header {
+  text-align: center;
+  margin-bottom: 60px;
+}
+
+.overall-rating {
+  margin-top: 20px;
+}
+
+.rating-score {
+  font-size: 3rem;
+  font-weight: bold;
+  color: #fff;
+  font-family: 'Oswald', sans-serif;
+}
+
+.stars-gold {
+  color: #d4af37;
+  font-size: 1.5rem;
+  margin: 10px 0;
+}
+
+.rating-count {
+  color: #666;
+  font-size: 0.9rem;
+}
+
+/* GRID & CARDS */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.review-card {
+  background: #111;
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid #222;
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-10px);
+  border-color: #d4af37;
+}
+
+.review-user {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  position: relative;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #d4af37;
+}
+
+.user-info h4 {
+  color: #fff;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.review-date {
+  color: #555;
+  font-size: 0.8rem;
+}
+
+.verified-badge {
+  position: absolute;
+  top: 0;
+  right: 0;
+  color: #d4af37;
+  font-weight: bold;
+}
+
+.review-stars {
+  color: #d4af37;
+  margin-bottom: 15px;
+  font-size: 0.9rem;
+}
+
+.review-text {
+  color: #aaa;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+.reviews-cta {
+  text-align: center;
+  margin-top: 50px;
+}
+
+/* --- OPTIMIZARE MOBIL --- */
+@media (max-width: 768px) {
+  .reviews-grid {
+    display: flex;
+    overflow-x: auto; /* Slider pe mobil */
+    scroll-snap-type: x mandatory;
+    padding-bottom: 20px;
+    gap: 20px;
+    scrollbar-width: none;
+  }
+
+  .review-card {
+    min-width: 85%; /* Vezi recenzia întreagă + un pic din următoarea */
+    scroll-snap-align: center;
+  }
+}
+/* --- 8. FAQ (ÎNTREBĂRI FRECVENTE) --- */
+.faq-section {
+  padding: 100px 50px;
+  background-color: #111;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.faq-container {
+  max-width: 800px;
+  width: 100%;
+}
+
+.faq-item {
+  background: #1a1a1a;
+  margin-bottom: 15px;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #333;
+}
+
+.faq-question {
+  padding: 20px;
+  width: 100%;
+  text-align: left;
+  background: none;
+  border: none;
+  color: #fff;
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: 0.3s;
+}
+
+.faq-question:hover {
+  background-color: #222;
+  color: #d4af37;
+}
+
+.faq-answer {
+  padding: 0 20px;
+  max-height: 0; /* Ascuns implicit */
+  overflow: hidden;
+  color: #999;
+  background-color: #0f0f0f;
+  transition: all 0.4s ease;
+}
+
+.faq-answer.open {
+  padding: 20px;
+  max-height: 200px; /* Se deschide */
+  border-top: 1px solid #333;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .review-card { width: 100%; }
+}
+/* --- FIX PENTRU MOBIL (SUB 768PX) --- */
+@media (max-width: 768px) {
+  
+  /* 1. TITLURI MAI MARI ȘI BINE SPAȚIATE */
+  .price-header-box {
+    margin-bottom: 40px;
+    padding: 0 10px;
+  }
+
+  .prices-section .section-title {
+    font-size: 2.8rem !important; /* Titlu masiv pe mobil */
+    line-height: 1.1;
+    margin-bottom: 15px !important;
+  }
+
+  .prices-section .section-subtitle {
+    font-size: 1.1rem !important; /* Subtitlu clar */
+    letter-spacing: 2px;
+  }
+
+  /* 2. BUTOANE ALINIATE DAR MARI (BOMBA) */
+  .price-tabs-mobile {
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 0 5px;
+    margin-bottom: 40px;
+  }
+
+  .tab-btn-m {
+    flex: 1; /* Le forțează să fie egale ca mărime */
+    background: #111;
+    border: 1px solid #333;
+    color: #fff;
+    /* Padding mare pentru a fi ușor de apăsat */
+    padding: 20px 0; 
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.1rem; /* Text mai mare în butoane */
+    letter-spacing: 1px;
+    border-radius: 4px;
+    transition: 0.3s ease;
+  }
+
+  .tab-btn-m.active {
+    background: #d4af37;
+    color: #000;
+    border-color: #d4af37;
+    font-weight: bold;
+    box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+  }
+
+  /* 3. LISTA DE SERVICII MAI VIZIBILĂ */
+  .service-row-m {
+    margin-bottom: 25px;
+    border-bottom: 1px solid #222;
+    padding-bottom: 15px;
+  }
+
+  .service-main-m {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+  }
+
+  .s-name-m {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.4rem; /* Numele serviciului mult mai mare */
+    color: #fff;
+    text-transform: uppercase;
+  }
+
+  .s-price-m {
+    font-size: 1.4rem;
+    color: #d4af37;
+    font-weight: bold;
+  }
+
+  .s-desc-m {
+    font-size: 1rem; /* Descrierea mai mare și lizibilă */
+    color: #888;
+    line-height: 1.4;
+  }
+}
+/* --- 10. HARTA CINEMATICĂ (Premium Style) --- */
+.map-section {
+  position: relative;
+  height: 600px; /* Hartă înaltă, impunătoare */
+  width: 100%;
+  background-color: #0b0b0b;
+  overflow: hidden;
+  display: flex;
+  align-items: center; /* Centrează cardul pe verticală */
+}
+
+/* Containerul pentru Iframe (Harta propriu-zisă) */
+.map-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.map-background iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  /* Filtrul Dark Mode ajustat să fie mai puțin "negativ" și more "dark grey" */
+  filter: grayscale(100%) invert(92%) contrast(0.83);
+}
+
+/* "Ceața" neagră care face trecerea fină (Gradient) */
+.map-fade-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(to bottom, #0b0b0b 0%, transparent 20%, transparent 80%, #050505 100%);
+  z-index: 2;
+  pointer-events: none; /* Lasă click-urile să treacă prin ea */
+}
+
+/* Cardul Plutitor cu Adresa */
+.contact-card {
+  position: relative;
+  z-index: 3; /* Deasupra hărții */
+  background: rgba(15, 15, 15, 0.9); /* Negru aproape opac */
+  backdrop-filter: blur(10px); /* Efect de sticlă mată */
+  padding: 40px;
+  max-width: 400px;
+  margin-left: 10%; /* Îl punem în stânga, nu pe centru */
+  border-left: 4px solid #d4af37; /* Linie aurie elegantă în stânga */
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+}
+
+.contact-card h3 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 30px;
+  color: #fff;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.contact-info-item {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 20px;
+  color: #ccc;
+}
+
+.contact-icon {
+  color: #d4af37;
+  font-size: 20px;
+  margin-right: 15px;
+  margin-top: 3px;
+}
+
+.contact-text h4 {
+  color: #fff;
+  font-size: 16px;
+  margin-bottom: 5px;
+}
+
+.contact-text p {
+  font-size: 14px;
+  color: #888;
+  line-height: 1.5;
+}
+
+/* RESPONSIVE: Pe telefon cardul stă sub hartă sau peste ea centrat */
+@media (max-width: 768px) {
+  .map-section {
+    flex-direction: column;
+    height: auto;
+  }
+  
+  .map-background {
+    position: relative;
+    height: 300px; /* Hartă mai mică pe mobil */
+  }
+
+  .contact-card {
+    margin: 0;
+    width: 100%;
+    max-width: 100%;
+    background: #111; /* Pe mobil e solid, nu transparent */
+    border-left: none;
+    border-top: 4px solid #d4af37;
+  }
+}
+
+/* --- 11. PROFIL FRIZER VIP (Nou) --- */
+
+/* Coperta mare de sus */
+.profile-cover {
+  height: 350px;
+  width: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+  mask-image: linear-gradient(to bottom, rgba(0,0,0,1) 80%, rgba(0,0,0,0) 100%);
+}
+
+.profile-header-content {
+  position: relative;
+  margin-top: -80px; /* Tragem conținutul peste copertă */
+  text-align: center;
+  padding: 0 20px;
+  z-index: 10;
+}
+
+.profile-avatar {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  border: 4px solid #d4af37;
+  object-fit: cover;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.8);
+}
+
+.barber-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 40px;
+  margin-top: 15px;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.barber-specialty {
+  color: #d4af37;
+  font-size: 18px;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 20px;
+}
+
+/* Statistici rapide (ca la jocuri video) */
+.barber-stats {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  margin-bottom: 40px;
+}
+
+.stat-box {
+  background: #1a1a1a;
+  padding: 10px 20px;
+  border-radius: 8px;
+  border: 1px solid #333;
+  text-align: center;
+}
+
+.stat-number {
+  font-size: 20px;
+  color: #fff;
+  font-weight: bold;
+  display: block;
+}
+
+.stat-label {
+  font-size: 12px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+/* Galeria de lucrări */
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+  padding: 20px;
+  max-width: 1000px;
+  margin: 0 auto 100px auto; /* Margin jos mare ca să nu acopere butonul */
+}
+
+.portfolio-img {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 4px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.portfolio-img:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+  z-index: 2;
+}
+
+/* ZONA DE PROGRAMARE (Mero Style Refined) */
+.booking-container {
+  background: #111;
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid #333;
+  max-width: 600px;
+  margin: 0 auto 50px auto;
+}
+
+/* BUTONUL FIX DE JOS (STICKY) */
+.sticky-footer-btn {
+  position: fixed;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 500px;
+  background-color: #d4af37;
+  color: #000;
+  padding: 18px;
+  font-size: 18px;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 50px; /* Rotund la capete */
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
+  z-index: 1000;
+  cursor: pointer;
+  animation: pulse 2s infinite;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+
+@keyframes pulse {
+  0% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0.7); }
+  70% { box-shadow: 0 0 0 15px rgba(212, 175, 55, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(212, 175, 55, 0); }
+}
+
+.hidden { display: none; }
+
+/* --- 12. FORMULAR DE PROGRAMARE "NEXT LEVEL" --- */
+
+.booking-section {
+  background: linear-gradient(to bottom, #0b0b0b, #111);
+  padding: 40px 20px;
+  position: relative;
+  z-index: 20;
+  margin-top: -20px; /* Se îmbină ușor cu headerul */
+}
+
+.booking-card {
+  background: #151515;
+  border: 1px solid #333;
+  border-top: 4px solid #d4af37; /* Linia aurie sus */
+  border-radius: 12px;
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 30px;
+  box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+}
+
+.form-step-title {
+  font-family: 'Oswald', sans-serif;
+  color: #fff;
+  font-size: 18px;
+  margin-bottom: 15px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.step-number {
+  background: #d4af37;
+  color: #000;
+  width: 25px;
+  height: 25px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+/* INPUT DATA STILIZAT */
+.custom-date-input {
+  width: 100%;
+  padding: 15px;
+  background: #222;
+  border: 1px solid #444;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  font-size: 16px;
+  border-radius: 8px;
+  outline: none;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.custom-date-input:focus {
+  border-color: #d4af37;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.2);
+}
+
+/* GRILA DE ORE MODIFICATĂ */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.time-slot {
+  background: #222;
+  color: #fff;
+  border: 1px solid #333;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.time-slot:hover:not(:disabled) {
+  border-color: #d4af37;
+  transform: translateY(-2px);
+}
+
+.time-slot.selected {
+  background: #d4af37;
+  color: #000;
+  border-color: #d4af37;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+.time-slot:disabled {
+  background: #111;
+  color: #444;
+  cursor: not-allowed;
+  text-decoration: line-through;
+  border-color: #222;
+}
+
+/* INPUTURI TEXT */
+.input-group {
+  display: flex;
+  gap: 15px;
+}
+
+.custom-text-input {
+  width: 100%;
+  padding: 15px;
+  background: #222;
+  border: 1px solid #444;
+  color: #fff;
+  border-radius: 8px;
+  font-size: 16px;
+  outline: none;
+}
+
+.custom-text-input:focus {
+  border-color: #d4af37;
+}
+
+/* BUTON FINAL */
+.submit-btn-large {
+  width: 100%;
+  padding: 18px;
+  background: linear-gradient(45deg, #d4af37, #f6e27a);
+  border: none;
+  color: #000;
+  font-family: 'Oswald', sans-serif;
+  font-size: 20px;
+  text-transform: uppercase;
+  font-weight: bold;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: 0.3s;
+  box-shadow: 0 10px 20px rgba(212, 175, 55, 0.3);
+}
+
+.submit-btn-large:hover {
+  transform: scale(1.02);
+  box-shadow: 0 10px 30px rgba(212, 175, 55, 0.5);
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .input-group { flex-direction: column; }
+}
+/* --- ANIMAȚIE LUMINĂ CARE PÂLPÂIE --- */
+@keyframes flicker {
+  /* Starea de repaus (5 secunde în care nu se întâmplă nimic) */
+  0%, 80% {
+    text-shadow: none;
+    opacity: 1;
+  }
+  /* Cele 3 pâlpâiri rapide */
+  82% {
+    text-shadow: 0 0 10px #d4af37, 0 0 20px #d4af37;
+    opacity: 0.8;
+  }
+  84% {
+    text-shadow: none;
+    opacity: 1;
+  }
+  86% {
+    text-shadow: 0 0 15px #d4af37, 0 0 30px #d4af37;
+    opacity: 0.7;
+  }
+  88% {
+    text-shadow: none;
+    opacity: 1;
+  }
+  90% {
+    text-shadow: 0 0 20px #d4af37, 0 0 40px #d4af37;
+    opacity: 0.9;
+  }
+  100% {
+    text-shadow: none;
+    opacity: 1;
+  }
+}
+
+/* Aplicăm animația pe titlul din Hero */
+.hero-content h1 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 4rem;
+  color: #fff;
+  text-transform: uppercase;
+  /* Animația durează 7 secunde în total (5 de pauză + 2 de acțiune) */
+  animation: flicker 7s infinite; 
+}
+
+/* Opțional: Adăugăm și un mic efect pe butonul de rezervare să pară că "reacționează" la lumină */
+.hero-content .btn-gold {
+  transition: box-shadow 0.3s ease;
+}
+/* --- EFECTUL DE PÂLPÂIRE (NEON VINTAGE) --- */
+@keyframes flicker {
+  0%, 80% {
+    text-shadow: none;
+    color: #d4af37; /* Culoarea aurie mată */
+  }
+  /* Pâlpâirea 1 */
+  81% {
+    text-shadow: 0 0 8px #fff, 0 0 15px #d4af37;
+    color: #fff;
+  }
+  82% {
+    text-shadow: none;
+    color: #d4af37;
+  }
+  /* Pâlpâirea 2 */
+  84% {
+    text-shadow: 0 0 10px #fff, 0 0 20px #d4af37;
+    color: #fff;
+  }
+  85% {
+    text-shadow: none;
+    color: #d4af37;
+  }
+  /* Pâlpâirea 3 (Rămâne aprins scurt) */
+  87% {
+    text-shadow: 0 0 12px #fff, 0 0 25px #d4af37, 0 0 35px #d4af37;
+    color: #fff;
+  }
+  100% {
+    text-shadow: none;
+    color: #d4af37;
+  }
+}
+
+.flicker-text {
+  /* Animația durează 7 secunde (5 sec pauză + 2 sec acțiune) */
+  animation: flicker 7s infinite;
+  display: inline-block;
+}
+/* Containerul de preview pe prima pagină */
+.preview-grid {
+    margin-bottom: 20px !important;
+}
+
+/* Efectul pentru ultimele 2 poze */
+.fade-item {
+    height: 120px !important; /* Afișăm doar aproximativ jumătate din înălțime pe mobil */
+    opacity: 0.5; /* Le facem mai discrete */
+    /* Gradient care pleacă de la transparent la fundalul negru al site-ului */
+    mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+    -webkit-mask-image: linear-gradient(to bottom, black 0%, transparent 100%);
+    pointer-events: none; /* Să nu poată da click pe ele dacă sunt doar de decor */
+}
+
+/* Ajustare pentru Desktop */
+@media (min-width: 769px) {
+    .fade-item {
+        height: 150px !important;
+    }
+}
+
+/* Poziționarea butonului peste zona de fade */
+.gallery-section .btn-gold {
+    box-shadow: 0px 0px 30px rgba(0, 0, 0, 1); /* Umbră puternică sub buton să nu se vadă pozele tăiate prin el */
+}
+/* --- AJUSTĂRI ECHIPĂ (SIZE & BUTTON) --- */
+/* --- AJUSTĂRI ECHIPĂ (EXTRA LONG & LARGE) --- */
+
+.team-slider {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding: 20px 30px 60px 30px; /* Mai mult spațiu jos pentru umbre */
+  scrollbar-width: none;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Pe Mobil: Carduri masive */
+.team-card {
+  /* 85% din lățime ca să se vadă doar o "felie" subțire din următorul */
+  flex: 0 0 85vw; 
+  scroll-snap-align: center;
+  transition: transform 0.3s ease;
+}
+
+.card-inner {
+  /* AM MĂRIT ÎNĂLȚIMEA: 600px pentru un aspect de coloană lungă */
+  height: 600px; 
+  border-radius: 20px; /* Colțuri mai rotunjite pentru un look modern */
+  position: relative;
+  background: #111;
+  box-shadow: 0 15px 35px rgba(0,0,0,0.8);
+}
+
+.card-inner img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Imaginea va fi focusată pe față chiar dacă e foarte lung cardul */
+  object-position: top center; 
+}
+
+/* Overlay-ul de info mai înalt pentru a acoperi baza cardului lung */
+.card-info {
+  background: linear-gradient(to top, rgba(0,0,0,1) 0%, rgba(0,0,0,0.8) 40%, transparent 100%);
+  padding: 40px 25px;
+}
+
+.card-info h3 {
+  font-size: 2rem; /* Nume mai mare */
+  margin-bottom: 5px;
+}
+
+.btn-direct-book {
+  padding: 16px 20px; /* Buton mai "gras" și ușor de apăsat */
+  font-size: 1rem;
+  letter-spacing: 2px;
+  margin-top: 10px;
+}
+
+/* Desktop: Revenim la dimensiuni echilibrate ca să nu ocupe tot ecranul */
+@media (min-width: 1024px) {
+  .team-card {
+    flex: 0 0 350px;
+  }
+  .card-inner {
+    height: 550px;
+  }
+}
+/* BUTONUL NOU "PROGRAMEAZĂ-TE" PE CARD */
+.btn-direct-book {
+  display: inline-block;
+  background: #d4af37;
+  color: #000;
+  text-decoration: none;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 0.85rem;
+  padding: 12px 20px;
+  border-radius: 4px;
+  width: 100%; /* Ocupă tot rândul în info card */
+  text-align: center;
+  transition: 0.3s;
+}
+
+.btn-direct-book:hover {
+  background: #fff;
+  transform: scale(1.02);
+}
+
+/* Ajustare Desktop: revenim la 4 pe rând dacă e ecran mare */
+@media (min-width: 1024px) {
+  .team-card {
+    flex: 0 0 280px; /* Dimensiune fixă pe PC */
+  }
+  .team-slider {
+    justify-content: center;
+    overflow: visible;
+  }
+}
+/* --- BARBER PROFILE PREMIUM STYLE --- */
+.back-circle {
+    position: absolute; top: 25px; left: 25px;
+    width: 45px; height: 45px;
+    background: rgba(212, 175, 55, 0.2);
+    border: 1px solid #d4af37;
+    color: #fff;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; font-size: 20px;
+    backdrop-filter: blur(5px);
+    transition: 0.3s;
+}
+
+.profile-main-info {
+    position: absolute; bottom: 0; left: 50%;
+    transform: translate(-50%, 20%);
+    text-align: center; width: 100%;
+}
+
+.big-avatar {
+    width: 140px; height: 140px;
+    border-radius: 50%;
+    border: 5px solid #070707;
+    object-fit: cover;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+}
+
+.stats-row {
+    display: flex; justify-content: center;
+    gap: 15px; margin-top: 80px; padding: 0 20px;
+}
+
+.stat-card {
+    background: #111; padding: 15px;
+    border-radius: 12px; border: 1px solid #222;
+    min-width: 100px; text-align: center;
+}
+
+.stat-card span { display: block; color: #d4af37; font-weight: bold; font-size: 1.2rem; }
+.stat-card small { color: #666; text-transform: uppercase; font-size: 10px; }
+
+.booking-master-container { max-width: 500px; margin: 40px auto; padding: 0 20px; }
+
+.modern-booking-card {
+    background: #121212; padding: 30px;
+    border-radius: 24px; border: 1px solid #d4af3733;
+}
+
+.booking-title { font-family: 'Oswald'; color: #d4af37; margin-bottom: 30px; text-align: center; }
+
+.booking-step label { display: block; font-size: 11px; color: #888; margin-bottom: 10px; letter-spacing: 1px; }
+
+.booking-input {
+    width: 100%; background: #1a1a1a; border: 1px solid #333;
+    padding: 15px; color: #fff; border-radius: 12px; margin-bottom: 15px;
+}
+
+.time-slots-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+
+.slot-btn {
+    background: #1a1a1a; border: 1px solid #333; color: #fff;
+    padding: 10px 5px; border-radius: 8px; cursor: pointer; transition: 0.2s;
+}
+
+.slot-btn.active { background: #d4af37; color: #000; border-color: #d4af37; font-weight: bold; }
+.slot-btn.taken { opacity: 0.2; cursor: not-allowed; text-decoration: line-through; }
+
+.confirm-booking-btn {
+    width: 100%; padding: 18px; background: #d4af37;
+    color: #000; border: none; border-radius: 12px;
+    font-weight: bold; font-family: 'Oswald'; cursor: pointer;
+}
+
+.locked { opacity: 0.3; pointer-events: none; }
+/* --- COMPONENTA DE TITLU (PREȚURI) --- */
+
+.prices-section .title-block {
+    margin-bottom: 80px; /* Spațiu generos între titlu și butoane */
+    text-align: center;
+}
+
+.prices-section .section-title {
+    font-family: 'Oswald', sans-serif;
+    font-size: 4.5rem !important; /* FOARTE MARE */
+    font-weight: 700;
+    text-transform: uppercase;
+    color: #fff;
+    letter-spacing: 8px; /* Spațiere între litere pentru look premium */
+    margin-bottom: 20px !important;
+    line-height: 1;
+}
+
+.prices-section .section-subtitle {
+    font-size: 1.5rem !important; /* Mărit și acesta */
+    color: #d4af37; /* Aurul de lux */
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-weight: 300;
+    margin-top: 0;
+}
+
+/* --- AJUSTĂRI PENTRU MOBIL --- */
+@media (max-width: 768px) {
+    .prices-section .section-title {
+        font-size: 2.8rem !important; /* Se micșorează puțin pe telefon să nu iasă din ecran */
+        letter-spacing: 4px;
+    }
+    
+    .prices-section .section-subtitle {
+        font-size: 1.1rem !important;
+        letter-spacing: 2px;
+    }
+
+    .prices-section .title-block {
+        margin-bottom: 50px;
+    }
+}
+
+/* --- SECTION PREȚURI (FULL UPGRADE) --- */
+.prices-section {
+  padding: 100px 20px;
+  background-color: #070707;
+  color: #fff;
+}
+
+.price-header-area {
+  text-align: center;
+  margin-bottom: 60px; /* Spațiu mare sub titlu */
+}
+
+.prices-section .section-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 4.5rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 6px;
+  margin-bottom: 10px;
+  color: #fff;
+}
+
+.prices-section .section-subtitle {
+  color: #d4af37;
+  font-size: 1.4rem;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: 300;
+}
+
+/* BUTOANE (DESKTOP) */
+.price-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  margin-bottom: 50px;
+  max-width: 800px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 20px 0;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.tab-btn.active {
+  background: #d4af37;
+  color: #000;
+  border-color: #d4af37;
+  font-weight: bold;
+  box-shadow: 0 5px 20px rgba(212, 175, 55, 0.3);
+}
+
+/* LISTA DE PREȚURI */
+.price-list-container {
+  max-width: 850px;
+  margin: 0 auto;
+  animation: fadeInPrice 0.5s ease;
+}
+
+.price-item-box {
+  margin-bottom: 35px;
+  position: relative;
+  padding: 10px;
+}
+
+.price-row-main {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.price-item-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.6rem;
+  text-transform: uppercase;
+}
+
+.price-item-dots {
+  flex: 1;
+  border-bottom: 1px dotted #444;
+  margin: 0 15px;
+}
+
+.price-item-value {
+  color: #d4af37;
+  font-size: 1.6rem;
+  font-weight: bold;
+}
+
+.price-item-desc {
+  color: #888;
+  font-size: 0.95rem;
+  margin-top: 5px;
+  max-width: 80%;
+}
+
+.vip-tag {
+  position: absolute;
+  top: -10px;
+  right: 0;
+  background: #d4af37;
+  color: #000;
+  font-size: 10px;
+  padding: 2px 8px;
+  font-weight: bold;
+  border-radius: 3px;
+}
+
+/* --- OPTIMIZARE PENTRU TELEFON --- */
+@media (max-width: 768px) {
+  .prices-section {
+    padding: 60px 15px;
+  }
+
+  .prices-section .section-title {
+    font-size: 2.8rem; /* Titlu mare pe mobil */
+    letter-spacing: 3px;
+  }
+
+  .prices-section .section-subtitle {
+    font-size: 1.1rem;
+  }
+
+  .price-tabs {
+    gap: 5px; /* Butoanele rămân aliniate dar apropiate */
+  }
+
+  .tab-btn {
+    padding: 22px 0; /* Butoane mai înalte pe mobil (BOMBA) */
+    font-size: 1rem;
+    letter-spacing: 1px;
+  }
+
+  .price-item-name, .price-item-value {
+    font-size: 1.3rem;
+  }
+  
+  .price-item-dots {
+    display: none; /* Scoatem punctele pe mobil să nu aglomereze */
+  }
+
+  .price-item-desc {
+    max-width: 100%;
+    font-size: 0.9rem;
+  }
+}
+
+@keyframes fadeInPrice {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.hero {
+  position: relative;
+  /* ... restul stilurilor tale ... */
+}
+
+/* Adăugăm un overlay la bază */
+.hero::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 150px; /* Înălțimea tranziției */
+  background: linear-gradient(to bottom, transparent, #0b0b0b); /* Se topește în culoarea de fundal a site-ului */
+  z-index: 1;
+} 
+
+/* --- CONTACT SECTION --- */
+.contact-section {
+  padding: 100px 20px;
+  background: #080808;
+}
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  align-items: center;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.contact-info .section-title {
+  text-align: left !important;
+  margin-bottom: 10px !important;
+}
+
+.premium-form {
+  background: #111;
+  padding: 35px;
+  border-radius: 15px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.premium-form input, .premium-form textarea {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  padding: 15px;
+  color: #fff;
+  border-radius: 8px;
+  outline: none;
+}
+
+.premium-form input:focus, .premium-form textarea:focus {
+  border-color: #d4af37;
+}
+
+.btn-gold-large {
+  background: #d4af37;
+  color: #000;
+  padding: 18px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.form-status {
+  text-align: center;
+  color: #d4af37;
+  font-size: 1rem;
+}
+
+/* MOBIL FIX */
+@media (max-width: 768px) {
+  .contact-grid {
+    grid-template-columns: 1fr;
+    text-align: center;
+  }
+  .contact-info .section-title {
+    text-align: center !important;
+  }
+}/* --- CONTACT SECTION - TEXT MASIV --- */
+.contact-info .section-title {
+  text-align: left !important;
+  font-size: 3rem !important; /* DIMENSIUNE URIAȘĂ PENTRU IMPACT */
+  line-height: 1;
+  letter-spacing: 5px;
+  margin-bottom: 25px !important;
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  color: #fff;
+}
+
+.contact-info .section-subtitle {
+  font-size: 1.5rem !important; /* SUBTITLU MULT MAI VIZIBIL */
+  color: #d4af37;
+  letter-spacing: 2px;
+  margin-bottom: 45px !important;
+  display: block;
+  font-weight: 300;
+}
+
+.contact-details p {
+  font-size: 1rem; /* TEXTUL DE CONTACT (ADRESA/TEL) MAI MARE */
+  color: #fff;
+  margin-bottom: 25px;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  font-family: 'Oswald', sans-serif;
+}
+
+/* --- REGLAJE PENTRU MOBIL --- */
+@media (max-width: 768px) {
+  .contact-info .section-title {
+    font-size: 3rem !important; /* Se ajustează pe telefon să nu iasă din ecran */
+    text-align: center !important;
+  }
+
+  .contact-info .section-subtitle {
+    font-size: 1.4rem !important;
+    text-align: center !important;
+  }
+
+  .contact-details p {
+    font-size: 1.2rem;
+    justify-content: center;
+  }
+}
+
+/* --- SECȚIUNEA RECENZII - TEXT GIGANT --- */
+
+/* 1. Titlul "Ce spun clienții" */
+.reviews-header-block .section-title {
+  font-size: 4.5rem !important; /* FOARTE MARE */
+  letter-spacing: 4px;
+  margin-bottom: 30px !important;
+  color: #fff;
+  text-transform: uppercase;
+  line-height: 1.1;
+}
+
+/* 2. Scorul "4.9" */
+.big-score {
+  font-size: 6rem; /* CIFRĂ URIAȘĂ */
+  font-weight: 800;
+  color: #fff;
+  line-height: 1;
+  display: block;
+  font-family: 'Oswald', sans-serif;
+}
+
+/* 3. Stelele de sub scor */
+.gold-stars {
+  font-size: 2rem; /* Stele mari */
+  margin: 15px 0;
+  color: #d4af37;
+}
+
+.rating-subtitle {
+  font-size: 1.1rem;
+  color: #888;
+  letter-spacing: 1px;
+}
+
+/* 4. Numele clientului în card */
+.rev-name-info h4 {
+  font-size: 1.4rem;
+  color: #fff;
+  margin: 0;
+  font-family: 'Oswald', sans-serif;
+}
+
+.rev-name-info span {
+  font-size: 0.9rem;
+  color: #d4af37; /* "Client Verificat" auriu */
+}
+
+
+/* --- SECȚIUNEA RECENZII (STIL "BOMBA") --- */
+
+.reviews-section {
+  background-color: #080808; /* Negru intens */
+  padding: 100px 20px;
+  color: #fff;
+  position: relative;
+}
+
+/* 1. HEADER-UL SECȚIUNII */
+.reviews-header {
+  text-align: center;
+  margin-bottom: 70px; /* Spațiu mare să nu se înghesuie */
+}
+
+/* Titlu Masiv */
+.reviews-header .section-title {
+  font-family: 'Oswald', sans-serif;
+  font-size: 3.5rem; /* Text mare */
+  text-transform: uppercase;
+  letter-spacing: 4px;
+  margin-bottom: 20px;
+  color: #fff;
+}
+
+/* Container scor (4.9) */
+.overall-rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* Cifra 4.9 Uriașă */
+.rating-score {
+  font-family: 'Oswald', sans-serif;
+  font-size: 6rem; /* MASIV */
+  font-weight: 700;
+  color: #fff;
+  line-height: 1;
+}
+
+/* Stelele Aurii de sub 4.9 */
+.overall-rating .stars-gold {
+  color: #d4af37;
+  font-size: 2rem;
+  margin: 10px 0;
+}
+
+.rating-count {
+  color: #888;
+  font-size: 1rem;
+  letter-spacing: 1px;
+}
+
+/* 2. GRILA DE CARDURI */
+.reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* Se așază singure pe rând */
+  gap: 30px;
+  max-width: 1200px;
+  margin: 0 auto 60px auto;
+}
+
+/* 3. CARDUL INDIVIDUAL */
+.review-card {
+  background: #111; /* Gri foarte închis */
+  padding: 35px;
+  border-radius: 12px;
+  border: 1px solid rgba(212, 175, 55, 0.1); /* Bordură fină aurie */
+  transition: transform 0.3s ease, border-color 0.3s ease;
+}
+
+.review-card:hover {
+  transform: translateY(-10px); /* Se ridică la mouse */
+  border-color: #d4af37; /* Se aprinde bordura */
+}
+
+/* Zona User (Poză + Nume) */
+.review-user {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #222;
+  padding-bottom: 15px;
+}
+
+.user-avatar {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid #d4af37;
+}
+
+.user-info h4 {
+  margin: 0;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.2rem;
+  color: #fff;
+  letter-spacing: 1px;
+}
+
+.review-date {
+  font-size: 0.8rem;
+  color: #666;
+}
+
+.verified-badge {
+  margin-left: auto; /* Împinge bifa în dreapta de tot */
+  color: #d4af37;
+  font-size: 1.2rem;
+}
+
+/* Stelele din card */
+.review-stars {
+  color: #d4af37;
+  margin-bottom: 15px;
+  font-size: 1rem;
+}
+
+/* Textul recenziei */
+.review-text {
+  color: #ccc;
+  font-style: italic;
+  line-height: 1.6;
+  font-size: 1rem;
+}
+
+/* 4. BUTONUL DE JOS (CTA) */
+.reviews-cta {
+  text-align: center;
+}
+
+.btn-outline-gold {
+  background: transparent;
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  padding: 18px 45px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.1rem;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+}
+
+.btn-outline-gold:hover {
+  background: #d4af37;
+  color: #000;
+  box-shadow: 0 0 25px rgba(212, 175, 55, 0.4); /* Glow effect */
+  transform: scale(1.05);
+}
+
+/* --- OPTIMIZARE MOBIL --- */
+@media (max-width: 768px) {
+  .reviews-header .section-title {
+    font-size: 2.8rem;
+  }
+  
+  .rating-score {
+    font-size: 4.5rem;
+  }
+  
+  .reviews-grid {
+    display: flex; /* Pe mobil le facem slider orizontal dacă vrei, sau coloană */
+    flex-direction: column;
+  }
+  
+  .review-card {
+    margin-bottom: 20px;
+  }
+}
+/* --- NAVBAR & BURGER --- */
+.custom-navbar {
+  position: fixed; top: 0; left: 0; width: 100%; padding: 20px 0; z-index: 9999;
+  transition: 0.4s ease; background: transparent;
+}
+.custom-navbar.scrolled {
+  background: rgba(26, 26, 26, 0.95); /* Gri închis, nu negru */
+  padding: 15px 0; box-shadow: 0 5px 20px rgba(0,0,0,0.5);
+}
+.nav-container {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 0 40px; max-width: 1400px; margin: 0 auto; position: relative;
+}
+.logo {
+  font-family: 'Oswald', sans-serif; font-size: 1.6rem; font-weight: 700; color: #fff;
+  letter-spacing: 2px; z-index: 10001; white-space: nowrap;
+}
+.nav-schedule {
+  position: absolute; left: 50%; transform: translateX(-50%);
+  font-family: 'Oswald', sans-serif; color: #ccc; font-size: 0.9rem;
+}
+.burger-btn {
+  width: 35px; height: 25px; display: flex; flex-direction: column; justify-content: space-between;
+  cursor: pointer; z-index: 10001;
+}
+.burger-btn span {
+  display: block; width: 100%; height: 3px; background: #d4af37; border-radius: 2px;
+}
+
+/* --- SIDEBAR MENU (DESIGN NOU - MAI DESCHIS) --- */
+
+/* 1. Backdrop */
+.menu-backdrop {
+  position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+  background: rgba(0, 0, 0, 0.6); /* Mai transparent */
+  z-index: 9998; opacity: 0; visibility: hidden; transition: 0.3s ease;
+  backdrop-filter: blur(4px);
+}
+.menu-backdrop.active { opacity: 1; visibility: visible; }
+
+/* 2. Sidebar-ul Efectiv */
+.sidebar-menu {
+  position: fixed; top: 0; right: 0;
+  width: 400px; height: 100vh;
+  
+  /* CULOARE MAI DESCHISĂ (Gri Cărbune, nu Negru) */
+  background: #1a1a1a; 
+  
+  z-index: 9999;
+  transform: translateX(100%);
+  transition: transform 0.4s cubic-bezier(0.77, 0.2, 0.05, 1.0);
+  box-shadow: -10px 0 30px rgba(0,0,0,0.5);
+  display: flex; flex-direction: column;
+  padding: 80px 40px 40px 40px;
+}
+.sidebar-menu.active { transform: translateX(0); }
+
+/* 3. BUTONUL DE IESIRE (X) */
+.close-menu-btn {
+  position: absolute;
+  top: 25px;
+  right: 25px;
+  font-size: 2.5rem;
+  color: #d4af37; /* Auriu */
+  cursor: pointer;
+  line-height: 1;
+  transition: 0.3s;
+  padding: 10px;
+}
+.close-menu-btn:hover {
+  color: #fff;
+  transform: rotate(90deg);
+}
+
+/* Link-urile */
+.sidebar-links { display: flex; flex-direction: column; gap: 20px; margin-top: 20px; }
+.sidebar-links a {
+  font-family: 'Oswald', sans-serif; font-size: 1.5rem;
+  color: #e0e0e0; /* Alb murdar, mai plăcut */
+  text-decoration: none; text-transform: uppercase; transition: 0.3s;
+}
+.sidebar-links a:hover { color: #d4af37; padding-left: 10px; }
+
+/* Buton CTA */
+.btn-gold-sidebar {
+  display: block; text-align: center; background: #d4af37; color: #000;
+  padding: 15px; font-weight: bold; text-decoration: none; border-radius: 4px;
+  font-family: 'Oswald', sans-serif; margin-top: auto; margin-bottom: 20px;
+}
+.sidebar-footer { margin-top: auto; }
+.sidebar-contact-info p { color: #888; margin-bottom: 5px; font-size: 0.9rem; }
+
+/* --- RESPONSIVE: MOBIL "DRAWER" (Sertar pe jumătate - Versiunea FINALĂ) --- */
+@media (max-width: 768px) {
+  
+  /* 1. Ascundem programul pe mobil */
+  .nav-schedule { display: none; }
+  
+  /* 2. Navbar mai înalt */
+  .nav-container { 
+    height: 80px; 
+    padding: 0 25px; 
+  }
+  
+  /* 3. Logo Centrat */
+  .logo { 
+    position: absolute; 
+    left: 50%; 
+    transform: translateX(-50%); 
+    font-size: 1.8rem; 
+    width: 100%; 
+    text-align: center;
+  }
+  
+  /* 4. Burger Dreapta */
+  .burger-btn { 
+    margin-left: auto; 
+    width: 40px; 
+    height: 28px; 
+  }
+
+  /* 5. MENIUL TIP SERTAR */
+  .sidebar-menu {
+    width: 75%; /* Un pic mai lat ca înainte */
+    background: #151515; /* Gri foarte închis */
+    /* AM SCOS PADDING-UL LATERAL CA SĂ AJUNGĂ LINIILE ÎN MARGINE */
+    padding: 90px 0 40px 0; 
+    align-items: stretch; /* Forțează elementele să se întindă maxim */
+    text-align: left;
+    border-left: 1px solid #333;
+    box-shadow: -10px 0 50px rgba(0,0,0,0.8);
+  }
+
+  /* Titlul "Meniu" mic de sus */
+  .sidebar-title {
+    margin-left: 30px; /* Adăugăm spațiu aici pentru că l-am scos din părinte */
+    font-size: 1.1rem;
+  }
+  
+  /* 6. BUTONUL "X" (CLOSE) */
+  .close-menu-btn {
+    top: 25px; 
+    right: 25px; 
+    font-size: 3rem; /* Mai mare */
+    color: #888;
+    padding: 5px;
+    z-index: 10002;
+  }
+
+  /* 7. LINK-URILE (PLINE, PÂNĂ ÎN MARGINE) */
+  .sidebar-links { 
+    width: 100%; 
+    gap: 0;
+    margin-top: 30px;
+  }
+  
+  .sidebar-links a { 
+    font-size: 1.6rem; /* TEXT MAI MARE */
+    font-weight: 600;
+    width: 100%;
+    display: block;
+    /* Padding interior mare pentru a simți butonul masiv */
+    padding: 25px 30px; 
+    /* Linia merge acum dintr-un capăt în altul */
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15); 
+    color: #e0e0e0;
+    box-sizing: border-box; /* Esențial ca să nu iasă din ecran */
+  }
+  
+  .sidebar-links a:last-child {
+    border-bottom: none;
+  }
+  
+  .sidebar-links a:hover {
+    color: #d4af37;
+    background: rgba(212, 175, 55, 0.05); /* Ușor fundal auriu la atingere */
+    padding-left: 40px; /* Efect de mișcare mai pronunțat */
+  }
+
+  /* 8. FOOTER-UL JOS DE TOT */
+  .sidebar-footer { 
+    width: 100%; 
+    margin-top: auto;
+    border-top: 1px solid rgba(212, 175, 55, 0.3); /* Linie aurie mai vizibilă */
+    /* Adăugăm padding aici pentru conținutul footerului */
+    padding: 30px;
+    box-sizing: border-box;
+  }
+  
+  /* BUTONUL "PROGRAMEAZĂ-TE" MAI MARE */
+  .btn-gold-sidebar {
+    width: 100%;
+    padding: 22px; /* BUTON MAI ÎNALT/GRAS */
+    font-size: 1.4rem; /* TEXT BUTON MAI MARE */
+    margin-bottom: 25px;
+    text-align: center;
+    border-radius: 8px; /* Colțuri puțin mai rotunjite */
+  }
+
+  /* Informațiile de contact */
+  .sidebar-contact-info {
+    text-align: center;
+  }
+  
+  .sidebar-contact-info p {
+    justify-content: center;
+    font-size: 1rem; /* Text contact puțin mai mare */
+    color: #aaa;
+    margin-bottom: 8px;
+  }
+} 
+
+/* ========================================= */
+/* 1. LAYOUT PAGINĂ PROFIL (INFO + FORMULAR) */
+/* ========================================= */
+.profile-page {
+  background-color: #0a0a0a;
+  min-height: 100vh;
+  padding-bottom: 80px;
+  color: #fff;
+}
+
+.profile-container {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  gap: 50px;
+  align-items: flex-start;
+}
+
+.profile-info-side {
+  flex: 1;
+  min-width: 300px;
+}
+
+.profile-img-box img {
+  width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+  border: 1px solid #222;
+}
+
+.profile-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 3.5rem;
+  margin: 25px 0 10px 0;
+  text-transform: uppercase;
+}
+
+.profile-role {
+  color: #d4af37;
+  font-size: 1.3rem;
+  letter-spacing: 1px;
+}
+
+/* ========================================= */
+/* 2. CARDUL DE REZERVARE (FORMULAR)         */
+/* ========================================= */
+.profile-booking-side {
+  flex: 1.5;
+  min-width: 320px;
+}
+
+.booking-card-modern {
+  background: #111;
+  padding: 35px;
+  border-radius: 15px;
+  border: 1px solid #333;
+}
+
+/* TABURI LUNI */
+.month-tabs {
+  display: flex;
+  gap: 20px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #222;
+}
+
+.month-tab {
+  background: transparent;
+  border: none;
+  color: #555;
+  font-family: 'Oswald', sans-serif;
+  font-size: 1.2rem;
+  padding-bottom: 10px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.month-tab.active {
+  color: #d4af37;
+  border-bottom: 3px solid #d4af37;
+}
+
+/* ========================================= */
+/* 3. SELECTOR ZILE & ORE (CU SCROLL)        */
+/* ========================================= */
+.section-label {
+  display: block;
+  font-size: 0.8rem;
+  color: #888;
+  margin-bottom: 15px;
+  letter-spacing: 2px;
+  font-weight: bold;
+}
+
+.dates-scroller {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 15px;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* BARA DE SCROLL AURIU */
+.dates-scroller::-webkit-scrollbar { height: 6px; display: block !important; }
+.dates-scroller::-webkit-scrollbar-track { background: #222; border-radius: 10px; }
+.dates-scroller::-webkit-scrollbar-thumb { background: #d4af37; border-radius: 10px; }
+
+.date-card {
+  flex: 0 0 auto;
+  width: 85px;
+  background: #1a1a1a;
+  border: 1px solid #333;
+  padding: 18px 5px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.date-card.active {
+  background: #d4af37;
+  border-color: #d4af37;
+  color: #000;
+  transform: translateY(-5px);
+}
+
+.day-name { font-size: 0.75rem; text-transform: uppercase; font-weight: bold; }
+.day-number { font-size: 1.6rem; font-weight: 900; margin: 5px 0; }
+
+/* GRID ORE */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(75px, 1fr));
+  gap: 10px;
+  margin-top: 15px;
+}
+
+.time-btn {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #fff;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Oswald', sans-serif;
+  transition: 0.2s;
+}
+
+.time-btn.active {
+  background: #d4af37;
+  color: #000;
+  font-weight: bold;
+}
+
+/* ========================================= */
+/* 4. VALIDARE & ERORI (ROSU)                */
+/* ========================================= */
+.has-error .dates-scroller,
+.has-error .time-grid {
+  border: 1px solid #ff4444;
+  padding: 10px;
+  border-radius: 10px;
+  animation: shake 0.4s ease-in-out;
+}
+
+.input-error {
+  border-bottom: 1px solid #ff4444 !important;
+}
+
+.input-error::placeholder { color: #ff4444; }
+
+.status-msg {
+  text-align: center;
+  padding: 15px;
+  font-weight: bold;
+  border-radius: 8px;
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-6px); }
+  75% { transform: translateX(6px); }
+}
+
+/* ========================================= */
+/* 5. PORTOFOLIU (2 PE RÂND + FADE)          */
+/* ========================================= */
+.barber-portfolio {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.portfolio-wrapper {
+  position: relative;
+  overflow: hidden;
+  transition: max-height 0.8s ease-in-out;
+}
+
+/* TEASER: Se vad 2 intregi si rândul 2 pe jumătate */
+.portfolio-wrapper.collapsed {
+  max-height: 520px; 
+}
+
+.portfolio-wrapper.expanded {
+  max-height: 4000px;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 PE RÂND */
+  gap: 15px;
+}
+
+.portfolio-item img {
+  width: 100%;
+  height: 380px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+/* FADE-UL CARE "TAIE" POZELE */
+.fade-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 280px;
+  background: linear-gradient(to bottom, rgba(10, 10, 10, 0) 0%, rgba(10, 10, 10, 1) 90%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.btn-see-more {
+  display: block;
+  margin: 30px auto;
+  background: transparent;
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  padding: 15px 40px;
+  font-family: 'Oswald', sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  cursor: pointer;
+}
+
+/* ========================================= */
+/* 6. RESPONSIVE (MOBIL)                     */
+/* ========================================= */
+@media (max-width: 768px) {
+  .profile-container { flex-direction: column; gap: 30px; }
+  .profile-name { font-size: 2.5rem; text-align: center; }
+  .profile-role { text-align: center; }
+
+  /* 2 PE RÂND ȘI PE MOBIL */
+  .portfolio-grid { grid-template-columns: 1fr 1fr; gap: 10px; }
+  .portfolio-item img { height: 240px; }
+  
+  /* Ajustare tăiere pentru mobil */
+  .portfolio-wrapper.collapsed {
+    max-height: 350px; 
+  }
+}
+/* --- GALERIE: 2 PE RÂND + FADE --- */
+.barber-portfolio {
+  max-width: 1200px;
+  margin: 60px auto;
+  padding: 0 20px;
+}
+
+.portfolio-wrapper {
+  position: relative;
+  overflow: hidden;
+  transition: max-height 0.8s ease-in-out;
+}
+
+/* Tăierea: aprox 2 rânduri (Desktop) */
+.portfolio-wrapper.collapsed {
+  max-height: 500px; 
+}
+
+.portfolio-wrapper.expanded {
+  max-height: 4000px;
+}
+
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr; /* 2 POZE PE RÂND */
+  gap: 15px;
+}
+
+.portfolio-item img {
+  width: 100%;
+  height: 350px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* GRADIENTUL CARE "TAIE" POZELE */
+.portfolio-fade-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200px; /* Acoperă jumătatea rândului 2 */
+  background: linear-gradient(to bottom, rgba(10, 10, 10, 0) 0%, rgba(10, 10, 10, 1) 95%);
+  pointer-events: none;
+  z-index: 10;
+}
+
+.portfolio-footer {
+  text-align: center;
+  margin-top: 25px;
+}
+
+.btn-show-more {
+  background: transparent;
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  padding: 15px 40px;
+  font-family: 'Oswald', sans-serif;
+  cursor: pointer;
+  letter-spacing: 2px;
+}
+
+/* MOBIL: 2 PE RÂND ȘI TĂIERE */
+@media (max-width: 768px) {
+  .portfolio-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .portfolio-item img {
+    height: 220px;
+  }
+
+  .portfolio-wrapper.collapsed {
+    max-height: 330px; /* Taie rândul 2 la jumătate pe mobil */
+  }
+}
+/* INPUTURILE DE TEXT (Nume, Telefon, Mesaj) */
+.clean-input {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 2px solid #333; /* Doar o linie jos */
+  padding: 15px 5px;
+  color: #fff;
+  font-size: 1.1rem;
+  font-family: 'Roboto', sans-serif;
+  margin-bottom: 20px;
+  outline: none;
+  transition: border-color 0.3s ease, background 0.3s ease;
+}
+
+.clean-input:focus {
+  border-bottom-color: #d4af37; /* Se face auriu la click */
+  background: rgba(255, 255, 255, 0.02);
+}
+
+/* CALENDAR ȘI ORE (Dacă folosești input-uri box) */
+.cool-input {
+  background: #111 !important;
+  border: 1px solid #333 !important;
+  color: #fff !important;
+  padding: 15px !important;
+  border-radius: 4px;
+  color-scheme: dark; /* Face calendarul browserului să fie negru */
+}
+
+/* --- STILURI DE EROARE (Când nu completează ceva) --- */
+.input-error {
+  border-bottom-color: #ff4444 !important; /* Linie roșie */
+  color: #ff4444 !important;
+}
+
+.input-error::placeholder {
+  color: rgba(255, 68, 68, 0.6);
+}
+
+/* ANIMAȚIA DE SHAKE (VIBRAȚIE) PENTRU ERORI */
+.has-error {
+  animation: shakeInput 0.4s cubic-bezier(.36,.07,.19,.97) both;
+  border: 1px solid #ff4444 !important; /* Chenar roșu la selectori */
+}
+
+@keyframes shakeInput {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+/* MESAJUL DE STATUS DE JOS */
+.status-msg {
+  font-family: 'Oswald', sans-serif;
+  font-size: 1rem;
+  text-align: center;
+  margin: 15px 0;
+  padding: 10px;
+  border-radius: 4px;
+}/* ========================================= */
+/* 1. BLOCAJ TOTAL SCROLL ORIZONTAL          */
+/* ========================================= */
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* NU MAI SARE NIMIC STÂNGA-DREAPTA */
+  position: relative;
+  background-color: #0a0a0a;
+}
+
+#root {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* ========================================= */
+/* 2. BUTONUL "ÎNAPOI" (PAGINA PRINCIPALĂ)   */
+/* ========================================= */
+.profile-nav {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.btn-back-main {
+  display: inline-flex;
+  align-items: center;
+  color: #d4af37;
+  text-decoration: none;
+  font-family: 'Oswald', sans-serif;
+  font-weight: 500;
+  font-size: 1rem;
+  letter-spacing: 2px;
+  padding: 10px 0;
+  border-bottom: 1px solid transparent;
+  transition: 0.3s;
+}
+
+.btn-back-main:hover {
+  color: #fff;
+  border-bottom: 1px solid #d4af37;
+}
+
+/* ========================================= */
+/* 3. REPARARE BUTON REZERVARE (BOOKING)     */
+/* ========================================= */
+.btn-book-final {
+  width: 100%;
+  background: #d4af37; /* AURIU */
+  color: #000;
+  padding: 20px;
+  font-size: 1.3rem;
+  font-weight: 800;
+  font-family: 'Oswald', sans-serif;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  margin-top: 30px;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(212, 175, 55, 0.2);
+}
+
+.btn-book-final:hover {
+  background: #fff;
+  transform: translateY(-3px);
+  box-shadow: 0 8px 25px rgba(255, 255, 255, 0.2);
+}
+
+.btn-book-final:active {
+  transform: translateY(0);
+}
+
+/* ========================================= */
+/* 4. FIX PT. DATES SCROLLER (SĂ NU MAI SARĂ) */
+/* ========================================= */
+.dates-scroller {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  width: 100%;
+  max-width: 100%; /* NU DEPĂȘEȘTE ECRANUL */
+  padding-bottom: 15px;
+  white-space: nowrap;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+/* ========================================= */
+/* 1. CONTAINERUL PRINCIPAL (CENTRĂRI)      */
+/* ========================================= */
+.profile-page {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden; /* Blocaj extra pentru orice "săritură" */
+  background-color: #0a0a0a;
+}
+
+.profile-container {
+  display: flex;
+  flex-direction: row; /* Desktop: stânga-dreapta */
+  justify-content: center; /* Centrează orizontal */
+  align-items: flex-start; /* Aliniere sus */
+  max-width: 1200px;
+  margin: 0 auto; /* Centrează tot blocul în pagină */
+  padding: 40px 20px;
+  gap: 40px;
+  box-sizing: border-box; /* Paddingul nu mărește lățimea */
+}
+
+/* ========================================= */
+/* 2. LATURILE (INFO ȘI FORMULAR)            */
+/* ========================================= */
+.profile-info-side, 
+.profile-booking-side {
+  flex: 1;
+  width: 100%;
+  max-width: 500px; /* Previne lățimea excesivă pe Desktop */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* CENTREAZĂ CONȚINUTUL INTERN */
+  text-align: center; /* Centrează textele (nume, rol) */
+}
+
+/* POZA - Să nu depășească niciodată ecranul */
+.profile-img-box {
+  width: 100%;
+  max-width: 400px; /* Dimensiune optimă */
+  margin: 0 auto;
+}
+
+.profile-img-box img {
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+}
+
+/* CARDUL DE REZERVARE */
+.booking-card-modern {
+  width: 100%;
+  background: #111;
+  padding: 30px;
+  border-radius: 15px;
+  border: 1px solid #333;
+  box-sizing: border-box; /* Foarte important pentru mobil */
+}
+
+/* ========================================= */
+/* 3. MOBIL: FORȚARE CENTRARE TOTALĂ        */
+/* ========================================= */
+@media (max-width: 768px) {
+  .profile-container {
+    flex-direction: column; /* Pune poza sus și formularul jos */
+    align-items: center; /* Centrează ambele blocuri pe mijlocul ecranului */
+    padding: 20px 15px;
+    gap: 30px;
+  }
+
+  .profile-info-side, 
+  .profile-booking-side {
+    max-width: 100%; /* Ocupă toată lățimea disponibilă pe mobil */
+  }
+
+  .profile-name {
+    font-size: 2.2rem; /* Scădem puțin dimensiunea ca să nu rupă rândul */
+    word-wrap: break-word; /* Dacă numele e lung, îl taie corect */
+  }
+
+  .dates-scroller {
+    width: 100vw; /* Forțează scroller-ul să vadă marginea ecranului */
+    margin-left: -15px; /* Compensează padding-ul părintelui ca să pară "full width" */
+    padding-left: 15px;
+    padding-right: 15px;
+  }
+}
+/* --- TITLURI STABILIZATE --- */
+.booking-title, .portfolio-title {
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  border-left: 4px solid #d4af37;
+  padding-left: 15px;
+  margin-bottom: 25px;
+  color: #fff;
+}
+
+/* --- BUTOANE ORA OCUPATA (TRANSPARENTE) --- */
+.time-btn.occupied {
+  opacity: 0.2; /* Foarte transparent */
+  cursor: not-allowed;
+  border: 1px dashed #444;
+  color: #666;
+  background: transparent;
+}
+
+.time-btn.occupied:hover {
+  border-color: #444; /* Nu se schimbă la hover */
+}
+
+/* --- FIX PORTOFOLIU (2 PE RÂND + FADE) --- */
+.portfolio-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.portfolio-wrapper {
+  position: relative;
+  overflow: hidden;
+  transition: max-height 0.8s ease-in-out;
+}
+
+.portfolio-wrapper.collapsed {
+  max-height: 480px; /* Taie rândul 2 la jumătate */
+}
+
+.portfolio-wrapper.expanded {
+  max-height: 5000px;
+}
+
+.portfolio-fade-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 250px;
+  background: linear-gradient(to bottom, rgba(10,10,10,0) 0%, rgba(10,10,10,1) 90%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+.portfolio-item img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  border-radius: 6px;
+  filter: grayscale(20%);
+  transition: 0.3s;
+}
+
+.portfolio-item img:hover {
+  filter: grayscale(0%);
+}
+
+/* --- BUTON VEZI MAI MULT --- */
+.btn-show-more {
+  display: block;
+  margin: 30px auto;
+  background: transparent;
+  border: 1px solid #d4af37;
+  color: #d4af37;
+  padding: 15px 40px;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 2px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.btn-show-more:hover {
+  background: #d4af37;
+  color: #000;
+}
+/* --- GALERIE REZOLVATĂ (VITEZĂ + FLUIDITATE) --- */
+.portfolio-wrapper {
+  position: relative;
+  overflow: hidden;
+  /* Am pus 0.4s - e viteza ideală să nu pară nici lent, nici brusc */
+  transition: max-height 0.4s cubic-bezier(0, 1, 0, 1); 
+}
+
+/* Starea închisă */
+.portfolio-wrapper.collapsed {
+  max-height: 480px; 
+  transition: max-height 0.4s cubic-bezier(0, 1, 0, 1);
+}
+
+/* Starea deschisă */
+.portfolio-wrapper.expanded {
+  /* Nu pune 5000px dacă nu ai sute de poze, 2000px e mai safe pentru viteză */
+  max-height: 2000px; 
+  transition: max-height 0.4s ease-in-out;
+}
+
+/* Opțional: Adăugăm un efect de "fade out" mai rapid pe buton */
+.btn-show-more {
+  transition: background 0.2s, transform 0.2s;
+}
+
+.btn-show-more:active {
+  transform: scale(0.95); /* Feedback vizual la apăsare */
+}
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@300;500;700&family=Poppins:wght@300;400;600&display=swap');
+
+:root {
+  --primary: #d4af37;
+  --bg-dark: #050505;
+  --card-bg: rgba(20, 20, 20, 0.8);
+  --border: rgba(212, 175, 55, 0.2);
+}
+
+/* LOGIN CENTRAT */
+.admin-login-screen {
+  height: 100vh; width: 100vw; display: flex; justify-content: center; align-items: center;
+  background: radial-gradient(circle at center, #151515 0%, #050505 100%);
+}
+
+.login-card {
+  background: var(--card-bg); backdrop-filter: blur(15px); padding: 50px 40px;
+  border-radius: 20px; border: 1px solid var(--border); text-align: center;
+  width: 100%; max-width: 400px; box-shadow: 0 25px 50px rgba(0,0,0,0.5);
+}
+
+.login-icon { font-size: 3.5rem; margin-bottom: 20px; display: block; }
+.login-card h2 { font-family: 'Oswald', sans-serif; letter-spacing: 4px; color: var(--primary); }
+
+.clean-input {
+  width: 100%; background: rgba(255, 255, 255, 0.05); border: 1px solid #333;
+  padding: 15px; color: white; border-radius: 8px; margin-bottom: 20px; outline: none;
+}
+
+/* DASHBOARD HEADER & ACTIONS */
+.admin-dashboard-modern { background: var(--bg-dark); min-height: 100vh; padding: 40px 5%; color: white; font-family: 'Poppins', sans-serif; }
+.admin-header-modern { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+.admin-actions { display: flex; align-items: center; gap: 20px; }
+.action-buttons-group { display: flex; align-items: center; gap: 12px; }
+
+.btn-refresh-mini {
+  background: rgba(212, 175, 55, 0.1); border: 1px solid var(--border); color: var(--primary);
+  width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.4s;
+}
+.btn-refresh-mini:hover { transform: rotate(180deg); background: var(--primary); color: black; }
+
+.btn-logout-mini {
+  height: 42px; background: rgba(255, 68, 68, 0.1); border: 1px solid rgba(255, 71, 87, 0.3);
+  color: #ff4757; padding: 0 20px; border-radius: 8px; font-family: 'Oswald', sans-serif; cursor: pointer;
+}
+
+/* MASTER STATS GRID (2 SUS, 1 JOS) */
+.stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 25px; margin-bottom: 50px; }
+.stat-card { background: #111; padding: 30px; border-radius: 15px; border-top: 2px solid var(--primary); text-align: center; }
+.stat-card.full-row { grid-column: 1 / span 2; display: flex; justify-content: space-around; align-items: center; }
+.stat-label { color: #666; font-size: 0.8rem; letter-spacing: 1px; }
+.stat-value { display: block; font-family: 'Oswald', sans-serif; font-size: 2.5rem; margin-top: 10px; }
+.stat-value.gold { color: var(--primary); }
+.stat-value.highlight { color: #ff4757; }
+
+/* TABLE & BUBBLES */
+.admin-table-container { background: var(--card-bg); border-radius: 15px; padding: 20px; overflow-x: auto; }
+.admin-table { width: 100%; border-collapse: separate; border-spacing: 0 10px; }
+.admin-table td { padding: 15px; background: rgba(255,255,255,0.02); }
+.msg-bubble { background: rgba(212, 175, 55, 0.08); border-left: 2px solid var(--primary); padding: 8px 12px; font-size: 0.85rem; font-style: italic; }
+
+/* BARBER VIEW: CALENDAR & LIST */
+.barber-grid-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 30px; }
+.calendar-card, .day-details-card { background: var(--card-bg); border-radius: 20px; padding: 25px; border: 1px solid var(--border); }
+.calendar-grid-modern { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; }
+.cal-day { aspect-ratio: 1/1; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.03); border-radius: 8px; cursor: pointer; position: relative; }
+.cal-day.selected { background: var(--primary) !important; color: black; font-weight: bold; }
+.app-dot { width: 6px; height: 6px; background: var(--primary); border-radius: 50%; position: absolute; bottom: 8px; }
+.mini-app-note { margin-top: 10px; background: rgba(212, 175, 55, 0.05); padding: 8px; border-radius: 5px; border: 1px dashed var(--primary); font-size: 0.8rem; }
+
+.back-link-modern { display: inline-block; margin-top: 20px; color: #555; text-decoration: none; font-size: 0.8rem; }
+.back-link-modern:hover { color: var(--primary); }/* Stil pentru orele ocupate */
+.time-btn.occupied {
+  background: #1a1a1a !important;
+  color: #444 !important;
+  border: 1px solid #333 !important;
+  text-decoration: line-through;
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.time-btn.occupied:hover {
+  background: #1a1a1a !important;
+  transform: none !important;
+}
+
+/* Stil pentru ora selectată activă */
+.time-btn.active {
+  background: #d4af37 !important;
+  color: #000 !important;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.4);
+}
+
+/* Mesajul de status */
+.status-msg {
+  margin-top: 15px;
+  text-align: center;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 5px;
+}/* --- STIL PENTRU ORELE OCUPATE --- */
+
+.time-btn.occupied {
+  background-color: #1a1a1a !important; /* Aproape negru */
+  color: #555 !important; /* Text gri închis */
+  border: 1px solid #333 !important;
+  text-decoration: line-through; /* Tăiem textul cu o linie */
+  cursor: not-allowed; /* Apare semnul de interzis la mouse */
+  opacity: 0.5; /* Le facem mai șterse */
+  pointer-events: none; /* Blochează orice click, chiar și forțat */
+}
+
+/* Ne asigurăm că nu se fac aurii la hover dacă sunt ocupate */
+.time-btn.occupied:hover {
+  background-color: #1a1a1a !important;
+  color: #555 !important;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* Stil pentru ora selectată (când e liberă) */
+.time-btn.active {
+  background-color: #d4af37 !important;
+  color: #000 !important;
+  font-weight: bold;
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.5);
+  border: 1px solid #d4af37 !important;
+}/* --- FUNDAL PREȚURI: SPOTLIGHT (Smooth & Clean) --- */
+
+.prices-section {
+  position: relative;
+  /* Setăm înălțimea să fie generoasă */
+  padding: 120px 20px;
+  overflow: hidden;
+  background-color: #000; /* Siguranță: Negru la bază */
+}
+
+/* 1. EFECTUL DE SPOTLIGHT (Lumină difuză) */
+.prices-section::before {
+  content: "";
+  position: absolute;
+  top: 0; 
+  left: 0; 
+  width: 100%; 
+  height: 100%;
+  z-index: 0;
+  
+ dex: 2; /* Textul stă peste spotlight și textură */
+}
+
+/* --- SFAT EXTRA: TITLURI MAI SMOOTH --- */
+/* Adaugă asta ca să faci textul să pară că iese din întuneric */
+.price-header-area h2 {
+  background: -webkit-linear-gradient(#fff, #666);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  /* Asta face textul să aibă un gradient metalic, nu doar alb */
+}/* --- SECTION PRETURI (FIXED) --- */
+.prices-section {
+  padding: 80px 20px;
+  background-color: #0a0a0a;
+  position: relative;
+  z-index: 1;
+}
+
+/* Containerul de butoane */
+.price-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-bottom: 50px;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 10; /* Ne asigurăm că butoanele sunt deasupra oricărui fundal */
+}
+
+/* Butonul de bază */
+.tab-btn {
+  background: #1a1a1a;
+  border: 1px solid #333;
+  color: #888;
+  padding: 12px 30px;
+  font-family: 'Oswald', sans-serif;
+  font-weight: bold;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border-radius: 4px;
+  pointer-events: auto; /* Forțăm activarea click-ului */
+}
+
+.tab-btn:hover {
+  border-color: #d4af37;
+  color: #fff;
+}
+
+/* BUTONUL ACTIV (Aici se vede schimbarea) */
+.tab-btn.active {
+  background: #d4af37 !important;
+  color: #000 !important;
+  border-color: #d4af37 !important;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+}
+
+/* Containerul listei */
+.price-list-container {
+  max-width: 900px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  min-height: 300px; /* Prevenim "săritul" paginii când schimbi tab-ul */
+}
+
+/* Item individual */
+.price-item-box {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 20px;
+  border-radius: 8px;
+  border-left: 3px solid transparent;
+  transition: 0.3s;
+}
+
+.price-item-box:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-left: 3px solid #d4af37;
+}
+
+.vip-item {
+  background: rgba(212, 175, 55, 0.05);
+  border-left: 3px solid #d4af37;
+}
+
+.price-row-main {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.price-item-name {
+  font-family: 'Oswald', sans-serif;
+  font-size: 18px;
+  color: #fff;
+}
+
+.price-item-dots {
+  flex: 1;
+  border-bottom: 1px dotted #333;
+  margin: 0 15px;
+}
+
+.price-item-value {
+  font-weight: bold;
+  color: #d4af37;
+  font-size: 18px;
+}

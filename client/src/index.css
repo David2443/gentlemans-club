@@ -1,0 +1,25 @@
+/* src/index.css */
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+  color-scheme: dark;
+}
+
+/* RESETARE TOTALĂ */
+* {
+  box-sizing: border-box; /* ASTA ESTE ESENȚIAL - include padding-ul în lățime */
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  width: 100%;
+  min-height: 100vh;
+  background-color: #0a0a0a;
+  overflow-x: hidden; /* Blochează scroll-ul orizontal */
+}
+
+#root {
+  width: 100%;
+}

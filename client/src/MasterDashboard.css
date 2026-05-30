@@ -1,0 +1,252 @@
+/* =========================================
+   MASTER DASHBOARD - IZOLAT (SAFE MODE)
+   Toate regulile încep cu .master-wrapper
+   ========================================= */
+
+/* --- VARIABILE LOCALE (Se aplică doar aici) --- */
+.master-wrapper {
+  --mst-gold: #d4af37;
+  --mst-dark: #121212;
+  --mst-card: #1e1e1e;
+  --mst-text: #ffffff;
+  --mst-gray: #aaaaaa;
+  
+  /* Resetări locale */
+  display: flex;
+  min-height: 100vh;
+  background-color: var(--mst-dark);
+  color: var(--mst-text);
+  font-family: 'Roboto', sans-serif;
+  overflow-x: hidden;
+  position: absolute; /* Se asigură că acoperă tot */
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1;
+}
+
+/* --- 1. SIDEBAR (MENIU STÂNGA) --- */
+.master-wrapper .master-sidebar {
+  width: 260px;
+  background: #0a0a0a;
+  border-right: 1px solid #333;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  position: fixed;
+  height: 100vh;
+  z-index: 1000;
+  transition: transform 0.3s ease-in-out;
+  left: 0; top: 0; /* Fixare explicită */
+}
+
+.master-wrapper .sidebar-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+
+.master-wrapper .sidebar-header h2 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 22px;
+  margin: 0;
+  color: #fff;
+}
+.master-wrapper .sidebar-header span { color: var(--mst-gold); }
+
+.master-wrapper .btn-close-sidebar {
+  display: none; 
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+.master-wrapper .sidebar-nav { display: flex; flex-direction: column; gap: 10px; }
+
+.master-wrapper .nav-item {
+  background: transparent;
+  border: none;
+  color: var(--mst-gray);
+  padding: 15px;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 8px;
+  transition: 0.3s;
+  font-weight: 500;
+  width: 100%; /* Fix width */
+}
+
+.master-wrapper .nav-item:hover { background: #222; color: #fff; }
+.master-wrapper .nav-item.active { background: var(--mst-gold); color: #000; font-weight: bold; }
+.master-wrapper .nav-item.logout { color: #e74c3c; margin-top: 20px; }
+.master-wrapper .nav-item.logout:hover { background: rgba(231, 76, 60, 0.1); }
+.master-wrapper .divider { height: 1px; background: #333; margin: 10px 0; }
+
+
+/* --- 2. MAIN CONTENT --- */
+.master-wrapper .master-content {
+  margin-left: 260px;
+  flex: 1;
+  padding: 30px;
+  width: calc(100% - 260px);
+}
+
+/* HEADER SUS */
+.master-wrapper .content-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.master-wrapper .header-left {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.master-wrapper .content-header h1 {
+  font-family: 'Oswald', sans-serif;
+  font-size: 28px;
+  margin: 0;
+  color: #fff;
+}
+
+/* BURGER MENU (Specific Master) */
+.master-wrapper .burger-btn {
+  display: none; /* Ascuns pe desktop */
+  background: transparent;
+  border: 1px solid var(--mst-gold);
+  color: var(--mst-gold);
+  font-size: 24px;
+  width: 45px;
+  height: 45px;
+  border-radius: 8px;
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+}
+
+.master-wrapper .user-info span { color: var(--mst-gray); font-weight: bold; }
+
+
+/* --- 3. STATS GRID --- */
+.master-wrapper .stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+  margin-bottom: 40px;
+}
+
+.master-wrapper .stat-card {
+  background: var(--mst-card);
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #333;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+.master-wrapper .stat-card.gold { border-color: var(--mst-gold); background: rgba(212, 175, 55, 0.05); }
+
+.master-wrapper .stat-card h3 { color: var(--mst-gray); font-size: 14px; text-transform: uppercase; margin-bottom: 10px; }
+.master-wrapper .stat-value { font-size: 28px; font-weight: bold; color: #fff; margin: 0; }
+.master-wrapper .stat-value.small { font-size: 20px; }
+
+
+/* --- 4. RECENT TABLE --- */
+.master-wrapper .recent-section {
+  background: var(--mst-card);
+  padding: 25px;
+  border-radius: 12px;
+  border: 1px solid #333;
+}
+
+.master-wrapper .section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 15px;
+}
+.master-wrapper .section-header h3 { margin: 0; color: var(--mst-gold); font-family: 'Oswald', sans-serif; }
+
+.master-wrapper .table-container { overflow-x: auto; }
+
+.master-wrapper .custom-table { width: 100%; border-collapse: collapse; min-width: 600px; }
+.master-wrapper .custom-table th { text-align: left; color: var(--mst-gray); padding: 15px; border-bottom: 1px solid #333; font-size: 14px; }
+.master-wrapper .custom-table td { padding: 15px; border-bottom: 1px solid #252525; color: #fff; }
+.master-wrapper .fw-bold { font-weight: bold; }
+.master-wrapper .badge-frizer { background: #333; padding: 4px 8px; border-radius: 4px; font-size: 12px; text-transform: uppercase; }
+.master-wrapper .phone-link { color: var(--mst-gold); text-decoration: none; }
+
+
+/* --- RESPONSIVE MOBILE (Doar pentru Master) --- */
+@media (max-width: 900px) {
+  
+  /* SIDEBAR */
+  .master-wrapper .master-sidebar {
+    width: 60vw;
+    transform: translateX(-100%);
+    box-shadow: 5px 0 20px rgba(0,0,0,0.5);
+    height: 100vh;
+    position: fixed;
+    top: 0; 
+    left: 0;
+  }
+  
+  /* Când e deschis */
+  .master-wrapper .master-sidebar.open {
+    transform: translateX(0);
+  }
+  
+  .master-wrapper .btn-close-sidebar { display: block; }
+
+  /* LINK-URILE CRESC PE MOBIL */
+  .master-wrapper .sidebar-nav {
+    gap: 15px; 
+    margin-top: 20px;
+  }
+
+  .master-wrapper .nav-item {
+    font-size: 18px; 
+    padding: 20px;   
+    text-align: center; 
+    border: 1px solid #333; 
+    background: #151515;
+  }
+  
+  .master-wrapper .nav-item.active {
+    font-size: 20px; 
+    background: var(--mst-gold);
+    color: #000;
+  }
+
+  /* OVERLAY */
+  .master-wrapper .sidebar-overlay {
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0,0,0,0.8);
+    backdrop-filter: blur(4px);
+    z-index: 999;
+  }
+
+  /* CONȚINUT */
+  .master-wrapper .master-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 20px;
+  }
+
+  /* NAVBAR SUS */
+  .master-wrapper .burger-btn { display: flex; } /* Apare doar aici */
+  .master-wrapper .content-header h1 { font-size: 20px; margin-left: 10px; }
+  .master-wrapper .user-info { display: none; }
+
+  /* GRID */
+  .master-wrapper .stats-grid { grid-template-columns: 1fr; }
+  .master-wrapper .recent-section { padding: 15px; }
+}

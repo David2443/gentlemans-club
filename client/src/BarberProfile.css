@@ -1,0 +1,518 @@
+/* =========================================
+   GENTLEMAN SALOON - PROFILE & BOOKING CSS
+   Version: NR. 1 (PREMIUM GOLD EDITION)
+   ========================================= */
+
+/* --- VARIABILE (Să fie totul consistent) --- */
+:root {
+  --gold: #d4af37;
+  --gold-hover: #b59020;
+  --dark-bg: #121212;
+  --card-bg: #1e1e1e;
+  --text-main: #ffffff;
+  --text-muted: #aaaaaa;
+  --border-color: #333333;
+  --error-color: #ff4444;
+}
+
+/* --- 1. LAYOUT PAGINĂ PROFIL --- */
+.profile-page {
+  background-color: var(--dark-bg);
+  min-height: 100vh;
+  color: var(--text-main);
+  font-family: 'Roboto', sans-serif;
+  padding-bottom: 50px;
+}
+
+/* Navbar simplu sus */
+.profile-nav {
+  padding: 20px 30px;
+  background: rgba(0,0,0,0.8);
+  border-bottom: 1px solid #222;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  backdrop-filter: blur(10px);
+}
+
+.btn-back-main {
+  color: var(--gold);
+  text-decoration: none;
+  font-weight: bold;
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: 1px;
+  border: 1px solid var(--gold);
+  padding: 8px 20px;
+  border-radius: 4px;
+  transition: 0.3s;
+  font-size: 14px;
+  text-transform: uppercase;
+}
+
+.btn-back-main:hover {
+  background: var(--gold);
+  color: #000;
+}
+
+/* Container Principal (Împarte ecranul în două pe Desktop) */
+.profile-container {
+  display: flex;
+  flex-wrap: wrap; /* Vital pentru mobil */
+  max-width: 1300px;
+  margin: 30px auto;
+  gap: 40px;
+  padding: 0 20px;
+}
+
+/* --- 2. PARTEA STÂNGĂ: INFO FRIZER --- */
+.profile-info-side {
+  flex: 1;
+  min-width: 300px;
+  position: relative;
+}
+
+.profile-hero {
+  text-align: center;
+  background: var(--card-bg);
+  padding: 40px 30px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  position: sticky; /* Să stea fix când dai scroll la calendar */
+  top: 100px;
+}
+
+.profile-img-box img {
+  width: 180px;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 50%;
+  border: 3px solid var(--gold);
+  margin-bottom: 25px;
+  box-shadow: 0 0 20px rgba(212, 175, 55, 0.2);
+}
+
+.profile-name {
+  font-family: 'Oswald', sans-serif;
+  color: var(--gold);
+  font-size: 36px;
+  margin: 0 0 10px 0;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.profile-role {
+  color: var(--text-muted);
+  font-size: 16px;
+  margin-bottom: 25px;
+  text-transform: uppercase;
+  letter-spacing: 3px;
+  font-weight: bold;
+}
+
+.profile-badges {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  font-size: 14px;
+  color: #fff;
+  flex-wrap: wrap;
+}
+
+.profile-badges span {
+  background: #252525;
+  border: 1px solid #444;
+  padding: 8px 15px;
+  border-radius: 20px;
+  font-weight: 500;
+}
+
+/* --- 3. PARTEA DREAPTĂ: FORMULAR PROGRAMARE --- */
+.profile-booking-side {
+  flex: 1.8; /* Mai lată decât stânga */
+  min-width: 350px;
+}
+
+.booking-card-modern {
+  background: #181818;
+  padding: 40px;
+  border-radius: 12px;
+  border-top: 4px solid var(--gold);
+  box-shadow: 0 0 50px rgba(0,0,0,0.4);
+}
+
+.booking-title {
+  font-family: 'Oswald', sans-serif;
+  color: #fff;
+  font-size: 28px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 15px;
+  letter-spacing: 1px;
+}
+
+/* --- A. LUNILE (Scroll Orizontal) --- */
+.month-tabs-container {
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 40px;
+  border-bottom: 1px solid #333;
+  padding-bottom: 5px;
+}
+
+.month-tabs-scroll {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  padding-bottom: 15px;
+  scroll-behavior: smooth;
+}
+
+/* Scrollbar Custom */
+.month-tabs-scroll::-webkit-scrollbar { height: 4px; }
+.month-tabs-scroll::-webkit-scrollbar-track { background: #1a1a1a; }
+.month-tabs-scroll::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+.month-tab {
+  background: transparent;
+  color: #666;
+  border: none;
+  font-size: 16px;
+  font-weight: bold;
+  padding: 10px 15px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: 'Oswald', sans-serif;
+  transition: 0.3s;
+  letter-spacing: 1px;
+  border-radius: 4px;
+}
+
+.month-tab:hover { color: #fff; background: rgba(255,255,255,0.05); }
+
+.month-tab.active {
+  color: var(--gold);
+  border-bottom: 2px solid var(--gold);
+  background: transparent;
+  border-radius: 0;
+}
+
+/* --- B. ZILELE (Scroll) --- */
+.selector-section { margin-bottom: 50px; }
+
+.section-label {
+  display: block;
+  font-size: 14px;
+  font-weight: bold;
+  color: var(--gold);
+  margin-bottom: 20px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.dates-scroller {
+  display: flex;
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 15px;
+}
+.dates-scroller::-webkit-scrollbar { height: 6px; }
+.dates-scroller::-webkit-scrollbar-thumb { background: #444; border-radius: 3px; }
+
+.date-card {
+  min-width: 80px;
+  height: 90px;
+  background: #252525;
+  border: 1px solid #333;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.date-card:hover { border-color: var(--gold); background: #333; transform: translateY(-3px); }
+
+.date-card.active {
+  background: var(--gold);
+  color: #000;
+  border-color: var(--gold);
+  transform: scale(1.05);
+  box-shadow: 0 5px 15px rgba(212, 175, 55, 0.3);
+}
+
+.day-name { font-size: 13px; text-transform: uppercase; margin-bottom: 5px; opacity: 0.8; }
+.day-number { font-size: 26px; font-weight: bold; font-family: 'Oswald', sans-serif; }
+
+/* --- C. ORELE (Grid) --- */
+.time-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 12px;
+}
+
+.time-btn {
+  padding: 15px 10px;
+  background: #252525;
+  border: 1px solid #333;
+  color: #fff;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: 0.2s;
+  font-family: 'Roboto', sans-serif;
+}
+
+.time-btn:hover:not(:disabled) { border-color: var(--gold); color: var(--gold); background: #2a2a2a; }
+
+.time-btn.active {
+  background: var(--gold);
+  color: #000;
+  border-color: var(--gold);
+  box-shadow: 0 0 15px rgba(212, 175, 55, 0.2);
+}
+
+.time-btn:disabled {
+  background: #111;
+  color: #444;
+  cursor: not-allowed;
+  text-decoration: line-through;
+  border: 1px solid #222;
+}
+
+.hint-text { color: #666; font-style: italic; }
+
+/* --- D. INPUTURI FINAL --- */
+.final-inputs {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin-top: 50px;
+  margin-bottom: 30px;
+  padding-top: 30px;
+  border-top: 1px solid #222;
+}
+
+.clean-input {
+  width: 100%;
+  padding: 16px;
+  background: #111;
+  border: 1px solid #333;
+  border-radius: 6px;
+  color: #fff;
+  font-size: 16px;
+  transition: 0.3s;
+  font-family: 'Roboto', sans-serif;
+  box-sizing: border-box; /* IMPORTANT */
+}
+
+.clean-input:focus {
+  border-color: var(--gold);
+  outline: none;
+  background: #000;
+  box-shadow: 0 0 10px rgba(212, 175, 55, 0.1);
+}
+
+/* --- E. BUTON SUBMIT --- */
+.btn-book-final {
+  width: 100%;
+  padding: 20px;
+  background: linear-gradient(45deg, #b8860b, #d4af37);
+  color: #000;
+  font-weight: 800;
+  font-size: 18px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  transition: 0.3s;
+  font-family: 'Oswald', sans-serif;
+}
+
+.btn-book-final:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(212, 175, 55, 0.3);
+}
+
+.btn-book-final:disabled {
+  background: #333;
+  color: #666;
+  cursor: not-allowed;
+}
+
+/* MESAJ STATUS */
+.status-msg {
+  text-align: center;
+  margin-top: 20px;
+  font-weight: bold;
+  padding: 15px;
+  border-radius: 6px;
+  font-size: 16px;
+}
+.status-msg.success { background: rgba(46, 204, 113, 0.15); color: #2ecc71; border: 1px solid #2ecc71; }
+.status-msg.error { background: rgba(231, 76, 60, 0.15); color: #e74c3c; border: 1px solid #e74c3c; }
+
+
+/* --- VALIDARE ERORI (Efecte Roșii) --- */
+.input-error {
+  border-color: var(--error-color) !important;
+  color: var(--error-color) !important;
+  background: rgba(255, 68, 68, 0.05) !important;
+  animation: shake 0.4s ease-in-out;
+}
+.input-error::placeholder { color: var(--error-color); opacity: 0.8; font-weight: bold; }
+
+.text-error { color: var(--error-color) !important; animation: shake 0.4s ease-in-out; }
+
+.error-border {
+  border-color: var(--error-color) !important;
+  box-shadow: 0 0 8px rgba(255, 68, 68, 0.4);
+  animation: shake 0.4s ease-in-out;
+}
+
+/* Container-ul de date primește și el o tentă roșie */
+.border-error-container {
+  border-radius: 8px;
+  padding: 5px;
+  background: rgba(255, 0, 0, 0.05);
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
+
+/* --- 4. GALERIA FOTO (FULL WIDTH, JOS) --- */
+.full-width-gallery {
+  max-width: 1300px;
+  margin: 80px auto 40px auto;
+  padding: 40px 20px;
+  border-top: 1px solid #222;
+  text-align: center;
+}
+
+.gallery-header h3 {
+  font-family: 'Oswald', sans-serif;
+  color: var(--gold);
+  font-size: 32px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+}
+
+.gallery-header p { color: #888; margin-bottom: 40px; font-size: 16px; }
+
+.gallery-grid-wrapper {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 20px;
+  position: relative;
+  max-height: 380px; /* Înălțime limitată inițial */
+  overflow: hidden;
+  transition: max-height 0.8s ease-in-out;
+}
+
+.gallery-grid-wrapper.expanded {
+  max-height: 4000px; /* Se deschide complet */
+}
+
+.gallery-card {
+  height: 280px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #333;
+  position: relative;
+}
+
+.gallery-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s;
+}
+.gallery-card:hover img { transform: scale(1.1); }
+
+/* FADE OVERLAY (Ceața neagră) */
+.gallery-fade-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 200px;
+  background: linear-gradient(to bottom, transparent, var(--dark-bg));
+  pointer-events: none;
+  z-index: 2;
+}
+
+.btn-show-more {
+  margin-top: 40px;
+  background: transparent;
+  border: 1px solid var(--gold);
+  color: var(--gold);
+  padding: 15px 40px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  border-radius: 4px;
+}
+.btn-show-more:hover { background: var(--gold); color: #000; box-shadow: 0 0 20px rgba(212, 175, 55, 0.4); }
+
+
+/* --- RESPONSIVE MOBILE --- */
+@media (max-width: 900px) {
+  .profile-container {
+    flex-direction: column;
+    padding: 10px;
+    gap: 30px;
+  }
+  
+  .profile-info-side, .profile-booking-side {
+    width: 100%;
+    min-width: auto;
+  }
+
+  .profile-hero { position: static; /* Nu mai e sticky pe mobil */ }
+  
+  .booking-card-modern { padding: 25px 15px; } /* Padding mai mic */
+  
+  .booking-title { font-size: 22px; text-align: center; }
+
+  /* Galeria pe mobil: 2 pe rând fix */
+  .gallery-grid-wrapper {
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    max-height: 400px;
+  }
+  .gallery-card { height: 180px; }
+  
+  /* Selectori */
+  .month-tab { font-size: 14px; padding: 8px 10px; }
+  .day-number { font-size: 20px; }
+  .date-card { min-width: 65px; height: 75px; }
+  
+  .btn-book-final { font-size: 16px; padding: 15px; }
+}/* --- FIX PENTRU FADE GALERIE --- */
+
+.gallery-fade-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  /* Îl facem puțin mai înalt să acopere bine ultimul rând */
+  height: 250px; 
+  
+  /* Gradientul: Transparent sus -> Negru total jos */
+  background: linear-gradient(to bottom, transparent 0%, var(--black-bg) 100%);
+  
+  pointer-events: none; /* Să poți da click prin el pe buton */
+  
+  /* AICI E CHEIA: Îl forțăm să stea peste imagini */
+  z-index: 10; 
+}
