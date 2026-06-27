@@ -20,7 +20,7 @@ const CONTACT_PHONE_HREF = 'tel:+40741844684';
 const CONTACT_ADDRESS = 'Strada Victoriei Nr. 38, Pitești';
 
 const MAP_QUERY = encodeURIComponent(CONTACT_ADDRESS);
-
+const GOOGLE_MAPS_LINK = 'https://share.google/N7PNzkqwQKnzkqyIP';
 const SOCIAL_LINKS = {
   instagram: 'https://www.instagram.com/gentlemensclubpitesti?utm_source=qr',
   tiktok: 'https://www.tiktok.com/@gentlemenss.club0?_r=1&_t=ZN-97U7b7CzB0o',
@@ -1256,13 +1256,13 @@ const getReviewAvatar = (review, index) => {
       </a>
 
       <a
-        href={`https://www.google.com/maps/search/?api=1&query=${MAP_QUERY}`}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="map-action-btn maps"
-      >
-        Google Maps
-      </a>
+  href={GOOGLE_MAPS_LINK}
+  target="_blank"
+  rel="noopener noreferrer"
+  className="map-action-btn maps"
+>
+  Google Maps
+</a>
 
       <a
         href={CONTACT_PHONE_HREF}
