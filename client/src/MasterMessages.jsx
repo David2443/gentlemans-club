@@ -186,6 +186,34 @@ const formatTime = (message) => {
     minute: '2-digit'
   });
 };
+const formatRelativeDate = (message) => {
+  const date = parseDate(message);
+
+  if (!date) {
+    return 'Dată necunoscută';
+  }
+
+  const diffMs = Date.now() - date.getTime();
+  const diffMinutes = Math.floor(diffMs / 60000);
+  const diffHours = Math.floor(diffMinutes / 60);
+  const diffDays = Math.floor(diffHours / 24);
+
+  if (diffMinutes < 1) return 'Chiar acum';
+  if (diffMinutes < 60) return `Acum ${diffMinutes} min`;
+  if (diffHours < 24) return `Acum ${diffHours} ore`;
+  if (diffDays === 1) return 'Ieri';
+  if (diffDays < 7) return `Acum ${diffDays} zile`;
+
+  return formatDate(message);
+};
+
+const isLast24Hours = (message) => {
+  const date = parseDate(message);
+
+  if (!date) return false;
+
+  return Date.now() - date.getTime() <= 24 * 60 * 60 * 1000;
+};
 
 const formatDateRoFromString = (dateString) => {
   if (!dateString) return 'N/A';
@@ -644,25 +672,35 @@ const fetchMessages = useCallback(async () => {
     };
   }, []);
 
-  const stats = useMemo(() => {
-    const total = messages.length;
-    const today = messages.filter(isToday).length;
-    const withPhone = messages.filter((message) => getPhone(message)).length;
-    const withoutPhone = messages.filter((message) => !getPhone(message)).length;
-    const urgent = messages.filter(isUrgentMessage).length;
+const stats = useMemo(() => {
+  const total = messages.length;
+  const today = messages.filter(isToday).length;
+  const last24h = messages.filter(isLast24Hours).length;
+  const withPhone = messages.filter((message) => getPhone(message)).length;
+  const withoutPhone = messages.filter((message) => !getPhone(message)).length;
+  const urgent = messages.filter(isUrgentMessage).length;
+  const normal = Math.max(total - urgent, 0);
 
-    const latest = [...messages]
-      .sort((a, b) => (parseDate(b)?.getTime() || 0) - (parseDate(a)?.getTime() || 0))[0];
+  const latest = [...messages]
+    .sort((a, b) => (parseDate(b)?.getTime() || 0) - (parseDate(a)?.getTime() || 0))[0];
 
-    return {
-      total,
-      today,
-      withPhone,
-      withoutPhone,
-      urgent,
-      latestTime: latest ? `${formatDate(latest)} · ${formatTime(latest)}` : 'N/A'
-    };
-  }, [messages]);
+  const phoneRate = total > 0
+    ? Math.round((withPhone / total) * 100)
+    : 0;
+
+  return {
+    total,
+    today,
+    last24h,
+    withPhone,
+    withoutPhone,
+    urgent,
+    normal,
+    phoneRate,
+    latestTime: latest ? `${formatRelativeDate(latest)} · ${formatTime(latest)}` : 'N/A',
+    latestClient: latest ? getName(latest) : 'N/A'
+  };
+}, [messages]);
 
   const filteredMessages = useMemo(() => {
     const searchValue = normalizeText(search);
@@ -846,12 +884,11 @@ const handleLogout = async () => {
         </div>
 
         <div className="mobile-top-actions">
-          <button
-            type="button"
-            onClick={fetchMessages}
-            disabled={loading}
-            aria-label="Reîncarcă mesajele"
-          >
+         <button
+  type="button"
+  onClick={fetchMessages}
+  aria-label="Reîncarcă mesajele"
+>
             ↻
           </button>
 
@@ -968,11 +1005,10 @@ const handleLogout = async () => {
 
           <div className="messages-header-actions">
             <button
-              type="button"
-              className="btn-refresh-messages"
-              onClick={fetchMessages}
-              disabled={loading}
-            >
+  type="button"
+  className="btn-refresh-messages"
+  onClick={fetchMessages}
+>
               {loading ? 'Se încarcă...' : '↻ Reîncarcă'}
             </button>
 
@@ -986,48 +1022,53 @@ const handleLogout = async () => {
           </div>
         </header>
 
-        <section className="messages-stats-grid messages-stats-grid-bomba">
-          <article className="message-stat-card gold">
-            <span>Total mesaje</span>
-            <strong>{stats.total}</strong>
-            <small>în inbox</small>
-          </article>
+       <section className="messages-stats-grid messages-stats-grid-bomba">
+  <article className="message-stat-card gold">
+    <span>Inbox total</span>
+    <strong>{stats.total}</strong>
+    <small>mesaje primite</small>
+  </article>
 
-          <article className="message-stat-card">
-            <span>Azi</span>
-            <strong>{stats.today}</strong>
-            <small>mesaje primite azi</small>
-          </article>
+  <article className="message-stat-card">
+    <span>Ultimele 24h</span>
+    <strong>{stats.last24h}</strong>
+    <small>activitate recentă</small>
+  </article>
 
-          <article className="message-stat-card">
-            <span>Cu telefon</span>
-            <strong>{stats.withPhone}</strong>
-            <small>pot primi răspuns rapid</small>
-          </article>
+  <article className="message-stat-card success">
+    <span>Răspuns rapid</span>
+    <strong>{stats.phoneRate}%</strong>
+    <small>{stats.withPhone} mesaje cu telefon</small>
+  </article>
 
-          <article className="message-stat-card danger">
-            <span>Posibil urgente</span>
-            <strong>{stats.urgent}</strong>
-            <small>mesaje care cer atenție</small>
-          </article>
-        </section>
+  <article className="message-stat-card danger">
+    <span>Necesită atenție</span>
+    <strong>{stats.urgent}</strong>
+    <small>posibil urgente</small>
+  </article>
+</section>
 
-        <section className="messages-insight-strip">
-          <article>
-            <span>Fără telefon</span>
-            <strong>{stats.withoutPhone}</strong>
-          </article>
+        <section className="messages-insight-strip messages-insight-strip-bomba">
+  <article>
+    <span>Ultimul client</span>
+    <strong>{stats.latestClient}</strong>
+  </article>
 
-          <article>
-            <span>Ultimul mesaj</span>
-            <strong>{stats.latestTime}</strong>
-          </article>
+  <article>
+    <span>Ultimul mesaj</span>
+    <strong>{stats.latestTime}</strong>
+  </article>
 
-          <article>
-            <span>Rezultate afișate</span>
-            <strong>{filteredMessages.length}</strong>
-          </article>
-        </section>
+  <article>
+    <span>Fără telefon</span>
+    <strong>{stats.withoutPhone}</strong>
+  </article>
+
+  <article>
+    <span>Rezultate filtrate</span>
+    <strong>{filteredMessages.length}</strong>
+  </article>
+</section>
 
         <section className={`messages-toolbar messages-toolbar-bomba ${showMobileFilters ? 'mobile-open' : ''}`}>
           <div className="messages-filter-field messages-range-filter">
