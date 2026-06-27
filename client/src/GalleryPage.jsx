@@ -33,6 +33,12 @@ const BARBER_FILTERS = [
     display: 'Flavius Frizeru',
     aliases: ['flavius', 'flavius frizeru']
   },
+   {
+    value: 'vali-frizeru',
+    label: 'VALI',
+    display: 'Vali Frizeru',
+    aliases: ['vali', 'vali frizeru', 'sonic style']
+  },
   {
     value: 'alex-frizeru',
     label: 'ALEX',
