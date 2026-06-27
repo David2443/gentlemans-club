@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, Link } from 'react-router-dom';
 
 import './App.css';
-
+import { getApiBase } from './api';
 import { AuthProvider, ProtectedRoute } from './AuthGate';
 
 import BarberProfile from './BarberProfile';
@@ -13,8 +13,6 @@ import ScrollToTop from './ScrollToTop';
 import Login from './Login';
 import MasterDashboard from './MasterDashboard';
 import MasterMessages from './MasterMessages';
-
-const API_BASE = 'http://localhost:5000';
 
 const BRAND_NAME = "Gentleman's Club";
 const CONTACT_PHONE_DISPLAY = '+40 741 844 684';
@@ -443,7 +441,69 @@ function Home() {
       text: 'Pensat precis, stil, formă și finisaj pentru un look complet.'
     }
   ];
+const maleReviewAvatars = [
+  'https://randomuser.me/api/portraits/men/32.jpg',
+  'https://randomuser.me/api/portraits/men/46.jpg',
+  'https://randomuser.me/api/portraits/men/65.jpg',
+  'https://randomuser.me/api/portraits/men/75.jpg',
+  'https://randomuser.me/api/portraits/men/22.jpg',
+  'https://randomuser.me/api/portraits/men/12.jpg'
+];
 
+const femaleReviewAvatars = [
+  'https://randomuser.me/api/portraits/women/44.jpg',
+  'https://randomuser.me/api/portraits/women/68.jpg',
+  'https://randomuser.me/api/portraits/women/26.jpg',
+  'https://randomuser.me/api/portraits/women/52.jpg'
+];
+
+const femaleNameHints = [
+  'elena',
+  'maria',
+  'ana',
+  'andreea',
+  'ioana',
+  'alexandra',
+  'cristina',
+  'diana',
+  'bianca',
+  'georgiana',
+  'raluca',
+  'teodora'
+];
+
+const getReviewGender = (review) => {
+  const rawGender = String(review?.gender || review?.sex || '').toLowerCase();
+
+  if (['female', 'femeie', 'woman'].includes(rawGender)) {
+    return 'female';
+  }
+
+  if (['male', 'barbat', 'bărbat', 'man'].includes(rawGender)) {
+    return 'male';
+  }
+
+  const name = String(review?.name || '')
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
+
+  return femaleNameHints.some((hint) => name.includes(hint)) ? 'female' : 'male';
+};
+
+const getReviewAvatar = (review, index) => {
+  const customAvatar = String(review?.avatar || review?.image || review?.photo || '').trim();
+
+  if (customAvatar && !customAvatar.includes('pravatar.cc')) {
+    return customAvatar;
+  }
+
+  const avatars = getReviewGender(review) === 'female'
+    ? femaleReviewAvatars
+    : maleReviewAvatars;
+
+  return avatars[index % avatars.length];
+};
   const fallbackReviews = [
     {
       name: 'Andrei Ionescu',
@@ -1065,17 +1125,13 @@ function Home() {
               return (
                 <div className="review-card" key={`${reviewName}-${index}`}>
                   <div className="review-user">
-                    {review.avatar ? (
-                      <img
-                        src={review.avatar}
-                        alt={reviewName}
-                        className="user-avatar"
-                      />
-                    ) : (
-                      <div className="user-avatar review-avatar-fallback">
-                        {reviewName.charAt(0)}
-                      </div>
-                    )}
+                    <img
+  src={getReviewAvatar(review, index)}
+  alt={reviewName}
+  className="user-avatar"
+  loading="lazy"
+  decoding="async"
+/>
 
                     <div className="user-info">
                       <h4>{reviewName}</h4>
@@ -1162,62 +1218,61 @@ function Home() {
         </div>
       </section>
 
-      <section className="map-section">
-        <div className="map-background">
-          <iframe
-            src={`https://www.google.com/maps?q=${MAP_QUERY}&output=embed`}
-            allowFullScreen
-            loading="lazy"
-            title="Locatie"
-          ></iframe>
-        </div>
+<section className="map-section premium-map-section">
+  <div className="map-background premium-map-background">
+    <iframe
+      src={`https://www.google.com/maps?q=${MAP_QUERY}&output=embed`}
+      allowFullScreen
+      loading="lazy"
+      title={`Locație ${BRAND_NAME}`}
+    ></iframe>
+  </div>
 
-        <div className="map-fade-overlay"></div>
+  <div className="map-fade-overlay"></div>
 
-        <div className="contact-card">
-          <h3>Vizitează-ne</h3>
+  <div className="contact-card premium-location-card">
+    <span className="location-kicker">Ne găsești aici</span>
 
-          <div className="contact-info-item">
-            📍 {CONTACT_ADDRESS}
-          </div>
+    <h3>Vizitează-ne</h3>
 
-          <div className="contact-info-item">
-            📞 {CONTACT_PHONE_DISPLAY}
-          </div>
+    <div className="contact-info-item">
+      <strong>📍 Adresă</strong>
+      <span>{CONTACT_ADDRESS}</span>
+    </div>
 
-          <a
-            href={CONTACT_PHONE_HREF}
-            className="btn-gold"
-            style={{
-              marginTop: '15px',
-              width: '100%',
-              display: 'block',
-              textAlign: 'center',
-              textDecoration: 'none'
-            }}
-          >
-            Sună acum
-          </a>
+    <div className="contact-info-item">
+      <strong>📞 Telefon</strong>
+      <span>{CONTACT_PHONE_DISPLAY}</span>
+    </div>
 
-          <a
-            href={`https://waze.com/ul?q=${MAP_QUERY}&navigate=yes`}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="btn-outline-gold"
-            style={{
-              marginTop: '12px',
-              width: '100%',
-              display: 'block',
-              textAlign: 'center',
-              textDecoration: 'none',
-              borderRadius: '50px',
-              padding: '14px 22px'
-            }}
-          >
-            Deschide Waze
-          </a>
-        </div>
-      </section>
+    <div className="map-actions">
+      <a
+        href={`https://waze.com/ul?q=${MAP_QUERY}&navigate=yes`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="map-action-btn waze"
+      >
+        Deschide Waze
+      </a>
+
+      <a
+        href={`https://www.google.com/maps/search/?api=1&query=${MAP_QUERY}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="map-action-btn maps"
+      >
+        Google Maps
+      </a>
+
+      <a
+        href={CONTACT_PHONE_HREF}
+        className="map-action-btn call"
+      >
+        Sună acum
+      </a>
+    </div>
+  </div>
+</section>
 
       <footer className="bomba-footer">
         <div className="footer-container">

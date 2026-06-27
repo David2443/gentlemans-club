@@ -4776,4 +4776,225 @@ select {
   .sidebar-legal-mini a {
     font-size: 0.72rem;
   }
+}/* ==========================================================================
+   FINAL MOBILE HERO + REVIEWS + PREMIUM MAP
+   ========================================================================== */
+
+/* Ascunde badge-ul "Gentleman's Club • Premium Grooming Experience" pe telefon */
+@media (max-width: 768px) {
+  .home-wrapper .hero-badge-mobile-safe {
+    display: none !important;
+  }
+
+  .home-wrapper .hero {
+    padding-top: 110px !important;
+  }
+}
+
+/* Recenzii mai premium */
+.home-wrapper .review-card {
+  position: relative !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(212, 175, 55, 0.16) !important;
+  background:
+    radial-gradient(circle at top left, rgba(212, 175, 55, 0.08), transparent 42%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0.02)) !important;
+}
+
+.home-wrapper .review-card::before {
+  content: '' !important;
+  position: absolute !important;
+  inset: 0 !important;
+  pointer-events: none !important;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.08), transparent 35%) !important;
+  opacity: 0.5 !important;
+}
+
+.home-wrapper .user-avatar {
+  width: 64px !important;
+  height: 64px !important;
+  flex: 0 0 64px !important;
+  border: 2px solid rgba(212, 175, 55, 0.8) !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  object-position: center !important;
+  background: #111 !important;
+  box-shadow:
+    0 0 0 5px rgba(212, 175, 55, 0.08),
+    0 14px 30px rgba(0, 0, 0, 0.42) !important;
+}
+
+/* Hartă premium */
+.home-wrapper .premium-map-section {
+  min-height: 620px !important;
+  height: 620px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  background:
+    radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.1), transparent 34%),
+    #030303 !important;
+}
+
+.home-wrapper .premium-map-background {
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 1 !important;
+}
+
+.home-wrapper .premium-map-background iframe {
+  width: 100% !important;
+  height: 100% !important;
+  border: 0 !important;
+  filter: grayscale(100%) invert(88%) contrast(0.86) brightness(0.78) !important;
+}
+
+.home-wrapper .premium-map-section .map-fade-overlay {
+  display: block !important;
+  position: absolute !important;
+  inset: 0 !important;
+  z-index: 2 !important;
+  pointer-events: none !important;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.92), rgba(0, 0, 0, 0.58) 38%, rgba(0, 0, 0, 0.2)),
+    linear-gradient(to top, rgba(5, 5, 5, 1), transparent 36%, rgba(5, 5, 5, 0.7)) !important;
+}
+
+.home-wrapper .premium-location-card {
+  position: relative !important;
+  z-index: 3 !important;
+  width: min(460px, calc(100% - 34px)) !important;
+  margin-left: clamp(18px, 7vw, 110px) !important;
+  padding: 34px !important;
+  border: 1px solid rgba(212, 175, 55, 0.28) !important;
+  border-radius: 30px !important;
+  background:
+    radial-gradient(circle at top left, rgba(212, 175, 55, 0.14), transparent 42%),
+    rgba(5, 5, 5, 0.86) !important;
+  backdrop-filter: blur(18px) !important;
+  -webkit-backdrop-filter: blur(18px) !important;
+  box-shadow: 0 28px 80px rgba(0, 0, 0, 0.74) !important;
+  text-align: left !important;
+}
+
+.home-wrapper .location-kicker {
+  display: inline-flex !important;
+  margin-bottom: 12px !important;
+  padding: 7px 12px !important;
+  border: 1px solid rgba(212, 175, 55, 0.34) !important;
+  border-radius: 999px !important;
+  color: var(--gold-light) !important;
+  font-size: 0.72rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 2px !important;
+  text-transform: uppercase !important;
+}
+
+.home-wrapper .premium-location-card h3 {
+  margin: 0 0 22px !important;
+  color: #fff !important;
+  font-family: var(--font-title) !important;
+  font-size: clamp(2rem, 4vw, 3rem) !important;
+  line-height: 1 !important;
+  letter-spacing: 2px !important;
+  text-transform: uppercase !important;
+}
+
+.home-wrapper .premium-location-card .contact-info-item {
+  margin-bottom: 12px !important;
+  padding: 15px 16px !important;
+  display: grid !important;
+  gap: 4px !important;
+  border: 1px solid rgba(255, 255, 255, 0.09) !important;
+  border-radius: 18px !important;
+  background: rgba(255, 255, 255, 0.04) !important;
+  color: var(--text-soft) !important;
+}
+
+.home-wrapper .premium-location-card .contact-info-item strong {
+  color: #fff !important;
+  font-size: 0.78rem !important;
+  font-weight: 900 !important;
+  letter-spacing: 1.6px !important;
+  text-transform: uppercase !important;
+}
+
+.home-wrapper .premium-location-card .contact-info-item span {
+  color: #bfb8aa !important;
+  font-size: 0.98rem !important;
+}
+
+.home-wrapper .map-actions {
+  margin-top: 22px !important;
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 12px !important;
+}
+
+.home-wrapper .map-action-btn {
+  min-height: 50px !important;
+  padding: 0 16px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  border-radius: 16px !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  color: #fff !important;
+  font-family: var(--font-title) !important;
+  font-size: 0.92rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 1.4px !important;
+  text-transform: uppercase !important;
+  text-decoration: none !important;
+  transition: var(--transition) !important;
+}
+
+.home-wrapper .map-action-btn:hover {
+  transform: translateY(-3px) !important;
+  border-color: rgba(212, 175, 55, 0.55) !important;
+  color: var(--gold-light) !important;
+  background: rgba(212, 175, 55, 0.1) !important;
+}
+
+.home-wrapper .map-action-btn.waze {
+  grid-column: 1 / -1 !important;
+  border-color: rgba(212, 175, 55, 0.55) !important;
+  background: rgba(212, 175, 55, 0.14) !important;
+  color: var(--gold-light) !important;
+}
+
+@media (max-width: 768px) {
+  .home-wrapper .premium-map-section {
+    height: auto !important;
+    min-height: auto !important;
+    display: block !important;
+  }
+
+  .home-wrapper .premium-map-background {
+    position: relative !important;
+    height: 320px !important;
+  }
+
+  .home-wrapper .premium-map-section .map-fade-overlay {
+    display: none !important;
+  }
+
+  .home-wrapper .premium-location-card {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 28px 22px !important;
+    border-radius: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    text-align: center !important;
+  }
+
+  .home-wrapper .premium-location-card .contact-info-item {
+    text-align: left !important;
+  }
+
+  .home-wrapper .map-actions {
+    grid-template-columns: 1fr !important;
+  }
 }
