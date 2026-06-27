@@ -764,6 +764,18 @@ const stats = useMemo(() => {
   const visibleMessages = useMemo(() => {
     return filteredMessages.slice(0, visibleCount);
   }, [filteredMessages, visibleCount]);
+  const hasActiveFilters = useMemo(() => {
+  return (
+    search.trim() !== '' ||
+    filter !== 'all' ||
+    sortMode !== 'newest' ||
+    activeRange !== 'all'
+  );
+}, [search, filter, sortMode, activeRange]);
+
+const applyMobileFilters = () => {
+  setShowMobileFilters(false);
+};
 
   const handleSelect = (message) => {
     setSelectedId(getLocalId(message));
@@ -892,19 +904,28 @@ const handleLogout = async () => {
             ↻
           </button>
 
-          <button
-            type="button"
-            className={showMobileFilters ? 'active' : ''}
-            onClick={() => {
-              setShowMobileFilters((prev) => !prev);
-              setMobileMenuOpen(false);
-            }}
-            aria-label="Deschide filtrele"
-          >
-            Filtre
-          </button>
+         <button
+  type="button"
+  className={`mobile-filter-toggle ${showMobileFilters ? 'active' : ''} ${hasActiveFilters ? 'has-active-filters' : ''}`}
+  onClick={() => {
+    setShowMobileFilters((prev) => !prev);
+    setMobileMenuOpen(false);
+  }}
+  aria-label="Deschide filtrele"
+>
+  <span>Filtre</span>
+</button>
         </div>
       </nav>
+
+      {showMobileFilters && (
+  <button
+    type="button"
+    className="mobile-filters-backdrop"
+    onClick={() => setShowMobileFilters(false)}
+    aria-label="Închide filtrele"
+  ></button>
+)}
 
       <div
         className={`mobile-menu-backdrop ${mobileMenuOpen ? 'show' : ''}`}
@@ -1116,18 +1137,37 @@ const handleLogout = async () => {
           </div>
 
           {activeRange === 'custom' && (
-            <div className="messages-custom-calendar-wrap">
-              <MiniRangeCalendar
-                startDate={customStartDate}
-                endDate={customEndDate}
-                onChange={(start, end) => {
-                  setCustomStartDate(start);
-                  setCustomEndDate(end);
-                }}
-              />
-            </div>
-          )}
-        </section>
+  <div className="messages-custom-calendar-wrap">
+    <MiniRangeCalendar
+      startDate={customStartDate}
+      endDate={customEndDate}
+      onChange={(start, end) => {
+        setCustomStartDate(start);
+        setCustomEndDate(end);
+      }}
+    />
+  </div>
+)}
+
+<div className="messages-filter-actions">
+  <button
+    type="button"
+    className="btn-clear-mobile-filters"
+    onClick={clearFilters}
+    disabled={!hasActiveFilters}
+  >
+    Scoate filtrul
+  </button>
+
+  <button
+    type="button"
+    className="btn-apply-mobile-filters"
+    onClick={applyMobileFilters}
+  >
+    Aplică filtrele
+  </button>
+</div>
+</section>
 
         {error && (
           <div className="messages-error">
