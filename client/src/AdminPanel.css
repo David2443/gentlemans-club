@@ -1,349 +1,2010 @@
-/* --- IZOLARE TOTALĂ: Toate regulile încep cu .admin-wrapper --- */
+/* ==========================================================================
+   ADMIN PANEL — GENTLEMAN'S CLUB
+   FULL CSS PREMIUM / BLACK GOLD / CLEAN GALLERY / MOBILE READY
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --gc-black: #030303;
+  --gc-black-2: #080808;
+  --gc-black-3: #101010;
+  --gc-panel: rgba(255, 255, 255, 0.035);
+  --gc-panel-2: rgba(255, 255, 255, 0.055);
+  --gc-gold: #d4af37;
+  --gc-gold-2: #f7df8a;
+  --gc-white: #ffffff;
+  --gc-text: rgba(255, 255, 255, 0.86);
+  --gc-muted: rgba(255, 255, 255, 0.58);
+  --gc-muted-2: rgba(255, 255, 255, 0.34);
+  --gc-border: rgba(255, 255, 255, 0.1);
+  --gc-border-gold: rgba(212, 175, 55, 0.22);
+  --gc-red: #ff453a;
+  --gc-green: #30d158;
+  --gc-blue: #0a84ff;
+  --gc-orange: #ff9f0a;
+  --gc-shadow: 0 30px 90px rgba(0, 0, 0, 0.48);
+  --gc-font-title: "Cinzel", "Playfair Display", Georgia, serif;
+  --gc-font-body: "Inter", Arial, sans-serif;
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+.admin-wrapper,
+.admin-wrapper * {
+  box-sizing: border-box;
+}
 
 .admin-wrapper {
-  --adm-gold: #d4af37;
-  --adm-gold-hover: #b59020;
-  --adm-dark-bg: #121212;
-  --adm-card-bg: #1e1e1e;
-  --adm-text-main: #ffffff;
-  --adm-text-muted: #aaaaaa;
-  --adm-border: #333333;
-  --adm-success: #2ecc71;
-  --adm-danger: #e74c3c;
-  
-  background-color: var(--adm-dark-bg);
   min-height: 100vh;
-  color: var(--adm-text-main);
-  font-family: 'Roboto', sans-serif;
-  display: flex;
-  flex-direction: column;
-  position: absolute;
+  position: relative;
+  overflow-x: hidden;
+  color: var(--gc-text);
+  font-family: var(--gc-font-body);
+  background:
+    radial-gradient(circle at 14% 8%, rgba(212, 175, 55, 0.13), transparent 28%),
+    radial-gradient(circle at 88% 16%, rgba(212, 175, 55, 0.08), transparent 32%),
+    radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.04), transparent 38%),
+    linear-gradient(135deg, #020202 0%, #090909 48%, #020202 100%);
+}
+
+.admin-wrapper::before {
+  content: "AGENDA";
+  position: fixed;
+  right: -110px;
+  top: 46%;
+  z-index: 0;
+  transform: translateY(-50%) rotate(-90deg);
+  color: rgba(212, 175, 55, 0.04);
+  font-family: var(--gc-font-title);
+  font-size: clamp(5rem, 15vw, 14rem);
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  pointer-events: none;
+}
+
+.admin-wrapper::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 58px 58px;
+  mask-image: radial-gradient(circle at center, black, transparent 74%);
+  pointer-events: none;
+}
+
+.admin-wrapper button,
+.admin-wrapper input,
+.admin-wrapper select,
+.admin-wrapper textarea {
+  font-family: inherit;
+}
+
+.admin-wrapper button {
+  border-radius: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================================
+   TOP NAVBAR
+   ========================================================================== */
+
+.top-navbar {
+  min-height: 76px;
+  position: sticky;
   top: 0;
-  left: 0;
+  z-index: 80;
+  padding: 14px 28px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.18);
+  background:
+    radial-gradient(circle at 12% 0%, rgba(212, 175, 55, 0.12), transparent 34%),
+    linear-gradient(90deg, rgba(6, 6, 6, 0.98), rgba(14, 14, 14, 0.96));
+  box-shadow: 0 18px 60px rgba(0, 0, 0, 0.36);
+  backdrop-filter: blur(14px);
+}
+
+.nav-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.nav-brand {
+  min-height: 42px;
+  padding: 0 15px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  background: rgba(212, 175, 55, 0.07);
+  color: var(--gc-gold-2);
+  font-family: var(--gc-font-title);
+  font-size: 0.88rem;
+  font-weight: 900;
+  letter-spacing: 1.6px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.btn-back-dash {
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(255, 255, 255, 0.82);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-back-dash:hover {
+  border-color: rgba(247, 223, 138, 0.7);
+  background: rgba(212, 175, 55, 0.13);
+  color: #fff;
+}
+
+.nav-actions-clean {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.nav-actions-clean .btn-icon,
+.btn-icon {
+  width: 42px;
+  height: 42px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(212, 175, 55, 0.26);
+  background: rgba(255, 255, 255, 0.045);
+  color: var(--gc-gold-2);
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.nav-actions-clean .btn-icon:hover,
+.btn-icon:hover {
+  border-color: rgba(247, 223, 138, 0.74);
+  background: rgba(212, 175, 55, 0.14);
+  color: #fff;
+}
+
+.nav-actions-clean .btn-icon.logout,
+.btn-icon.logout {
+  border-color: rgba(255, 69, 58, 0.28);
+  color: #ff8b84;
+}
+
+.nav-actions-clean .btn-icon.logout:hover,
+.btn-icon.logout:hover {
+  border-color: rgba(255, 69, 58, 0.7);
+  background: rgba(255, 69, 58, 0.14);
+  color: #fff;
+}
+
+/* dacă mai există din variante vechi, ascunde uploadul din navbar */
+.nav-upload-input,
+.nav-upload-btn,
+.nav-save-upload {
+  display: none !important;
+}
+
+/* ==========================================================================
+   MAIN GRID
+   ========================================================================== */
+
+.dashboard-grid {
+  position: relative;
+  z-index: 1;
   width: 100%;
-  z-index: 10;
+  padding: 28px;
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 22px;
+  align-items: start;
 }
 
-/* NAVBAR */
-.admin-wrapper .top-navbar {
-  background-color: rgba(30, 30, 30, 0.95);
+/* ==========================================================================
+   CALENDAR
+   ========================================================================== */
+
+.sidebar-calendar {
+  position: sticky;
+  top: 104px;
+  z-index: 2;
+}
+
+.calendar-card-premium {
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-left: 3px solid rgba(212, 175, 55, 0.82);
+  background:
+    radial-gradient(circle at top right, rgba(212, 175, 55, 0.12), transparent 38%),
+    rgba(255, 255, 255, 0.035);
+  box-shadow: var(--gc-shadow);
+}
+
+.month-header {
+  min-height: 82px;
+  padding: 18px;
+  display: grid;
+  grid-template-columns: 42px 1fr 42px;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.14);
+  background: rgba(0, 0, 0, 0.24);
+}
+
+.month-header button {
+  width: 42px;
+  height: 42px;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--gc-gold-2);
+  font-size: 1.6rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.month-header button:hover {
+  border-color: rgba(247, 223, 138, 0.74);
+  background: rgba(212, 175, 55, 0.16);
+  color: #fff;
+}
+
+.month-title {
+  display: grid;
+  gap: 4px;
+  color: #fff;
+  font-family: var(--gc-font-title);
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.11em;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.month-title span {
+  color: rgba(212, 175, 55, 0.9);
+  font-family: var(--gc-font-body);
+  font-size: 0.75rem;
+  font-weight: 1000;
+  letter-spacing: 0.14em;
+}
+
+.weekdays-grid,
+.days-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.weekdays-grid {
+  padding: 14px 14px 8px;
+  gap: 5px;
+}
+
+.weekdays-grid span {
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 0.64rem;
+  font-weight: 1000;
+  letter-spacing: 1px;
+  text-align: center;
+}
+
+.days-grid {
+  padding: 0 14px 18px;
+  gap: 6px;
+}
+
+.day-cell {
+  aspect-ratio: 1;
+  min-height: 38px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  background: rgba(255, 255, 255, 0.036);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.8rem;
+  font-weight: 1000;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.day-cell:hover:not(.empty) {
+  border-color: rgba(212, 175, 55, 0.5);
+  background: rgba(212, 175, 55, 0.1);
+  color: #fff;
+}
+
+.day-cell.active {
+  border-color: rgba(247, 223, 138, 0.92);
+  background: linear-gradient(135deg, rgba(247, 223, 138, 0.96), rgba(212, 175, 55, 0.82));
+  color: #050505;
+}
+
+.day-cell.empty {
+  border-color: transparent;
+  background: transparent;
+  cursor: default;
+}
+
+.day-cell .dot {
+  position: absolute;
+  bottom: 5px;
+  width: 5px;
+  height: 5px;
+  border-radius: 999px;
+  background: var(--gc-green);
+  box-shadow: 0 0 10px rgba(48, 209, 88, 0.6);
+}
+
+/* ==========================================================================
+   SCHEDULE AREA
+   ========================================================================== */
+
+.schedule-area {
+  min-width: 0;
+}
+
+.schedule-header {
+  min-height: 126px;
+  margin-bottom: 18px;
+  padding: 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  border: 1px solid rgba(212, 175, 55, 0.14);
+  background:
+    radial-gradient(circle at top left, rgba(212, 175, 55, 0.1), transparent 36%),
+    rgba(255, 255, 255, 0.032);
+  box-shadow: var(--gc-shadow);
+}
+
+.schedule-header .header-left {
+  display: grid;
+  gap: 2px;
+}
+
+.schedule-header h2 {
+  margin: 0;
+  color: #fff;
+  font-family: var(--gc-font-title);
+  font-size: clamp(1.45rem, 3vw, 2.4rem);
+  font-weight: 900;
+  line-height: 1.08;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.btn-block-day {
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1px solid rgba(255, 69, 58, 0.42);
+  background: rgba(255, 69, 58, 0.08);
+  color: #ff8b84;
+  font-size: 0.7rem;
+  font-weight: 1000;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.btn-block-day:hover {
+  border-color: rgba(255, 69, 58, 0.72);
+  background: rgba(255, 69, 58, 0.15);
+  color: #fff;
+}
+
+.task-count {
+  min-height: 34px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  background: rgba(212, 175, 55, 0.085);
+  color: var(--gc-gold-2);
+  font-size: 0.72rem;
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   SLOTS
+   ========================================================================== */
+
+.slots-list {
+  display: grid;
+  gap: 12px;
+}
+
+.slot-card {
+  position: relative;
+  min-height: 94px;
+  display: grid;
+  grid-template-columns: 92px minmax(0, 1fr) 48px;
+  align-items: stretch;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.12);
+  background:
+    radial-gradient(circle at top right, rgba(212, 175, 55, 0.07), transparent 42%),
+    rgba(255, 255, 255, 0.03);
+  box-shadow: 0 18px 50px rgba(0, 0, 0, 0.24);
+}
+
+.slot-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-left: 3px solid rgba(212, 175, 55, 0.3);
+  pointer-events: none;
+}
+
+.slot-card.free::before {
+  border-left-color: rgba(48, 209, 88, 0.45);
+}
+
+.slot-card.occupied::before {
+  border-left-color: rgba(212, 175, 55, 0.82);
+}
+
+.slot-card.blocked::before {
+  border-left-color: rgba(255, 69, 58, 0.75);
+}
+
+.slot-card.free {
+  background:
+    linear-gradient(90deg, rgba(48, 209, 88, 0.045), transparent 42%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.slot-card.occupied {
+  background:
+    linear-gradient(90deg, rgba(212, 175, 55, 0.075), transparent 42%),
+    rgba(255, 255, 255, 0.032);
+}
+
+.slot-card.blocked {
+  background:
+    linear-gradient(90deg, rgba(255, 69, 58, 0.07), transparent 42%),
+    rgba(255, 255, 255, 0.025);
+}
+
+.slot-time {
+  padding: 18px 10px;
+  display: grid;
+  place-items: center;
+  border-right: 1px solid rgba(212, 175, 55, 0.12);
+  color: var(--gc-gold-2);
+  font-family: var(--gc-font-title);
+  font-size: 1rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.slot-content {
+  min-width: 0;
+  padding: 16px;
+}
+
+.slot-main-info {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.badge {
+  min-height: 26px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(212, 175, 55, 0.36);
+  background: rgba(212, 175, 55, 0.09);
+  color: var(--gc-gold-2);
+  font-size: 0.62rem;
+  font-weight: 1000;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.badge.blocat {
+  border-color: rgba(255, 69, 58, 0.42);
+  background: rgba(255, 69, 58, 0.09);
+  color: #ff8b84;
+}
+
+.admin-status-pill {
+  min-height: 26px;
+  padding: 0 9px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.046);
+  color: #fff;
+  font-size: 0.62rem;
+  font-weight: 1000;
+  letter-spacing: 1.1px;
+  text-transform: uppercase;
+}
+
+.admin-status-pill.status-noua {
+  border-color: rgba(212, 175, 55, 0.54);
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--gc-gold-2);
+}
+
+.admin-status-pill.status-confirmata {
+  border-color: rgba(48, 209, 88, 0.54);
+  background: rgba(48, 209, 88, 0.12);
+  color: var(--gc-green);
+}
+
+.admin-status-pill.status-anulata {
+  border-color: rgba(255, 69, 58, 0.54);
+  background: rgba(255, 69, 58, 0.12);
+  color: #ff6961;
+}
+
+.admin-status-pill.status-blocat {
+  border-color: rgba(255, 159, 10, 0.54);
+  background: rgba(255, 159, 10, 0.12);
+  color: #ffb340;
+}
+
+.client-name {
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 1000;
+  line-height: 1.3;
+}
+
+.admin-appointment-extra {
+  margin-top: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-appointment-extra span {
+  min-height: 30px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  background: rgba(212, 175, 55, 0.07);
+  color: rgba(255, 255, 255, 0.8);
+  font-size: 0.78rem;
+  font-weight: 900;
+}
+
+.client-phone {
+  width: fit-content;
+  margin-top: 10px;
+  min-height: 34px;
+  padding: 0 11px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(10, 132, 255, 0.32);
+  background: rgba(10, 132, 255, 0.08);
+  color: #64b5ff;
+  font-size: 0.82rem;
+  font-weight: 1000;
+  text-decoration: none;
+}
+
+.client-phone:hover {
+  color: #fff;
+  border-color: rgba(10, 132, 255, 0.6);
+}
+
+.client-msg {
+  margin-top: 10px;
+  padding: 10px 12px;
+  border-left: 3px solid rgba(212, 175, 55, 0.56);
+  background: rgba(0, 0, 0, 0.22);
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.84rem;
+  line-height: 1.55;
+}
+
+.status-label {
+  min-height: 36px;
+  display: inline-flex;
+  align-items: center;
+  color: rgba(48, 209, 88, 0.85);
+  font-size: 0.86rem;
+  font-weight: 1000;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   SLOT ACTIONS
+   ========================================================================== */
+
+.admin-slot-actions-clean {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(212, 175, 55, 0.12);
+}
+
+.admin-slot-actions-clean button,
+.admin-slot-actions-clean a {
+  min-height: 36px;
+  padding: 0 13px;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--gc-gold-2);
+  font-size: 0.68rem;
+  font-weight: 1000;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.admin-slot-actions-clean button:hover,
+.admin-slot-actions-clean a:hover {
+  border-color: rgba(247, 223, 138, 0.72);
+  background: rgba(212, 175, 55, 0.16);
+  color: #fff;
+}
+
+.admin-slot-actions-clean .admin-whatsapp-btn {
+  border-color: rgba(48, 209, 88, 0.42);
+  background: rgba(48, 209, 88, 0.1);
+  color: var(--gc-green);
+}
+
+.admin-slot-actions-clean .admin-whatsapp-btn:hover {
+  color: #fff;
+  background: rgba(48, 209, 88, 0.18);
+}
+
+.admin-clean-hint {
+  min-height: 32px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(255, 69, 58, 0.22);
+  background: rgba(255, 69, 58, 0.06);
+  color: rgba(255, 139, 132, 0.9);
+  font-size: 0.64rem;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+.action-btn {
+  width: 48px;
+  height: 100%;
+  min-height: 94px;
+  border: 0;
+  border-left: 1px solid rgba(212, 175, 55, 0.12);
+  background: rgba(255, 255, 255, 0.03);
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 1.35rem;
+  font-weight: 900;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.action-btn.btn-add {
+  color: var(--gc-green);
+}
+
+.action-btn.btn-add:hover {
+  background: rgba(48, 209, 88, 0.12);
+  color: #fff;
+}
+
+.action-btn.btn-del {
+  color: #ff8b84;
+}
+
+.action-btn.btn-del:hover {
+  background: rgba(255, 69, 58, 0.14);
+  color: #fff;
+}
+
+/* ==========================================================================
+   GALLERY MANAGER
+   ========================================================================== */
+
+.admin-gallery-manager {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  margin: 28px;
+  padding: clamp(22px, 4vw, 34px);
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  border-left: 3px solid rgba(212, 175, 55, 0.82);
+  background:
+    radial-gradient(circle at top right, rgba(212, 175, 55, 0.12), transparent 38%),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.052), rgba(255, 255, 255, 0.018));
+  box-shadow: var(--gc-shadow);
+}
+
+.admin-gallery-manager::before {
+  content: "PORTOFOLIU";
+  position: absolute;
+  right: -28px;
+  top: 24px;
+  color: rgba(212, 175, 55, 0.045);
+  font-family: var(--gc-font-title);
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  pointer-events: none;
+}
+
+.section-title {
+  position: relative;
+  z-index: 2;
+  margin: 0 0 22px;
+  color: #fff;
+  font-family: var(--gc-font-title);
+  font-size: clamp(1.2rem, 3vw, 2rem);
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.upload-gallery-modern {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(220px, 320px);
+  gap: 18px;
+  align-items: stretch;
+  margin-bottom: 26px;
+  padding: 16px;
+  border: 1px solid rgba(212, 175, 55, 0.14);
+  background: rgba(0, 0, 0, 0.22);
+}
+
+.upload-zone {
+  min-height: 230px;
+  position: relative;
+  overflow: hidden;
+  border: 1px dashed rgba(212, 175, 55, 0.38);
+  background:
+    radial-gradient(circle at center, rgba(212, 175, 55, 0.12), transparent 52%),
+    rgba(255, 255, 255, 0.026);
+  cursor: pointer;
+  transition: 0.22s ease;
+}
+
+.upload-zone:hover {
+  border-color: rgba(247, 223, 138, 0.78);
+  background:
+    radial-gradient(circle at center, rgba(212, 175, 55, 0.18), transparent 55%),
+    rgba(255, 255, 255, 0.04);
+}
+
+.upload-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.upload-placeholder {
+  min-height: 230px;
+  padding: 28px;
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 12px;
+  text-align: center;
+}
+
+.upload-icon {
+  width: 62px;
+  height: 62px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  background: rgba(212, 175, 55, 0.08);
+  font-size: 1.8rem;
+}
+
+.upload-placeholder p {
+  max-width: 430px;
+  margin: 0;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.92rem;
+  font-weight: 800;
+  line-height: 1.65;
+}
+
+.preview-container {
+  min-height: 230px;
+  position: relative;
+  overflow: hidden;
+}
+
+.image-preview {
+  width: 100%;
+  height: 100%;
+  min-height: 230px;
+  object-fit: cover;
+  display: block;
+  filter: contrast(1.05) saturate(1.05);
+}
+
+.preview-overlay {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  padding: 12px 14px;
+  border: 1px solid rgba(212, 175, 55, 0.32);
+  background: rgba(0, 0, 0, 0.7);
+  color: var(--gc-gold-2);
+  font-size: 0.72rem;
+  font-weight: 1000;
+  letter-spacing: 1px;
+  text-transform: uppercase;
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid var(--adm-gold);
-  padding: 0 30px; height: 70px;
-  display: flex; align-items: center; justify-content: space-between;
-  position: sticky; top: 0; z-index: 100;
-}
-.admin-wrapper .nav-left { display: flex; align-items: center; gap: 20px; }
-.admin-wrapper .nav-brand { font-family: 'Oswald', sans-serif; font-size: 22px; font-weight: 700; color: var(--adm-gold); letter-spacing: 1px; }
-
-.admin-wrapper .btn-back-dash {
-  background: transparent; border: 1px solid var(--adm-gold); color: var(--adm-gold);
-  padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; transition: 0.3s;
-}
-.admin-wrapper .btn-back-dash:hover { background: rgba(212, 175, 55, 0.1); }
-
-.admin-wrapper .nav-actions { display: flex; gap: 15px; }
-.admin-wrapper .btn-icon {
-  background: transparent; border: 1px solid var(--adm-border); color: var(--adm-text-main);
-  width: 40px; height: 40px; border-radius: 8px; cursor: pointer; font-size: 18px;
-  display: flex; align-items: center; justify-content: center; transition: 0.3s;
-}
-.admin-wrapper .btn-icon:hover { border-color: var(--adm-gold); color: var(--adm-gold); }
-.admin-wrapper .btn-icon.logout:hover { border-color: var(--adm-danger); color: var(--adm-danger); }
-.admin-wrapper .spinning { animation: spin 1s linear infinite; }
-@keyframes spin { 100% { transform: rotate(360deg); } }
-
-/* GRID 50/50 */
-.admin-wrapper .dashboard-grid {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 30px; padding: 30px;
-  max-width: 1800px; margin: 0 auto; width: 100%; height: calc(100vh - 70px);
-  overflow: hidden; box-sizing: border-box;
 }
 
-/* CALENDAR */
-.admin-wrapper .sidebar-calendar { height: 100%; display: flex; flex-direction: column; }
-.admin-wrapper .calendar-card-premium {
-  background: var(--adm-card-bg); border: 1px solid var(--adm-border); border-radius: 12px;
-  padding: 25px; box-shadow: 0 4px 20px rgba(0,0,0,0.5); height: 100%; display: flex; flex-direction: column;
-}
-.admin-wrapper .month-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-.admin-wrapper .month-title { font-family: 'Oswald', sans-serif; font-size: 20px; color: var(--adm-gold); text-align: center; }
-.admin-wrapper .month-title span { display: block; font-size: 14px; color: var(--adm-text-muted); font-family: 'Roboto', sans-serif; }
-.admin-wrapper .month-header button {
-  background: transparent; border: 1px solid var(--adm-border); color: #fff; width: 35px; height: 35px; border-radius: 50%; cursor: pointer; transition: 0.3s;
-}
-.admin-wrapper .month-header button:hover { border-color: var(--adm-gold); color: var(--adm-gold); }
-.admin-wrapper .weekdays-grid { display: grid; grid-template-columns: repeat(7, 1fr); text-align: center; font-size: 12px; color: var(--adm-text-muted); margin-bottom: 15px; font-weight: bold; }
-.admin-wrapper .days-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 8px; flex: 1; align-content: start; }
-.admin-wrapper .day-cell {
-  aspect-ratio: 1/1; display: flex; flex-direction: column; align-items: center; justify-content: center;
-  border-radius: 8px; cursor: pointer; font-size: 16px; position: relative; background: #252525; transition: 0.2s;
-}
-.admin-wrapper .day-cell:hover:not(.empty) { background: #333; border: 1px solid var(--adm-gold); }
-.admin-wrapper .day-cell.empty { background: transparent; cursor: default; }
-.admin-wrapper .day-cell.active { background: var(--adm-gold); color: #000; font-weight: bold; box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
-.admin-wrapper .day-cell .dot { width: 5px; height: 5px; background-color: var(--adm-gold); border-radius: 50%; position: absolute; bottom: 8px; }
-.admin-wrapper .day-cell.active .dot { background-color: #000; }
-
-/* LISTA ORE */
-.admin-wrapper .schedule-area {
-  background: var(--adm-card-bg); border: 1px solid var(--adm-border); border-radius: 12px;
-  display: flex; flex-direction: column; overflow: hidden;
-}
-.admin-wrapper .schedule-header {
-  padding: 20px; border-bottom: 1px solid var(--adm-border); display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.2);
-}
-.admin-wrapper .header-left { display: flex; align-items: center; gap: 20px; }
-.admin-wrapper .schedule-header h2 { font-family: 'Oswald', sans-serif; color: var(--adm-text-main); margin: 0; font-size: 24px; text-transform: capitalize; }
-.admin-wrapper .btn-block-day {
-  background: transparent; border: 1px solid var(--adm-danger); color: var(--adm-danger);
-  padding: 8px 15px; font-size: 12px; font-weight: bold; border-radius: 4px;
-  cursor: pointer; text-transform: uppercase; letter-spacing: 1px; transition: 0.3s;
-}
-.admin-wrapper .btn-block-day:hover { background: var(--adm-danger); color: #fff; box-shadow: 0 0 10px rgba(231, 76, 60, 0.4); }
-.admin-wrapper .task-count { background: var(--adm-gold); color: #000; padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: bold; }
-.admin-wrapper .slots-list { padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
-
-/* SLOT CARD */
-.admin-wrapper .slot-card {
-  display: flex; align-items: center; background: #252525; border-radius: 8px; padding: 15px;
-  border-left: 4px solid transparent; transition: transform 0.2s;
-}
-.admin-wrapper .slot-card:hover { transform: translateX(5px); }
-.admin-wrapper .slot-card.free { border-left-color: var(--adm-text-muted); opacity: 0.7; }
-.admin-wrapper .slot-card.occupied { border-left-color: var(--adm-success); background: rgba(46, 204, 113, 0.05); }
-.admin-wrapper .slot-card.blocked { border-left-color: var(--adm-gold); background: rgba(212, 175, 55, 0.05); }
-.admin-wrapper .slot-time { font-family: 'Oswald', sans-serif; font-size: 20px; font-weight: bold; color: var(--adm-text-main); width: 80px; }
-.admin-wrapper .slot-content { flex: 1; display: flex; flex-direction: column; gap: 5px; }
-.admin-wrapper .status-label { color: var(--adm-text-muted); font-style: italic; font-size: 14px; }
-.admin-wrapper .slot-main-info { display: flex; align-items: center; gap: 10px; }
-.admin-wrapper .client-name { font-weight: bold; font-size: 16px; color: var(--adm-text-main); }
-.admin-wrapper .client-phone { color: var(--adm-gold); text-decoration: none; font-size: 14px; }
-.admin-wrapper .client-msg { font-size: 13px; color: #888; font-style: italic; }
-.admin-wrapper .badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; text-transform: uppercase; font-weight: bold; }
-.admin-wrapper .badge.client { background: var(--adm-success); color: #000; }
-.admin-wrapper .badge.blocat { background: var(--adm-gold); color: #000; }
-.admin-wrapper .action-btn {
-  width: 40px; height: 40px; border-radius: 50%; border: none; cursor: pointer; font-size: 20px;
-  display: flex; align-items: center; justify-content: center; margin-left: 15px; transition: 0.3s;
-}
-.admin-wrapper .btn-add { background: #333; color: var(--adm-gold); border: 1px solid var(--adm-border); }
-.admin-wrapper .btn-add:hover { background: var(--adm-gold); color: #000; }
-.admin-wrapper .btn-del { background: rgba(231, 76, 60, 0.1); color: var(--adm-danger); }
-.admin-wrapper .btn-del:hover { background: var(--adm-danger); color: #fff; }
-
-/* --- MODAL POPUPS (SMECHERE) --- */
-.admin-wrapper .modal-backdrop {
-  position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
-  background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
-  z-index: 1000; display: flex; align-items: center; justify-content: center;
-  animation: fadeIn 0.3s ease;
+.upload-actions-row {
+  display: grid;
+  align-content: center;
+  gap: 10px;
 }
 
-.admin-wrapper .modal-box {
-  background: #181818; border: 1px solid var(--adm-gold); padding: 40px;
-  width: 90%; max-width: 450px; border-radius: 12px; position: relative;
-  box-shadow: 0 0 50px rgba(212, 175, 55, 0.15); text-align: center;
-  animation: scaleUp 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+.btn-gold,
+.btn-dark {
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid rgba(212, 175, 55, 0.5);
+  background:
+    linear-gradient(135deg, rgba(247, 223, 138, 0.95), rgba(212, 175, 55, 0.86), rgba(126, 94, 19, 0.95));
+  color: #050505;
+  font-size: 0.72rem;
+  font-weight: 1000;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
-.admin-wrapper .btn-close-modal {
-  position: absolute; top: 15px; right: 15px; background: transparent; border: none; color: #555; font-size: 20px; cursor: pointer;
-}
-.admin-wrapper .btn-close-modal:hover { color: var(--adm-gold); }
-
-.admin-wrapper .modal-box h3 { color: var(--adm-gold); font-family: 'Oswald', sans-serif; font-size: 28px; margin-bottom: 30px; border-bottom: 1px solid #333; padding-bottom: 15px; }
-
-.admin-wrapper .input-group { margin-bottom: 20px; text-align: left; }
-.admin-wrapper .input-group label { display: block; color: #888; font-size: 12px; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px; }
-.admin-wrapper .input-group input {
-  width: 100%; padding: 15px; background: #252525; border: 1px solid #444; border-radius: 6px;
-  color: #fff; font-size: 16px; outline: none; box-sizing: border-box;
-}
-.admin-wrapper .input-group input:focus { border-color: var(--adm-gold); background: #000; }
-
-.admin-wrapper .modal-actions { display: flex; gap: 15px; margin-top: 30px; }
-.admin-wrapper .btn-gold { flex: 1; background: var(--adm-gold); color: #000; border: none; padding: 15px; font-weight: bold; cursor: pointer; border-radius: 6px; text-transform: uppercase; transition: 0.3s; }
-.admin-wrapper .btn-gold:hover { background: var(--adm-gold-hover); box-shadow: 0 0 15px rgba(212, 175, 55, 0.4); }
-.admin-wrapper .btn-dark { flex: 1; background: transparent; border: 1px solid var(--adm-gold); color: var(--adm-gold); padding: 15px; cursor: pointer; border-radius: 6px; font-weight: bold; transition: 0.3s; }
-.admin-wrapper .btn-dark:hover { background: rgba(212, 175, 55, 0.1); }
-
-/* --- CSS SPECIAL PENTRU CONFIRMARE (NOU) --- */
-.admin-wrapper .confirm-box {
-  border-color: var(--adm-danger); /* Bordură Roșie */
-  box-shadow: 0 0 50px rgba(231, 76, 60, 0.15); /* Halou Roșu */
+.btn-gold:hover {
+  filter: brightness(1.08);
+  transform: translateY(-1px);
 }
 
-.admin-wrapper .confirm-title {
-  color: var(--adm-danger) !important;
-  font-size: 24px;
+.btn-gold:disabled,
+.btn-dark:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
 }
 
-.admin-wrapper .confirm-msg {
-  color: #ccc; font-size: 16px; margin-bottom: 20px; line-height: 1.5;
+.btn-dark {
+  border-color: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(255, 255, 255, 0.72);
 }
 
-.admin-wrapper .btn-confirm-yes {
-  flex: 1; background: var(--adm-danger); color: #fff; border: none; padding: 15px;
-  font-weight: bold; cursor: pointer; border-radius: 6px; text-transform: uppercase; transition: 0.3s;
+.btn-dark:hover {
+  border-color: rgba(212, 175, 55, 0.38);
+  background: rgba(212, 175, 55, 0.1);
+  color: #fff;
 }
-.admin-wrapper .btn-confirm-yes:hover { background: #c0392b; box-shadow: 0 0 15px rgba(231, 76, 60, 0.4); }
 
-.admin-wrapper .btn-confirm-no {
-  flex: 1; background: transparent; border: 1px solid #555; color: #aaa; padding: 15px;
-  font-weight: bold; cursor: pointer; border-radius: 6px; text-transform: uppercase; transition: 0.3s;
+.admin-gallery-grid {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 16px;
 }
-.admin-wrapper .btn-confirm-no:hover { border-color: #fff; color: #fff; }
 
-/* RESPONSIVE */
-/* --- RESPONSIVE: TABLETE & TELEFOANE LATE (Până la 1200px) --- */
-@media (max-width: 1200px) {
-  
-  /* 1. LAYOUT - Trecem pe o singură coloană mai devreme */
-  .admin-wrapper .dashboard-grid {
-    grid-template-columns: 1fr; /* Una sub alta */
-    height: auto; /* Lăsăm înălțimea să crească cât e nevoie */
-    overflow: visible; /* Să putem da scroll pe toată pagina */
-    padding: 20px;
-    gap: 30px;
+.admin-photo-card {
+  position: relative;
+  overflow: hidden;
+  min-height: 230px;
+  border: 1px solid rgba(212, 175, 55, 0.14);
+  background: rgba(255, 255, 255, 0.028);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.32);
+}
+
+.admin-photo-card img {
+  width: 100%;
+  height: 230px;
+  object-fit: cover;
+  display: block;
+  transition: 0.28s ease;
+}
+
+.admin-photo-card:hover img {
+  transform: scale(1.04);
+}
+
+.btn-delete-photo {
+  position: absolute;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  min-height: 38px;
+  border: 1px solid rgba(255, 69, 58, 0.42);
+  background: rgba(0, 0, 0, 0.72);
+  color: #ff8b84;
+  font-size: 0.66rem;
+  font-weight: 1000;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+}
+
+.btn-delete-photo:hover {
+  background: rgba(255, 69, 58, 0.18);
+  color: #fff;
+}
+
+/* ==========================================================================
+   MODALS
+   ========================================================================== */
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 300;
+  padding: 20px;
+  display: grid;
+  place-items: center;
+  background: rgba(0, 0, 0, 0.74);
+  backdrop-filter: blur(10px);
+}
+
+.modal-box {
+  width: min(520px, 100%);
+  max-height: 90vh;
+  overflow-y: auto;
+  position: relative;
+  padding: 28px;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  border-left: 3px solid rgba(212, 175, 55, 0.82);
+  background:
+    radial-gradient(circle at top right, rgba(212, 175, 55, 0.12), transparent 42%),
+    linear-gradient(180deg, #111, #050505);
+  box-shadow: 0 35px 110px rgba(0, 0, 0, 0.62);
+}
+
+.modal-box h3 {
+  margin: 0 0 22px;
+  color: #fff;
+  font-family: var(--gc-font-title);
+  font-size: 1.45rem;
+  font-weight: 900;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.btn-close-modal {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.045);
+  color: #fff;
+  cursor: pointer;
+}
+
+.input-group {
+  margin-bottom: 16px;
+  display: grid;
+  gap: 8px;
+}
+
+.input-group label {
+  color: rgba(212, 175, 55, 0.94);
+  font-size: 0.68rem;
+  font-weight: 1000;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+.input-group input,
+.input-group select,
+.input-group textarea {
+  width: 100%;
+  min-height: 50px;
+  padding: 0 14px;
+  border: 1px solid rgba(212, 175, 55, 0.22);
+  outline: none;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.48);
+  color: #fff;
+  font-size: 0.92rem;
+  font-weight: 800;
+}
+
+.input-group textarea {
+  min-height: 92px;
+  padding: 13px 14px;
+  resize: vertical;
+  line-height: 1.6;
+}
+
+.input-group select option {
+  background: #080808;
+  color: #fff;
+}
+
+.input-group input:focus,
+.input-group select:focus,
+.input-group textarea:focus {
+  border-color: rgba(247, 223, 138, 0.72);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+}
+
+.admin-selected-service {
+  margin: 12px 0 18px;
+  padding: 14px;
+  border-left: 3px solid var(--gc-gold);
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.admin-selected-service span {
+  display: block;
+  margin-bottom: 5px;
+  color: rgba(212, 175, 55, 0.9);
+  font-size: 0.68rem;
+  font-weight: 1000;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.admin-selected-service strong {
+  color: #fff;
+  font-size: 0.94rem;
+  font-weight: 1000;
+}
+
+.modal-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.modal-actions button {
+  flex: 1;
+}
+
+.confirm-box {
+  max-width: 480px;
+}
+
+.confirm-title {
+  color: var(--gc-gold-2) !important;
+}
+
+.confirm-msg {
+  margin: 0 0 22px;
+  color: rgba(255, 255, 255, 0.68);
+  font-size: 0.95rem;
+  line-height: 1.7;
+}
+
+.btn-confirm-no,
+.btn-confirm-yes {
+  min-height: 46px;
+  padding: 0 15px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.045);
+  color: #fff;
+  font-size: 0.72rem;
+  font-weight: 1000;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.btn-confirm-no:hover {
+  border-color: rgba(212, 175, 55, 0.38);
+  background: rgba(212, 175, 55, 0.1);
+}
+
+.btn-confirm-yes {
+  border-color: rgba(255, 69, 58, 0.5);
+  background: rgba(255, 69, 58, 0.12);
+  color: #ff8b84;
+}
+
+.btn-confirm-yes:hover {
+  border-color: rgba(255, 69, 58, 0.76);
+  background: rgba(255, 69, 58, 0.2);
+  color: #fff;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 1180px) {
+  .dashboard-grid {
+    grid-template-columns: 1fr;
   }
-  
-  /* 2. CALENDARUL - Îl lăsăm să fie mare și aerisit */
-  .admin-wrapper .sidebar-calendar {
+
+  .sidebar-calendar {
+    position: static;
+  }
+
+  .calendar-card-premium {
+    max-width: 520px;
+  }
+}
+
+@media (max-width: 900px) {
+  .admin-wrapper::before,
+  .admin-wrapper::after {
+    display: none;
+  }
+
+  .top-navbar {
+    padding: 12px 14px;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .nav-left {
     width: 100%;
-    max-width: 600px; /* Să nu se lățească infinit pe tablete */
-    margin: 0 auto 30px auto; /* Centrat */
-    max-height: none; /* Fără limită de înălțime */
+    justify-content: space-between;
   }
 
-  .admin-wrapper .calendar-card-premium {
-    height: auto; /* Să se muleze pe conținut */
-    min-height: 400px; /* Înălțime minimă garantată */
+  .nav-brand {
+    flex: 1;
+    justify-content: center;
+    font-size: 0.74rem;
+    text-align: center;
   }
 
-  /* 3. ZILELE (Pătrățelele) - FIXUL PENTRU "SARE PESTE" */
-  .admin-wrapper .days-grid {
-    gap: 10px; /* Spațiu mai mare între zile */
+  .nav-actions-clean {
+    width: 100%;
+    justify-content: flex-end;
   }
 
-  .admin-wrapper .day-cell {
-    aspect-ratio: 1/1; /* Păstrează forma pătrată */
-    min-height: 50px; /* CRITIC: Nu lăsăm să fie mai mic de 50px */
-    font-size: 16px;
+  .dashboard-grid {
+    padding: 16px;
+    gap: 16px;
+  }
+
+  .schedule-header {
+    padding: 18px;
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .task-count {
+    width: fit-content;
+  }
+
+  .slot-card {
+    grid-template-columns: 72px minmax(0, 1fr) 46px;
+  }
+
+  .slot-time {
+    font-size: 0.82rem;
+  }
+
+  .slot-content {
+    padding: 14px;
+  }
+
+  .admin-appointment-extra {
+    flex-direction: column;
+  }
+
+  .admin-appointment-extra span {
+    width: fit-content;
+  }
+
+  .admin-slot-actions-clean {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .admin-slot-actions-clean button,
+  .admin-slot-actions-clean a,
+  .admin-clean-hint {
+    width: 100%;
+    justify-content: center;
+    text-align: center;
+  }
+
+  .admin-gallery-manager {
+    margin: 16px;
+    padding: 18px;
+  }
+
+  .upload-gallery-modern {
+    grid-template-columns: 1fr;
+  }
+
+  .upload-actions-row {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-gallery-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+
+  .admin-photo-card,
+  .admin-photo-card img {
+    min-height: 180px;
+    height: 180px;
+  }
+
+  .modal-box {
+    padding: 24px 18px;
+  }
+}
+
+@media (max-width: 560px) {
+  .calendar-card-premium {
+    max-width: 100%;
+  }
+
+  .month-header {
+    grid-template-columns: 38px 1fr 38px;
+    padding: 14px;
+  }
+
+  .month-header button {
+    width: 38px;
+    height: 38px;
+  }
+
+  .days-grid,
+  .weekdays-grid {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .day-cell {
+    min-height: 34px;
+    font-size: 0.74rem;
+  }
+
+  .schedule-header h2 {
+    font-size: 1.25rem;
+  }
+
+  .slot-card {
+    grid-template-columns: 1fr 44px;
+  }
+
+  .slot-time {
+    grid-column: 1 / -1;
+    min-height: 42px;
+    padding: 0 12px;
     display: flex;
-    align-items: center;
+    justify-content: flex-start;
+    border-right: 0;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.12);
+    background: rgba(0, 0, 0, 0.22);
+  }
+
+  .action-btn {
+    min-height: 100%;
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .slot-content {
+    grid-column: 1;
+    grid-row: 2;
+  }
+
+  .client-name {
+    font-size: 0.94rem;
+  }
+
+  .admin-gallery-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .admin-photo-card,
+  .admin-photo-card img {
+    min-height: 220px;
+    height: 220px;
+  }
+
+  .nav-left {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .btn-back-dash,
+  .nav-brand {
+    width: 100%;
     justify-content: center;
   }
 
-  /* Punctul programării - Să fie vizibil clar */
-  .admin-wrapper .day-cell .dot {
-    width: 8px; /* Punct mai mare */
-    height: 8px;
-    bottom: 6px;
-    background-color: var(--adm-gold);
-    box-shadow: 0 0 5px rgba(0,0,0,0.8); /* Umbră puternică să se vadă */
-    z-index: 2; /* Să fie peste orice */
+  .modal-actions,
+  .confirm-actions {
+    display: grid;
+    grid-template-columns: 1fr;
   }
 
-  /* 4. LISTA ORE - Scrollabil intern */
-  .admin-wrapper .schedule-area {
-    max-height: 600px; /* Pe tablete limităm lista să nu fie infinită */
+  .modal-actions button,
+  .confirm-actions button {
+    width: 100%;
+  }
+}/* ==========================================================================
+   ADMIN PANEL — TOP STACKED + PROGRAMĂRI COMPACT PREMIUM
+   Pune jos de tot în AdminPanel.css
+   ========================================================================== */
+
+/* ==========================================================================
+   ADMIN PANEL — FINAL CLEAN OVERRIDE
+   NAV STACKED + SLOT COMPACT FULL WIDTH
+   ========================================================================== */
+
+/* NAV: refresh + logout sus, Panou + Agenda jos */
+.admin-top-stacked {
+  min-height: auto !important;
+  padding: 12px 28px 14px !important;
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 10px !important;
+  align-items: stretch !important;
+}
+
+.admin-top-actions-row {
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.admin-top-actions-row .btn-icon {
+  width: 40px !important;
+  height: 40px !important;
+  border: 1px solid rgba(212, 175, 55, 0.28) !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  color: #f7df8a !important;
+}
+
+.admin-top-actions-row .btn-icon.logout {
+  border-color: rgba(255, 69, 58, 0.34) !important;
+  color: #ff8b84 !important;
+}
+
+.admin-top-main-row {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+}
+
+.admin-top-main-row .nav-brand {
+  margin-left: auto !important;
+}
+
+/* SLOTURI COMPACTE */
+.slots-list {
+  gap: 9px !important;
+}
+
+.slot-card {
+  grid-template-columns: 76px minmax(0, 1fr) 44px !important;
+  min-height: 64px !important;
+}
+
+/* programare ocupată */
+.slot-card.occupied {
+  display: grid !important;
+  grid-template-columns: 76px minmax(0, 1fr) 44px !important;
+  min-height: 64px !important;
+  align-items: stretch !important;
+  overflow: hidden !important;
+}
+
+.slot-card.occupied .slot-time {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  min-height: 64px !important;
+  padding: 8px !important;
+  display: grid !important;
+  place-items: center !important;
+  align-content: center !important;
+  border-right: 1px solid rgba(212, 175, 55, 0.12) !important;
+  border-bottom: 0 !important;
+}
+
+.slot-card.occupied .slot-content {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  min-height: 64px !important;
+  padding: 9px 10px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  align-items: center !important;
+}
+
+/* ascunde resturile vechi din card */
+.slot-card.occupied .slot-main-info,
+.slot-card.occupied .admin-appointment-extra,
+.slot-card.occupied .client-phone,
+.slot-card.occupied .client-msg,
+.slot-card.occupied .admin-slot-actions-clean,
+.admin-clean-hint {
+  display: none !important;
+}
+
+/* butonul clientului umple tot spațiul */
+.slot-card.occupied .admin-compact-client {
+  width: 100% !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  min-height: 42px !important;
+  margin: 0 !important;
+  padding: 0 12px !important;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: center !important;
+  gap: 14px !important;
+  justify-self: stretch !important;
+  border: 1px solid rgba(212, 175, 55, 0.28) !important;
+  background:
+    linear-gradient(90deg, rgba(212, 175, 55, 0.12), rgba(255, 255, 255, 0.025)) !important;
+  color: #fff !important;
+  cursor: pointer !important;
+  text-align: left !important;
+}
+
+.slot-card.occupied .admin-compact-client:hover {
+  border-color: rgba(247, 223, 138, 0.78) !important;
+  background:
+    linear-gradient(90deg, rgba(212, 175, 55, 0.2), rgba(255, 255, 255, 0.045)) !important;
+}
+
+/* nume client — merge și cu span, și cu strong */
+.slot-card.occupied .admin-compact-client .compact-client-name,
+.slot-card.occupied .admin-compact-client > strong {
+  min-width: 0 !important;
+  overflow: hidden !important;
+  color: #fff !important;
+  font-size: 0.95rem !important;
+  font-weight: 1000 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+}
+
+/* preț — merge și cu clasa nouă, și cu span simplu */
+.slot-card.occupied .admin-compact-client .compact-client-price,
+.slot-card.occupied .admin-compact-client > span:last-child {
+  min-height: 30px !important;
+  padding: 0 12px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(48, 209, 88, 0.45) !important;
+  background: rgba(48, 209, 88, 0.1) !important;
+  color: #30d158 !important;
+  font-size: 0.8rem !important;
+  font-weight: 1000 !important;
+  letter-spacing: 0.7px !important;
+  white-space: nowrap !important;
+}
+
+/* confirmată */
+.slot-card.occupied .admin-compact-client.confirmata {
+  border-color: rgba(48, 209, 88, 0.36) !important;
+  background:
+    linear-gradient(90deg, rgba(48, 209, 88, 0.13), rgba(212, 175, 55, 0.055)) !important;
+}
+
+/* X separat */
+.slot-card.occupied .action-btn.btn-del {
+  position: static !important;
+  grid-column: 3 !important;
+  grid-row: 1 !important;
+  width: 44px !important;
+  min-width: 44px !important;
+  height: auto !important;
+  min-height: 64px !important;
+  display: grid !important;
+  place-items: center !important;
+  border: 0 !important;
+  border-left: 1px solid rgba(212, 175, 55, 0.12) !important;
+  background: rgba(0, 0, 0, 0.18) !important;
+  color: #ff8b84 !important;
+  font-size: 1.1rem !important;
+  font-weight: 1000 !important;
+}
+
+.slot-card.occupied .action-btn.btn-del:hover {
+  background: rgba(255, 69, 58, 0.16) !important;
+  color: #fff !important;
+}
+
+/* libere */
+.slot-card.free {
+  grid-template-columns: 76px minmax(0, 1fr) 44px !important;
+  min-height: 62px !important;
+}
+
+.slot-card.free .slot-content {
+  display: flex !important;
+  align-items: center !important;
+}
+
+.slot-card.free .action-btn.btn-add {
+  width: 44px !important;
+  min-height: 62px !important;
+}
+
+/* mobile */
+@media (max-width: 900px) {
+  .admin-top-stacked {
+    padding: 12px 14px !important;
+  }
+
+  .admin-top-main-row {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-top-main-row .nav-brand,
+  .admin-top-main-row .btn-back-dash {
+    width: 100% !important;
+    justify-content: center !important;
   }
 }
 
-/* --- RESPONSIVE: TELEFOANE MOBILE (Sub 600px) --- */
-@media (max-width: 600px) {
-  
-  /* NAVBAR MARE (Cum ai cerut) */
-  .admin-wrapper .top-navbar {
-    height: 80px; 
-    padding: 0 15px;
+@media (max-width: 560px) {
+  .slot-card.occupied {
+    grid-template-columns: 1fr 44px !important;
   }
 
-  .admin-wrapper .nav-brand {
-    font-size: 18px;
-  }
-
-  /* Butoanele de sus URIAȘE */
-  .admin-wrapper .btn-icon {
-    width: 50px;
-    height: 50px;
-    font-size: 24px;
-  }
-
-  /* Calendar Compact dar Sigur */
-  .admin-wrapper .day-cell {
-    min-height: 45px; /* Pe mobil acceptăm 45px */
-    font-size: 14px;
-  }
-  
-  .admin-wrapper .day-cell .dot {
-    width: 6px;
-    height: 6px;
-  }
-
-  /* Header-ul Zilei pe Mobil */
-  .admin-wrapper .schedule-header {
-    flex-direction: column;
-    gap: 15px;
-  }
-
-  .admin-wrapper .header-left {
-    flex-direction: column;
-    width: 100%;
-  }
-
-  .admin-wrapper .btn-block-day {
-    width: 100%;
-    justify-content: center;
-    padding: 14px; /* Buton "gras" să-l nimerești */
-    font-size: 14px;
-  }
-}/* --- FORȚARE NAVBAR MARE PE TELEFON & TABLETĂ --- */
-@media (max-width: 1024px) {
-  
-  /* 1. BARA DE SUS - O facem înaltă de 90px (era 70px) */
-  .admin-wrapper .top-navbar {
-    height: 90px !important; 
-    padding: 0 15px !important;
+  .slot-card.occupied .slot-time {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    min-height: 34px !important;
+    padding: 0 10px !important;
     display: flex !important;
-    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.12) !important;
   }
 
-  /* 2. TITLUL (AGENDA ANDREI) - Să se vadă clar */
-  .admin-wrapper .nav-brand {
-    font-size: 26px !important;
-    font-weight: 900 !important;
-    white-space: nowrap; /* Să nu treacă pe rândul doi */
+  .slot-card.occupied .slot-content {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+    min-height: 58px !important;
+    padding: 8px !important;
   }
 
-  /* 3. BUTOANELE (Refresh și Logout) - LE FACEM GIGANTICE */
-  .admin-wrapper .btn-icon {
-    width: 55px !important;  /* Lățime mare */
-    height: 55px !important; /* Înălțime mare */
-    font-size: 28px !important; /* Iconița (săgeata/power) mare */
-    border-width: 2px !important; /* Bordură mai groasă */
-    margin-left: 5px !important; /* Spațiu între ele */
-    display: flex !important;
-    align-items: center !important;
+  .slot-card.occupied .action-btn.btn-del {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+    min-height: 58px !important;
+  }
+
+  .slot-card.free {
+    grid-template-columns: 1fr 44px !important;
+  }
+
+  .slot-card.free .slot-time {
+    grid-column: 1 / -1 !important;
+    min-height: 34px !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.12) !important;
+  }
+}
+
+/* MOBILE */
+@media (max-width: 900px) {
+  .admin-top-stacked {
+    padding: 12px 14px !important;
+  }
+
+  .admin-top-actions-row {
+    justify-content: flex-end !important;
+  }
+
+  .admin-top-main-row {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .admin-top-main-row .nav-brand,
+  .admin-top-main-row .btn-back-dash {
+    width: 100% !important;
     justify-content: center !important;
   }
 
-  /* 4. BUTONUL "PANOU" (Înapoi) */
-  .admin-wrapper .btn-back-dash {
-    padding: 12px 15px !important; /* Buton gras */
-    font-size: 14px !important;
-    height: auto !important;
-    border-width: 2px !important;
+  .slot-card {
+    grid-template-columns: 62px minmax(0, 1fr) 40px !important;
+    min-height: 70px !important;
   }
 
-  /* 5. ZONA DE ACȚIUNI DREAPTA */
-  .admin-wrapper .nav-actions {
-    gap: 10px !important; /* Spațiu între butoanele mari */
+  .slot-time {
+    font-size: 0.72rem !important;
+    padding: 8px 5px !important;
   }
-  
-  /* 6. ZONA STÂNGA (Brand + buton înapoi) */
-  .admin-wrapper .nav-left {
-    gap: 10px !important;
+
+  .slot-time::before {
+    font-size: 0.48rem;
+    margin-bottom: 4px;
+  }
+
+  .slot-content {
+    padding: 10px !important;
+  }
+
+  .client-name {
+    font-size: 0.86rem !important;
+  }
+
+  .action-btn {
+    width: 40px !important;
+    min-height: 70px !important;
+  }
+}
+
+@media (max-width: 560px) {
+  .slot-card {
+    grid-template-columns: 1fr 40px !important;
+  }
+
+  .slot-time {
+    grid-column: 1 / -1 !important;
+    min-height: 34px !important;
+    padding: 0 10px !important;
+    display: flex !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.12) !important;
+  }
+
+  .slot-time::before {
+    margin: 0 !important;
+  }
+
+  .slot-content {
+    grid-column: 1 !important;
+    grid-row: 2 !important;
+  }
+
+  .action-btn {
+    grid-column: 2 !important;
+    grid-row: 2 !important;
+    min-height: 100% !important;
+  }
+} /* ==========================================================================
+   FINAL — PROGRAMARE FĂRĂ BORDER, ALINIATĂ LA STÂNGA CA DISPONIBIL
+   ========================================================================== */
+
+.slot-card.occupied .slot-content {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  padding: 0 12px !important;
+}
+
+.slot-card.occupied .admin-compact-client {
+  width: auto !important;
+  max-width: 100% !important;
+  min-height: 44px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 12px !important;
+
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  cursor: pointer !important;
+}
+
+.slot-card.occupied .admin-compact-client:hover {
+  border: 0 !important;
+  background: transparent !important;
+  transform: none !important;
+}
+
+.slot-card.occupied .admin-compact-client .compact-client-name {
+  flex: 0 1 auto !important;
+  min-width: 0 !important;
+  max-width: 220px !important;
+
+  overflow: hidden !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+
+  color: #fff !important;
+  font-size: 0.95rem !important;
+  font-weight: 1000 !important;
+  line-height: 1 !important;
+}
+
+.slot-card.occupied .admin-compact-client .compact-client-price {
+  flex: 0 0 auto !important;
+  min-height: auto !important;
+  padding: 0 !important;
+
+  border: 0 !important;
+  background: transparent !important;
+
+  color: #30d158 !important;
+  font-size: 0.82rem !important;
+  font-weight: 1000 !important;
+  letter-spacing: 0.5px !important;
+  white-space: nowrap !important;
+}
+
+/* hover discret doar pe text */
+.slot-card.occupied .admin-compact-client:hover .compact-client-name {
+  color: #f7df8a !important;
+}
+
+.slot-card.occupied .admin-compact-client:hover .compact-client-price {
+  color: #4cff7a !important;
+}.slot-card.occupied .slot-content {
+  position: relative !important;
+  z-index: 3 !important;
+  pointer-events: auto !important;
+}
+
+.slot-card.occupied .admin-compact-client {
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 5 !important;
+  cursor: pointer !important;
+}
+
+.slot-card.occupied .action-btn.btn-del {
+  position: relative !important;
+  z-index: 6 !important;
+}/* ==========================================================================
+   APPOINTMENT POPUP — FIX FINAL
+   Popup detalii programare când apeși pe client
+   ========================================================================== */
+
+.slot-card.occupied .slot-content {
+  position: relative !important;
+  z-index: 3 !important;
+}
+
+.slot-card.occupied .admin-compact-client {
+  pointer-events: auto !important;
+  position: relative !important;
+  z-index: 5 !important;
+  cursor: pointer !important;
+}
+
+.appointment-detail-backdrop {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  padding: 20px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: rgba(0, 0, 0, 0.78) !important;
+  backdrop-filter: blur(12px) !important;
+}
+
+.appointment-detail-modal {
+  width: min(780px, 100%) !important;
+  max-height: 92vh !important;
+  overflow-y: auto !important;
+  position: relative !important;
+  padding: 26px !important;
+  border: 1px solid rgba(212, 175, 55, 0.26) !important;
+  border-left: 3px solid rgba(212, 175, 55, 0.9) !important;
+  background:
+    radial-gradient(circle at top right, rgba(212, 175, 55, 0.16), transparent 42%),
+    linear-gradient(180deg, #111, #050505) !important;
+  box-shadow: 0 35px 110px rgba(0, 0, 0, 0.72) !important;
+  color: #fff !important;
+}
+
+.appointment-modal-close {
+  position: absolute !important;
+  top: 14px !important;
+  right: 14px !important;
+  width: 38px !important;
+  height: 38px !important;
+  border: 1px solid rgba(255, 255, 255, 0.14) !important;
+  background: rgba(255, 255, 255, 0.045) !important;
+  color: #fff !important;
+  font-size: 1rem !important;
+  cursor: pointer !important;
+}
+
+.appointment-modal-close:hover {
+  border-color: rgba(255, 69, 58, 0.6) !important;
+  background: rgba(255, 69, 58, 0.14) !important;
+}
+
+.appointment-modal-head {
+  padding-right: 48px !important;
+  margin-bottom: 20px !important;
+}
+
+.appointment-modal-head span {
+  display: block !important;
+  margin-bottom: 8px !important;
+  color: rgba(212, 175, 55, 0.94) !important;
+  font-size: 0.68rem !important;
+  font-weight: 1000 !important;
+  letter-spacing: 1.6px !important;
+  text-transform: uppercase !important;
+}
+
+.appointment-modal-head h3 {
+  margin: 0 !important;
+  color: #fff !important;
+  font-family: "Cinzel", "Playfair Display", Georgia, serif !important;
+  font-size: clamp(1.35rem, 4vw, 2.15rem) !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.08em !important;
+  text-transform: uppercase !important;
+}
+
+.appointment-modal-head p {
+  margin: 8px 0 0 !important;
+  color: rgba(255, 255, 255, 0.55) !important;
+  font-size: 0.86rem !important;
+  font-weight: 800 !important;
+}
+
+.appointment-modal-grid {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  gap: 14px !important;
+}
+
+.appointment-modal-grid .wide {
+  grid-column: 1 / -1 !important;
+}
+
+.appointment-modal-summary {
+  margin: 18px 0 !important;
+  display: grid !important;
+  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+  gap: 10px !important;
+}
+
+.appointment-modal-summary article {
+  min-height: 78px !important;
+  padding: 14px !important;
+  display: grid !important;
+  align-content: center !important;
+  gap: 6px !important;
+  border: 1px solid rgba(212, 175, 55, 0.15) !important;
+  background: rgba(212, 175, 55, 0.065) !important;
+}
+
+.appointment-modal-summary span {
+  color: rgba(212, 175, 55, 0.88) !important;
+  font-size: 0.62rem !important;
+  font-weight: 1000 !important;
+  letter-spacing: 1.3px !important;
+  text-transform: uppercase !important;
+}
+
+.appointment-modal-summary strong {
+  color: #fff !important;
+  font-size: 0.9rem !important;
+  font-weight: 1000 !important;
+}
+
+.appointment-modal-actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+}
+
+.appointment-modal-actions button,
+.appointment-modal-actions a {
+  min-height: 44px !important;
+  padding: 0 15px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  text-decoration: none !important;
+}
+
+.btn-modal-whatsapp {
+  border: 1px solid rgba(48, 209, 88, 0.42) !important;
+  background: rgba(48, 209, 88, 0.1) !important;
+  color: #30d158 !important;
+  font-size: 0.72rem !important;
+  font-weight: 1000 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+}
+
+.btn-modal-danger {
+  border: 1px solid rgba(255, 69, 58, 0.42) !important;
+  background: rgba(255, 69, 58, 0.1) !important;
+  color: #ff8b84 !important;
+  font-size: 0.72rem !important;
+  font-weight: 1000 !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+}
+
+.btn-modal-whatsapp:hover,
+.btn-modal-danger:hover {
+  border-color: rgba(247, 223, 138, 0.68) !important;
+  background: rgba(212, 175, 55, 0.14) !important;
+  color: #fff !important;
+}
+
+@media (max-width: 700px) {
+  .appointment-detail-backdrop {
+    padding: 12px !important;
+    align-items: end !important;
+  }
+
+  .appointment-detail-modal {
+    width: 100% !important;
+    max-height: 88vh !important;
+    padding: 22px 16px !important;
+  }
+
+  .appointment-modal-grid,
+  .appointment-modal-summary {
+    grid-template-columns: 1fr !important;
+  }
+
+  .appointment-modal-actions {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+  }
+
+  .appointment-modal-actions button,
+  .appointment-modal-actions a {
+    width: 100% !important;
   }
 }

@@ -1,0 +1,9 @@
+﻿node_modules
+.env
+server/.env
+client/.env
+client/.env.local
+dist
+build
+uploads
+server/uploads

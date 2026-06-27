@@ -1,252 +1,2019 @@
-/* =========================================
-   MASTER DASHBOARD - IZOLAT (SAFE MODE)
-   Toate regulile încep cu .master-wrapper
-   ========================================= */
+/* ==========================================================================
+   MASTER DASHBOARD — GENTLEMAN'S CLUB
+   FULL CSS PREMIUM / SMART DASHBOARD
+   Pentru MasterDashboard cu:
+   - bani făcuți
+   - programări anulate + pune înapoi
+   - custom mini calendar
+   - search
+   - load more pentru multe programări
+   ========================================================================== */
 
-/* --- VARIABILE LOCALE (Se aplică doar aici) --- */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
+
+:root {
+  --gc-black: #030303;
+  --gc-black-2: #080808;
+  --gc-black-3: #101010;
+  --gc-panel: rgba(255, 255, 255, 0.035);
+  --gc-panel-2: rgba(255, 255, 255, 0.055);
+  --gc-gold: #d4af37;
+  --gc-gold-2: #f7df8a;
+  --gc-gold-dark: #8b6b18;
+  --gc-white: #ffffff;
+  --gc-text: rgba(255, 255, 255, 0.86);
+  --gc-muted: rgba(255, 255, 255, 0.58);
+  --gc-muted-2: rgba(255, 255, 255, 0.34);
+  --gc-border: rgba(255, 255, 255, 0.1);
+  --gc-border-gold: rgba(212, 175, 55, 0.2);
+  --gc-red: #ff453a;
+  --gc-green: #30d158;
+  --gc-blue: #0a84ff;
+  --gc-orange: #ff9f0a;
+  --gc-shadow: 0 30px 90px rgba(0, 0, 0, 0.48);
+  --gc-font-title: "Cinzel", "Playfair Display", Georgia, serif;
+  --gc-font-body: "Inter", Arial, sans-serif;
+}
+
+/* ==========================================================================
+   BASE
+   ========================================================================== */
+
+.master-wrapper,
+.master-wrapper * {
+  box-sizing: border-box;
+}
+
 .master-wrapper {
-  --mst-gold: #d4af37;
-  --mst-dark: #121212;
-  --mst-card: #1e1e1e;
-  --mst-text: #ffffff;
-  --mst-gray: #aaaaaa;
-  
-  /* Resetări locale */
-  display: flex;
   min-height: 100vh;
-  background-color: var(--mst-dark);
-  color: var(--mst-text);
-  font-family: 'Roboto', sans-serif;
+  display: flex;
+  position: relative;
   overflow-x: hidden;
-  position: absolute; /* Se asigură că acoperă tot */
-  top: 0;
-  left: 0;
-  width: 100%;
-  z-index: 1;
+  color: var(--gc-text);
+  font-family: var(--gc-font-body);
+  background:
+    radial-gradient(circle at 14% 8%, rgba(212, 175, 55, 0.13), transparent 28%),
+    radial-gradient(circle at 88% 14%, rgba(212, 175, 55, 0.08), transparent 31%),
+    radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.04), transparent 38%),
+    linear-gradient(135deg, #020202 0%, #090909 48%, #020202 100%);
 }
 
-/* --- 1. SIDEBAR (MENIU STÂNGA) --- */
-.master-wrapper .master-sidebar {
-  width: 260px;
-  background: #0a0a0a;
-  border-right: 1px solid #333;
-  display: flex;
-  flex-direction: column;
-  padding: 20px;
+.master-wrapper::before {
+  content: "MASTER";
   position: fixed;
-  height: 100vh;
-  z-index: 1000;
-  transition: transform 0.3s ease-in-out;
-  left: 0; top: 0; /* Fixare explicită */
+  right: -105px;
+  top: 48%;
+  z-index: 0;
+  transform: translateY(-50%) rotate(-90deg);
+  color: rgba(212, 175, 55, 0.04);
+  font-family: var(--gc-font-title);
+  font-size: clamp(5rem, 15vw, 14rem);
+  font-weight: 900;
+  letter-spacing: 0.18em;
+  pointer-events: none;
 }
 
-.master-wrapper .sidebar-header {
-  display: flex;
-  justify-content: space-between;
+.master-wrapper::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+  background-size: 58px 58px;
+  mask-image: radial-gradient(circle at center, black, transparent 74%);
+  pointer-events: none;
+}
+
+.master-wrapper button,
+.master-wrapper input,
+.master-wrapper select {
+  font-family: inherit;
+}
+
+.master-wrapper button {
+  border-radius: 0;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* ==========================================================================
+   FLOATING MESSAGES
+   ========================================================================== */
+
+.floating-messages-btn {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  z-index: 100;
+  width: 62px;
+  height: 62px;
+  border: 1px solid rgba(212, 175, 55, 0.58);
+  border-radius: 999px !important;
+  background:
+    radial-gradient(circle at top left, rgba(247, 223, 138, 0.3), transparent 42%),
+    linear-gradient(135deg, rgba(212, 175, 55, 0.26), rgba(0, 0, 0, 0.92));
+  color: #fff;
+  font-size: 1.5rem;
+  cursor: pointer;
+  box-shadow:
+    0 18px 55px rgba(0, 0, 0, 0.5),
+    0 0 34px rgba(212, 175, 55, 0.22);
+  transition: 0.22s ease;
+}
+
+.floating-messages-btn:hover {
+  transform: translateY(-4px) scale(1.03);
+  border-color: rgba(247, 223, 138, 0.88);
+  box-shadow:
+    0 24px 70px rgba(0, 0, 0, 0.58),
+    0 0 44px rgba(212, 175, 55, 0.34);
+}
+
+.floating-message-badge {
+  position: absolute;
+  top: -7px;
+  right: -7px;
+  min-width: 25px;
+  height: 25px;
+  padding: 0 7px;
+  display: inline-flex;
   align-items: center;
-  margin-bottom: 40px;
+  justify-content: center;
+  border: 2px solid #050505;
+  border-radius: 999px;
+  background: var(--gc-red);
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 1000;
+  line-height: 1;
 }
 
-.master-wrapper .sidebar-header h2 {
-  font-family: 'Oswald', sans-serif;
-  font-size: 22px;
+/* ==========================================================================
+   SIDEBAR
+   ========================================================================== */
+
+.master-sidebar {
+  width: 292px;
+  min-width: 292px;
+  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  z-index: 20;
+  border-right: 1px solid rgba(212, 175, 55, 0.15);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(212, 175, 55, 0.13), transparent 34%),
+    linear-gradient(180deg, rgba(12, 12, 12, 0.99), rgba(3, 3, 3, 0.99));
+  box-shadow: 18px 0 70px rgba(0, 0, 0, 0.38);
+}
+
+.sidebar-header {
+  min-height: 106px;
+  padding: 28px 24px 20px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.13);
+}
+
+.sidebar-header h2 {
   margin: 0;
   color: #fff;
+  font-family: var(--gc-font-title);
+  font-size: 1.15rem;
+  font-weight: 900;
+  line-height: 1.12;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
 }
-.master-wrapper .sidebar-header span { color: var(--mst-gold); }
 
-.master-wrapper .btn-close-sidebar {
-  display: none; 
-  background: transparent;
-  border: none;
+.sidebar-header h2 span {
+  display: block;
+  margin-top: 7px;
+  color: var(--gc-gold);
+  font-size: 0.76rem;
+  letter-spacing: 0.28em;
+}
+
+.btn-close-sidebar {
+  display: none;
+  width: 38px;
+  height: 38px;
+  border: 1px solid rgba(255, 255, 255, 0.13);
+  background: rgba(255, 255, 255, 0.045);
   color: #fff;
-  font-size: 24px;
+  font-size: 1.05rem;
   cursor: pointer;
 }
 
-.master-wrapper .sidebar-nav { display: flex; flex-direction: column; gap: 10px; }
+.sidebar-nav {
+  padding: 18px 14px;
+  display: grid;
+  gap: 8px;
+}
 
-.master-wrapper .nav-item {
+.nav-item {
+  width: 100%;
+  min-height: 48px;
+  padding: 0 16px;
+  border: 1px solid transparent;
   background: transparent;
-  border: none;
-  color: var(--mst-gray);
-  padding: 15px;
-  text-align: left;
-  font-size: 16px;
+  color: rgba(255, 255, 255, 0.68);
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 10px;
+  font-size: 0.81rem;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
   cursor: pointer;
-  border-radius: 8px;
-  transition: 0.3s;
-  font-weight: 500;
-  width: 100%; /* Fix width */
+  transition: 0.2s ease;
 }
 
-.master-wrapper .nav-item:hover { background: #222; color: #fff; }
-.master-wrapper .nav-item.active { background: var(--mst-gold); color: #000; font-weight: bold; }
-.master-wrapper .nav-item.logout { color: #e74c3c; margin-top: 20px; }
-.master-wrapper .nav-item.logout:hover { background: rgba(231, 76, 60, 0.1); }
-.master-wrapper .divider { height: 1px; background: #333; margin: 10px 0; }
+.nav-item:hover {
+  border-color: rgba(212, 175, 55, 0.24);
+  background: rgba(212, 175, 55, 0.075);
+  color: #fff;
+}
 
+.nav-item.active {
+  border-color: rgba(212, 175, 55, 0.46);
+  background:
+    linear-gradient(90deg, rgba(212, 175, 55, 0.19), rgba(212, 175, 55, 0.045));
+  color: var(--gc-gold-2);
+  box-shadow: inset 3px 0 0 var(--gc-gold);
+}
 
-/* --- 2. MAIN CONTENT --- */
-.master-wrapper .master-content {
-  margin-left: 260px;
+.nav-item.logout {
+  color: rgba(255, 105, 97, 0.92);
+}
+
+.nav-item.logout:hover {
+  border-color: rgba(255, 69, 58, 0.4);
+  background: rgba(255, 69, 58, 0.09);
+  color: #fff;
+}
+
+.divider {
+  height: 1px;
+  margin: 12px 10px;
+  background: linear-gradient(90deg, transparent, rgba(212, 175, 55, 0.28), transparent);
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+/* ==========================================================================
+   MAIN
+   ========================================================================== */
+
+.master-content {
+  width: 100%;
+  min-width: 0;
+  position: relative;
+  z-index: 1;
+  padding: 28px;
+}
+
+.content-header {
+  min-height: 88px;
+  padding: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 22px;
+  border: 1px solid rgba(212, 175, 55, 0.14);
+  background:
+    radial-gradient(circle at top left, rgba(212, 175, 55, 0.1), transparent 36%),
+    rgba(255, 255, 255, 0.032);
+  box-shadow: var(--gc-shadow);
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.header-left h1,
+.content-header h1 {
+  margin: 0;
+  color: #fff;
+  font-family: var(--gc-font-title);
+  font-size: clamp(1.55rem, 3vw, 2.45rem);
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.master-subtitle {
+  margin: 7px 0 0;
+  color: rgba(255, 255, 255, 0.54);
+  font-size: 0.92rem;
+  font-weight: 650;
+}
+
+.burger-btn {
+  width: 46px;
+  height: 46px;
+  display: none;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--gc-gold-2);
+  font-size: 1.3rem;
+  cursor: pointer;
+}
+
+.user-info {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.master-refresh-btn {
+  min-height: 40px;
+  padding: 0 15px;
+  border: 1px solid rgba(212, 175, 55, 0.34);
+  background: rgba(212, 175, 55, 0.09);
+  color: var(--gc-gold-2);
+  font-size: 0.72rem;
+  font-weight: 1000;
+  letter-spacing: 1.25px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.22s ease;
+}
+
+.master-refresh-btn:hover {
+  border-color: rgba(247, 223, 138, 0.78);
+  background: rgba(212, 175, 55, 0.17);
+  color: #fff;
+}
+
+.master-refresh-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   FILTERS + SEARCH
+   ========================================================================== */
+
+.master-filters {
+  margin: 24px 0;
+  padding: 16px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  border: 1px solid rgba(212, 175, 55, 0.14);
+  background:
+    linear-gradient(135deg, rgba(212, 175, 55, 0.06), transparent 34%),
+    rgba(255, 255, 255, 0.026);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.26);
+}
+
+.smart-filters {
+  align-items: flex-start;
+}
+
+.range-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.range-buttons button {
+  min-height: 38px;
+  padding: 0 14px;
+  border: 1px solid rgba(255, 255, 255, 0.105);
+  background: rgba(0, 0, 0, 0.3);
+  color: rgba(255, 255, 255, 0.66);
+  font-size: 0.72rem;
+  font-weight: 1000;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.range-buttons button:hover {
+  border-color: rgba(212, 175, 55, 0.44);
+  color: #fff;
+  background: rgba(212, 175, 55, 0.08);
+}
+
+.range-buttons button.active {
+  border-color: rgba(247, 223, 138, 0.76);
+  background:
+    linear-gradient(135deg, rgba(212, 175, 55, 0.23), rgba(212, 175, 55, 0.07));
+  color: var(--gc-gold-2);
+  box-shadow: inset 0 -2px 0 var(--gc-gold);
+}
+
+.barber-filter {
+  min-width: 215px;
+}
+
+.barber-filter select,
+.master-search-filter input {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 13px;
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  outline: none;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.47);
+  color: #fff;
+  font-size: 0.82rem;
+  font-weight: 850;
+}
+
+.barber-filter select:focus,
+.master-search-filter input:focus {
+  border-color: rgba(247, 223, 138, 0.7);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.08);
+}
+
+.barber-filter select option {
+  background: #080808;
+  color: #fff;
+}
+
+.master-search-filter {
   flex: 1;
-  padding: 30px;
-  width: calc(100% - 260px);
+  min-width: 250px;
 }
 
-/* HEADER SUS */
-.master-wrapper .content-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 30px;
+.master-search-filter input::placeholder {
+  color: rgba(255, 255, 255, 0.34);
 }
 
-.master-wrapper .header-left {
+.custom-date-filter {
   display: flex;
   align-items: center;
-  gap: 15px;
+  gap: 8px;
+  flex-wrap: wrap;
 }
 
-.master-wrapper .content-header h1 {
-  font-family: 'Oswald', sans-serif;
-  font-size: 28px;
-  margin: 0;
+.custom-date-smart {
+  width: 100%;
+}
+
+/* ==========================================================================
+   MINI RANGE CALENDAR
+   ========================================================================== */
+
+.mini-range-calendar {
+  width: min(440px, 100%);
+  padding: 15px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  background:
+    radial-gradient(circle at top right, rgba(212, 175, 55, 0.11), transparent 42%),
+    rgba(0, 0, 0, 0.4);
+  box-shadow: 0 18px 55px rgba(0, 0, 0, 0.28);
+}
+
+.mini-calendar-top {
+  display: grid;
+  grid-template-columns: 38px 1fr 38px;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 13px;
+}
+
+.mini-calendar-top strong {
+  color: var(--gc-gold-2);
+  font-family: var(--gc-font-title);
+  font-size: 0.96rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.mini-calendar-top button,
+.mini-calendar-footer button {
+  min-height: 34px;
+  border: 1px solid rgba(212, 175, 55, 0.26);
+  background: rgba(212, 175, 55, 0.085);
+  color: var(--gc-gold-2);
+  font-weight: 1000;
+  cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.mini-calendar-top button:hover,
+.mini-calendar-footer button:hover {
+  border-color: rgba(247, 223, 138, 0.66);
+  background: rgba(212, 175, 55, 0.16);
   color: #fff;
 }
 
-/* BURGER MENU (Specific Master) */
-.master-wrapper .burger-btn {
-  display: none; /* Ascuns pe desktop */
-  background: transparent;
-  border: 1px solid var(--mst-gold);
-  color: var(--mst-gold);
-  font-size: 24px;
-  width: 45px;
-  height: 45px;
-  border-radius: 8px;
+.mini-calendar-weekdays,
+.mini-calendar-days {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 5px;
+}
+
+.mini-calendar-weekdays {
+  margin-bottom: 6px;
+}
+
+.mini-calendar-weekdays span {
+  color: rgba(255, 255, 255, 0.38);
+  font-size: 0.66rem;
+  font-weight: 1000;
+  letter-spacing: 1px;
+  text-align: center;
+  text-transform: uppercase;
+}
+
+.mini-calendar-days button {
+  aspect-ratio: 1;
+  min-height: 35px;
+  border: 1px solid rgba(255, 255, 255, 0.085);
+  background: rgba(255, 255, 255, 0.036);
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.78rem;
+  font-weight: 1000;
   cursor: pointer;
+  transition: 0.18s ease;
+}
+
+.mini-calendar-days button:hover:not(:disabled) {
+  border-color: rgba(212, 175, 55, 0.5);
+  background: rgba(212, 175, 55, 0.1);
+  color: #fff;
+}
+
+.mini-calendar-days button.empty {
+  border-color: transparent;
+  background: transparent;
+  cursor: default;
+}
+
+.mini-calendar-days button.in-range {
+  border-color: rgba(212, 175, 55, 0.36);
+  background: rgba(212, 175, 55, 0.13);
+  color: var(--gc-gold-2);
+}
+
+.mini-calendar-days button.start,
+.mini-calendar-days button.end {
+  border-color: rgba(247, 223, 138, 0.92);
+  background: linear-gradient(135deg, rgba(247, 223, 138, 0.96), rgba(212, 175, 55, 0.82));
+  color: #050505;
+}
+
+.mini-calendar-footer {
+  margin-top: 12px;
+  display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.mini-calendar-footer span {
+  color: rgba(255, 255, 255, 0.64);
+  font-size: 0.76rem;
+  font-weight: 850;
+}
+
+/* ==========================================================================
+   SERVER WARNING
+   ========================================================================== */
+
+.server-limit-warning {
+  margin: -6px 0 20px;
+  padding: 14px 15px;
+  border: 1px solid rgba(255, 159, 10, 0.3);
+  border-left: 3px solid var(--gc-orange);
+  background: rgba(255, 159, 10, 0.08);
+  color: #ffcf7a;
+  font-size: 0.82rem;
+  font-weight: 850;
+  line-height: 1.5;
+}
+
+/* ==========================================================================
+   STATS
+   ========================================================================== */
+
+.stats-grid {
+  margin-bottom: 24px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.stat-card {
+  min-height: 148px;
+  padding: 20px;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(212, 175, 55, 0.12);
+  background:
+    radial-gradient(circle at top right, rgba(212, 175, 55, 0.08), transparent 44%),
+    rgba(255, 255, 255, 0.032);
+  box-shadow: 0 22px 60px rgba(0, 0, 0, 0.33);
+}
+
+.stat-card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-left: 3px solid rgba(212, 175, 55, 0.62);
+  pointer-events: none;
+}
+
+.stat-card::after {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  right: -62px;
+  bottom: -62px;
+  border: 1px solid rgba(212, 175, 55, 0.14);
+  transform: rotate(45deg);
+  pointer-events: none;
+}
+
+.stat-card.gold {
+  border-color: rgba(212, 175, 55, 0.36);
+  background:
+    radial-gradient(circle at top right, rgba(247, 223, 138, 0.2), transparent 42%),
+    linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(255, 255, 255, 0.028));
+}
+
+.stat-card h3 {
+  margin: 0 0 14px;
+  color: rgba(255, 255, 255, 0.48);
+  font-size: 0.72rem;
+  font-weight: 1000;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.stat-value {
+  margin: 0;
+  color: #fff;
+  font-family: var(--gc-font-title);
+  font-size: clamp(2rem, 4vw, 3.15rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.03em;
+}
+
+.stat-value.small {
+  color: var(--gc-gold-2);
+  font-size: clamp(1.05rem, 2vw, 1.45rem);
+  line-height: 1.25;
+  word-break: break-word;
+}
+
+.smart-stats-grid .money-stat {
+  color: var(--gc-gold-2);
+  font-size: clamp(1.35rem, 3vw, 2.35rem);
+}
+
+.stat-note {
+  display: block;
+  margin-top: 10px;
+  color: rgba(255, 255, 255, 0.42);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+}
+
+/* ==========================================================================
+   SECTIONS
+   ========================================================================== */
+
+.recent-section {
+  border: 1px solid rgba(212, 175, 55, 0.13);
+  background:
+    radial-gradient(circle at top left, rgba(212, 175, 55, 0.058), transparent 30%),
+    rgba(255, 255, 255, 0.027);
+  box-shadow: var(--gc-shadow);
+}
+
+.canceled-section {
+  margin-top: 24px;
+  border-color: rgba(255, 69, 58, 0.18);
+}
+
+.canceled-section .section-header {
+  background:
+    linear-gradient(90deg, rgba(255, 69, 58, 0.075), transparent 48%),
+    rgba(255, 255, 255, 0.015);
+}
+
+.section-header {
+  padding: 20px 22px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.105);
+}
+
+.section-header h3 {
+  margin: 0;
+  color: #fff;
+  font-family: var(--gc-font-title);
+  font-size: 1.2rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.section-subtitle {
+  margin: 6px 0 0;
+  color: rgba(255, 255, 255, 0.44);
+  font-size: 0.82rem;
+  font-weight: 650;
+}
+
+.task-count {
+  min-height: 32px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  background: rgba(212, 175, 55, 0.085);
+  color: var(--gc-gold-2);
+  font-size: 0.72rem;
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.canceled-count {
+  border-color: rgba(255, 69, 58, 0.32);
+  background: rgba(255, 69, 58, 0.085);
+  color: #ff8b84;
+}
+
+.empty-state {
+  padding: 44px 22px;
+  color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+  font-size: 0.95rem;
+  font-weight: 750;
+}
+
+/* ==========================================================================
+   TABLE
+   ========================================================================== */
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(212, 175, 55, 0.45) rgba(255, 255, 255, 0.04);
+}
+
+.table-container::-webkit-scrollbar {
+  height: 9px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.42);
+}
+
+.custom-table {
+  width: 100%;
+  min-width: 1260px;
+  border-collapse: collapse;
+}
+
+.custom-table thead {
+  background: rgba(0, 0, 0, 0.38);
+}
+
+.custom-table th {
+  padding: 16px 14px;
+  color: rgba(212, 175, 55, 0.94);
+  font-size: 0.67rem;
+  font-weight: 1000;
+  letter-spacing: 0.14em;
+  text-align: left;
+  text-transform: uppercase;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.17);
+}
+
+.custom-table td {
+  padding: 16px 14px;
+  color: rgba(255, 255, 255, 0.74);
+  font-size: 0.85rem;
+  font-weight: 650;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.066);
+}
+
+.custom-table tbody tr {
+  transition: 0.18s ease;
+}
+
+.custom-table tbody tr:hover {
+  background: rgba(212, 175, 55, 0.046);
+}
+
+.custom-table a {
+  color: var(--gc-gold-2);
+  text-decoration: none;
+}
+
+.custom-table a:hover {
+  color: #fff;
+}
+
+.canceled-table tbody tr {
+  opacity: 0.82;
+}
+
+.canceled-table tbody tr:hover {
+  opacity: 1;
+  background: rgba(255, 69, 58, 0.047);
+}
+
+.fw-bold {
+  color: #fff !important;
+  font-weight: 1000 !important;
+}
+
+.master-programari-table td {
+  vertical-align: middle;
+}
+
+.barber-pill {
+  min-height: 28px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  background: rgba(212, 175, 55, 0.09);
+  color: var(--gc-gold-2);
+  font-size: 0.7rem;
+  font-weight: 1000;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+}
+
+.master-service-cell {
+  min-width: 150px;
+  display: grid;
+  gap: 5px;
+}
+
+.master-service-cell strong {
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 1000;
+  line-height: 1.3;
+}
+
+.master-service-cell span {
+  color: var(--gc-gold);
+  font-size: 0.76rem;
+  font-weight: 1000;
+}
+
+.money-cell {
+  color: var(--gc-gold-2) !important;
+  font-weight: 1000 !important;
+  white-space: nowrap;
+}
+
+/* ==========================================================================
+   STATUS
+   ========================================================================== */
+
+.master-status-pill {
+  min-height: 28px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.046);
+  color: #fff;
+  font-size: 0.66rem;
+  font-weight: 1000;
+  letter-spacing: 1.15px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.master-status-noua {
+  border-color: rgba(212, 175, 55, 0.54);
+  background: rgba(212, 175, 55, 0.12);
+  color: var(--gc-gold-2);
+}
+
+.master-status-confirmata {
+  border-color: rgba(48, 209, 88, 0.54);
+  background: rgba(48, 209, 88, 0.12);
+  color: var(--gc-green);
+}
+
+.master-status-finalizata {
+  border-color: rgba(10, 132, 255, 0.54);
+  background: rgba(10, 132, 255, 0.12);
+  color: #64b5ff;
+}
+
+.master-status-anulata {
+  border-color: rgba(255, 69, 58, 0.54);
+  background: rgba(255, 69, 58, 0.12);
+  color: #ff6961;
+}
+
+.master-status-blocat {
+  border-color: rgba(255, 159, 10, 0.54);
+  background: rgba(255, 159, 10, 0.12);
+  color: #ffb340;
+}
+
+/* ==========================================================================
+   ACTIONS
+   ========================================================================== */
+
+.table-actions,
+.master-actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 7px;
+  min-width: 350px;
+}
+
+.master-actions button,
+.master-actions a {
+  min-height: 33px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(212, 175, 55, 0.19);
+  background: rgba(255, 255, 255, 0.047);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 1000;
+  letter-spacing: 0.85px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+  transition: 0.2s ease;
+}
+
+.master-actions button:hover,
+.master-actions a:hover {
+  border-color: rgba(247, 223, 138, 0.6);
+  background: rgba(212, 175, 55, 0.13);
+  color: var(--gc-gold-2);
+}
+
+.master-actions a.call {
+  border-color: rgba(10, 132, 255, 0.38);
+  background: rgba(10, 132, 255, 0.09);
+  color: #64b5ff;
+}
+
+.master-actions a.whatsapp {
+  border-color: rgba(48, 209, 88, 0.42);
+  background: rgba(48, 209, 88, 0.105);
+  color: var(--gc-green);
+}
+
+.master-actions a.call:hover,
+.master-actions a.whatsapp:hover {
+  color: #fff;
+}
+
+.master-actions button.delete {
+  border-color: rgba(255, 69, 58, 0.44);
+  background: rgba(255, 69, 58, 0.088);
+  color: #ff6961;
+}
+
+.master-actions button.hard-delete,
+.master-mobile-actions button.hard-delete {
+  border-color: rgba(255, 255, 255, 0.13);
+  background: rgba(0, 0, 0, 0.36);
+  color: rgba(255, 255, 255, 0.58);
+}
+
+.master-actions button.delete:hover,
+.master-actions button.hard-delete:hover,
+.master-mobile-actions button.hard-delete:hover {
+  border-color: rgba(255, 69, 58, 0.74);
+  background: rgba(255, 69, 58, 0.16);
+  color: #fff;
+}
+
+.master-actions button:disabled,
+.master-mobile-actions button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* ==========================================================================
+   LOAD MORE
+   ========================================================================== */
+
+.load-more-wrap {
+  padding: 18px;
+  display: flex;
   justify-content: center;
 }
 
-.master-wrapper .user-info span { color: var(--mst-gray); font-weight: bold; }
-
-
-/* --- 3. STATS GRID --- */
-.master-wrapper .stats-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
-  margin-bottom: 40px;
+.load-more-btn {
+  min-height: 42px;
+  padding: 0 18px;
+  border: 1px solid rgba(212, 175, 55, 0.36);
+  background: rgba(212, 175, 55, 0.085);
+  color: var(--gc-gold-2);
+  font-size: 0.74rem;
+  font-weight: 1000;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.2s ease;
 }
 
-.master-wrapper .stat-card {
-  background: var(--mst-card);
-  padding: 25px;
-  border-radius: 12px;
-  border: 1px solid #333;
-  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-}
-.master-wrapper .stat-card.gold { border-color: var(--mst-gold); background: rgba(212, 175, 55, 0.05); }
-
-.master-wrapper .stat-card h3 { color: var(--mst-gray); font-size: 14px; text-transform: uppercase; margin-bottom: 10px; }
-.master-wrapper .stat-value { font-size: 28px; font-weight: bold; color: #fff; margin: 0; }
-.master-wrapper .stat-value.small { font-size: 20px; }
-
-
-/* --- 4. RECENT TABLE --- */
-.master-wrapper .recent-section {
-  background: var(--mst-card);
-  padding: 25px;
-  border-radius: 12px;
-  border: 1px solid #333;
+.load-more-btn:hover {
+  border-color: rgba(247, 223, 138, 0.72);
+  background: rgba(212, 175, 55, 0.16);
+  color: #fff;
 }
 
-.master-wrapper .section-header {
+/* ==========================================================================
+   MOBILE CARDS
+   ========================================================================== */
+
+.mobile-list {
+  display: none;
+  padding: 16px;
+}
+
+.appointment-mobile {
+  border: 1px solid rgba(212, 175, 55, 0.14);
+  background:
+    radial-gradient(circle at top right, rgba(212, 175, 55, 0.085), transparent 42%),
+    rgba(255, 255, 255, 0.036);
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.33);
+}
+
+.master-mobile-card {
+  padding: 16px;
+  border-left: 3px solid rgba(212, 175, 55, 0.66);
+}
+
+.canceled-card {
+  border-left-color: rgba(255, 69, 58, 0.72) !important;
+}
+
+.appointment-top {
   display: flex;
+  align-items: flex-start;
   justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-  border-bottom: 1px solid #333;
-  padding-bottom: 15px;
+  gap: 14px;
 }
-.master-wrapper .section-header h3 { margin: 0; color: var(--mst-gold); font-family: 'Oswald', sans-serif; }
 
-.master-wrapper .table-container { overflow-x: auto; }
+.appointment-top span {
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 0.72rem;
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
 
-.master-wrapper .custom-table { width: 100%; border-collapse: collapse; min-width: 600px; }
-.master-wrapper .custom-table th { text-align: left; color: var(--mst-gray); padding: 15px; border-bottom: 1px solid #333; font-size: 14px; }
-.master-wrapper .custom-table td { padding: 15px; border-bottom: 1px solid #252525; color: #fff; }
-.master-wrapper .fw-bold { font-weight: bold; }
-.master-wrapper .badge-frizer { background: #333; padding: 4px 8px; border-radius: 4px; font-size: 12px; text-transform: uppercase; }
-.master-wrapper .phone-link { color: var(--mst-gold); text-decoration: none; }
+.appointment-top h3 {
+  margin: 7px 0 0;
+  color: #fff;
+  font-family: var(--gc-font-title);
+  font-size: 1.08rem;
+  font-weight: 900;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
 
+.appointment-top strong {
+  min-height: 30px;
+  padding: 0 10px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  background: rgba(212, 175, 55, 0.085);
+  color: var(--gc-gold-2);
+  font-size: 0.7rem;
+  font-weight: 1000;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
 
-/* --- RESPONSIVE MOBILE (Doar pentru Master) --- */
-@media (max-width: 900px) {
-  
-  /* SIDEBAR */
-  .master-wrapper .master-sidebar {
-    width: 60vw;
-    transform: translateX(-100%);
-    box-shadow: 5px 0 20px rgba(0,0,0,0.5);
-    height: 100vh;
-    position: fixed;
-    top: 0; 
-    left: 0;
+.master-mobile-service {
+  margin: 14px 0;
+  padding: 14px;
+  display: grid;
+  gap: 5px;
+  border-left: 3px solid var(--gc-gold);
+  background:
+    linear-gradient(90deg, rgba(212, 175, 55, 0.12), transparent),
+    rgba(212, 175, 55, 0.066);
+}
+
+.master-mobile-service span {
+  color: rgba(212, 175, 55, 0.92);
+  font-size: 0.68rem;
+  font-weight: 1000;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+
+.master-mobile-service strong {
+  color: #fff;
+  font-size: 0.94rem;
+  font-weight: 1000;
+}
+
+.master-mobile-service em {
+  color: var(--gc-gold-2);
+  font-style: normal;
+  font-size: 0.86rem;
+  font-weight: 1000;
+}
+
+.mobile-phone {
+  margin-top: 12px;
+  min-height: 38px;
+  padding: 0 12px;
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid rgba(212, 175, 55, 0.19);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--gc-gold-2);
+  font-size: 0.82rem;
+  font-weight: 1000;
+  text-decoration: none;
+}
+
+.appointment-mobile p {
+  margin: 13px 0 0;
+  color: rgba(255, 255, 255, 0.57);
+  font-size: 0.86rem;
+  line-height: 1.55;
+}
+
+.mobile-actions,
+.master-mobile-actions {
+  margin-top: 15px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.master-mobile-actions button,
+.master-mobile-actions a {
+  min-height: 40px;
+  padding: 0 10px;
+  border: 1px solid rgba(212, 175, 55, 0.19);
+  background: rgba(255, 255, 255, 0.047);
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 1000;
+  letter-spacing: 0.85px;
+  text-transform: uppercase;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.master-mobile-actions a.call {
+  border-color: rgba(10, 132, 255, 0.38);
+  background: rgba(10, 132, 255, 0.09);
+  color: #64b5ff;
+}
+
+.master-mobile-actions a.whatsapp {
+  border-color: rgba(48, 209, 88, 0.4);
+  background: rgba(48, 209, 88, 0.105);
+  color: var(--gc-green);
+}
+
+.master-mobile-actions button.delete {
+  border-color: rgba(255, 69, 58, 0.44);
+  background: rgba(255, 69, 58, 0.09);
+  color: #ff6961;
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   ========================================================================== */
+
+@media (min-width: 901px) {
+  .mobile-list {
+    display: none !important;
   }
-  
-  /* Când e deschis */
-  .master-wrapper .master-sidebar.open {
+}
+
+@media (max-width: 1180px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .master-content {
+    padding: 22px;
+  }
+}
+
+@media (max-width: 900px) {
+  .master-wrapper {
+    display: block;
+  }
+
+  .master-wrapper::before,
+  .master-wrapper::after {
+    display: none;
+  }
+
+  .master-sidebar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: min(330px, 88vw);
+    min-width: 0;
+    height: 100vh;
+    transform: translateX(-105%);
+    transition: transform 0.34s cubic-bezier(0.16, 1, 0.3, 1);
+    z-index: 200;
+  }
+
+  .master-sidebar.open {
     transform: translateX(0);
   }
-  
-  .master-wrapper .btn-close-sidebar { display: block; }
 
-  /* LINK-URILE CRESC PE MOBIL */
-  .master-wrapper .sidebar-nav {
-    gap: 15px; 
-    margin-top: 20px;
+  .btn-close-sidebar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
   }
 
-  .master-wrapper .nav-item {
-    font-size: 18px; 
-    padding: 20px;   
-    text-align: center; 
-    border: 1px solid #333; 
-    background: #151515;
-  }
-  
-  .master-wrapper .nav-item.active {
-    font-size: 20px; 
-    background: var(--mst-gold);
-    color: #000;
-  }
-
-  /* OVERLAY */
-  .master-wrapper .sidebar-overlay {
+  .sidebar-overlay {
+    display: block;
     position: fixed;
-    top: 0; left: 0; width: 100%; height: 100%;
-    background: rgba(0,0,0,0.8);
-    backdrop-filter: blur(4px);
-    z-index: 999;
+    inset: 0;
+    z-index: 150;
+    background: rgba(0, 0, 0, 0.72);
+    backdrop-filter: blur(8px);
   }
 
-  /* CONȚINUT */
-  .master-wrapper .master-content {
-    margin-left: 0;
+  .burger-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .master-content {
+    padding: 14px;
+  }
+
+  .content-header {
+    padding: 18px;
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .header-left {
     width: 100%;
-    padding: 20px;
+    align-items: flex-start;
   }
 
-  /* NAVBAR SUS */
-  .master-wrapper .burger-btn { display: flex; } /* Apare doar aici */
-  .master-wrapper .content-header h1 { font-size: 20px; margin-left: 10px; }
-  .master-wrapper .user-info { display: none; }
+  .user-info {
+    width: 100%;
+    align-items: stretch;
+    flex-direction: column;
+  }
 
-  /* GRID */
-  .master-wrapper .stats-grid { grid-template-columns: 1fr; }
-  .master-wrapper .recent-section { padding: 15px; }
+  .master-refresh-btn {
+    width: 100%;
+  }
+
+  .master-filters {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .range-buttons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .range-buttons button {
+    width: 100%;
+  }
+
+  .barber-filter,
+  .master-search-filter {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .barber-filter select,
+  .master-search-filter input {
+    width: 100%;
+  }
+
+  .custom-date-filter {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .custom-date-smart,
+  .mini-range-calendar {
+    width: 100%;
+  }
+
+  .mini-calendar-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .mini-calendar-footer button {
+    width: 100%;
+  }
+
+  .table-container {
+    display: none !important;
+  }
+
+  .mobile-list {
+    display: grid !important;
+    gap: 14px;
+  }
+
+  .section-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .task-count {
+    width: fit-content;
+  }
+
+  .floating-messages-btn {
+    right: 16px;
+    bottom: 16px;
+    width: 58px;
+    height: 58px;
+  }
+}
+
+@media (max-width: 560px) {
+  .content-header h1 {
+    font-size: 1.38rem;
+  }
+
+  .master-subtitle {
+    font-size: 0.82rem;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .stat-card {
+    min-height: 122px;
+  }
+
+  .range-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .appointment-top {
+    flex-direction: column;
+  }
+
+  .appointment-top strong {
+    width: fit-content;
+  }
+
+  .mobile-actions,
+  .master-mobile-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .section-header h3 {
+    font-size: 1rem;
+  }
+
+  .custom-table {
+    min-width: 1100px;
+  }
+
+  .mini-calendar-days button {
+    min-height: 32px;
+    font-size: 0.74rem;
+  }
+}/* ==========================================================================
+   MASTER MOBILE MENU + RANGE DROPDOWN FIX
+   ========================================================================== */
+
+.master-burger-btn {
+  width: 46px;
+  height: 46px;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(212, 175, 55, 0.34);
+  background: rgba(212, 175, 55, 0.1);
+  color: #f7df8a;
+  font-size: 1.45rem;
+  font-weight: 900;
+  line-height: 1;
+  cursor: pointer;
+  position: relative;
+  z-index: 80;
+}
+
+.master-burger-btn:hover {
+  border-color: rgba(247, 223, 138, 0.75);
+  background: rgba(212, 175, 55, 0.18);
+  color: #fff;
+}
+
+.master-range-filter {
+  min-width: 220px;
+  display: grid;
+  gap: 7px;
+}
+
+.master-range-filter label {
+  color: rgba(212, 175, 55, 0.92);
+  font-size: 0.66rem;
+  font-weight: 1000;
+  letter-spacing: 1.3px;
+  text-transform: uppercase;
+}
+
+.master-range-filter select {
+  width: 100%;
+  min-height: 42px;
+  padding: 0 13px;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  outline: none;
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.52);
+  color: #fff;
+  font-size: 0.84rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.master-range-filter select:focus {
+  border-color: rgba(247, 223, 138, 0.75);
+  box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.09);
+}
+
+.master-range-filter select option {
+  background: #080808;
+  color: #fff;
+}
+
+@media (max-width: 900px) {
+  .master-burger-btn {
+    display: inline-flex !important;
+  }
+
+  .content-header {
+    position: relative;
+    z-index: 60;
+  }
+
+  .header-left {
+    align-items: center !important;
+  }
+
+  .master-sidebar {
+    z-index: 300 !important;
+  }
+
+  .master-sidebar.open {
+    transform: translateX(0) !important;
+  }
+
+  .sidebar-overlay {
+    z-index: 250 !important;
+  }
+
+  .master-range-filter {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .master-range-filter select {
+    width: 100%;
+  }
+
+  .range-buttons {
+    display: none !important;
+  }
+}/* ==========================================================================
+   MASTER DASHBOARD — MOBILE PROGRAMĂRI BOMBĂ
+   Pentru telefon: programări active + programări anulate
+   Pune jos de tot în MasterDashboard.css
+   ========================================================================== */
+
+@media (max-width: 900px) {
+  .recent-section {
+    margin-top: 18px !important;
+    border: 1px solid rgba(212, 175, 55, 0.18) !important;
+    background:
+      radial-gradient(circle at top right, rgba(212, 175, 55, 0.12), transparent 42%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.018)) !important;
+    box-shadow: 0 24px 70px rgba(0, 0, 0, 0.45) !important;
+  }
+
+  .canceled-section {
+    border-color: rgba(255, 69, 58, 0.24) !important;
+    background:
+      radial-gradient(circle at top right, rgba(255, 69, 58, 0.12), transparent 42%),
+      linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.014)) !important;
+  }
+
+  .section-header {
+    padding: 18px 16px !important;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.14) !important;
+  }
+
+  .canceled-section .section-header {
+    border-bottom-color: rgba(255, 69, 58, 0.18) !important;
+  }
+
+  .section-header h3 {
+    font-size: 1.05rem !important;
+    letter-spacing: 0.08em !important;
+  }
+
+  .section-subtitle {
+    max-width: 100%;
+    font-size: 0.78rem !important;
+    line-height: 1.55 !important;
+  }
+
+  .task-count {
+    width: fit-content !important;
+    min-height: 30px !important;
+    padding: 0 10px !important;
+    font-size: 0.66rem !important;
+  }
+
+  .mobile-list {
+    padding: 14px !important;
+    display: grid !important;
+    gap: 16px !important;
+  }
+
+  .appointment-mobile.master-mobile-card {
+    position: relative;
+    overflow: hidden;
+    padding: 0 !important;
+    border: 1px solid rgba(212, 175, 55, 0.2) !important;
+    border-left: 4px solid rgba(212, 175, 55, 0.9) !important;
+    background:
+      radial-gradient(circle at 92% 0%, rgba(212, 175, 55, 0.16), transparent 38%),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(255, 255, 255, 0.025)) !important;
+    box-shadow:
+      0 22px 65px rgba(0, 0, 0, 0.48),
+      inset 0 1px 0 rgba(255, 255, 255, 0.045) !important;
+  }
+
+  .appointment-mobile.master-mobile-card::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(120deg, transparent 0%, rgba(212, 175, 55, 0.08) 42%, transparent 72%);
+    pointer-events: none;
+  }
+
+  .appointment-mobile.master-mobile-card::after {
+    content: "ACTIVE";
+    position: absolute;
+    top: 14px;
+    right: -32px;
+    width: 120px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transform: rotate(35deg);
+    border: 1px solid rgba(212, 175, 55, 0.38);
+    background: rgba(212, 175, 55, 0.12);
+    color: rgba(247, 223, 138, 0.86);
+    font-size: 0.55rem;
+    font-weight: 1000;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+  }
+
+  .appointment-mobile.canceled-card {
+    border-color: rgba(255, 69, 58, 0.22) !important;
+    border-left-color: rgba(255, 69, 58, 0.9) !important;
+    background:
+      radial-gradient(circle at 92% 0%, rgba(255, 69, 58, 0.14), transparent 38%),
+      linear-gradient(145deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.018)) !important;
+    opacity: 1 !important;
+  }
+
+  .appointment-mobile.canceled-card::before {
+    background:
+      linear-gradient(120deg, transparent 0%, rgba(255, 69, 58, 0.07) 42%, transparent 72%) !important;
+  }
+
+  .appointment-mobile.canceled-card::after {
+    content: "ANULATĂ";
+    border-color: rgba(255, 69, 58, 0.38);
+    background: rgba(255, 69, 58, 0.13);
+    color: #ff8b84;
+  }
+
+  .appointment-top {
+    position: relative;
+    z-index: 2;
+    padding: 18px 16px 14px !important;
+    display: grid !important;
+    grid-template-columns: 1fr auto !important;
+    gap: 12px !important;
+    align-items: start !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.075);
+  }
+
+  .appointment-top span {
+    display: inline-flex;
+    margin-bottom: 6px;
+    color: rgba(212, 175, 55, 0.92) !important;
+    font-size: 0.66rem !important;
+    font-weight: 1000 !important;
+    letter-spacing: 1.15px !important;
+    text-transform: uppercase;
+  }
+
+  .canceled-card .appointment-top span {
+    color: #ff8b84 !important;
+  }
+
+  .appointment-top h3 {
+    margin: 0 !important;
+    max-width: 190px;
+    color: #fff !important;
+    font-size: 1.08rem !important;
+    line-height: 1.18 !important;
+    letter-spacing: 0.06em !important;
+    word-break: break-word;
+  }
+
+  .appointment-top strong {
+    min-height: 30px !important;
+    padding: 0 9px !important;
+    border: 1px solid rgba(212, 175, 55, 0.34) !important;
+    background: rgba(212, 175, 55, 0.1) !important;
+    color: #f7df8a !important;
+    font-size: 0.64rem !important;
+    font-weight: 1000 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .canceled-card .appointment-top strong {
+    border-color: rgba(255, 69, 58, 0.34) !important;
+    background: rgba(255, 69, 58, 0.1) !important;
+    color: #ff8b84 !important;
+  }
+
+  .master-mobile-service {
+    position: relative;
+    z-index: 2;
+    margin: 14px 14px 12px !important;
+    padding: 14px 14px !important;
+    display: grid !important;
+    gap: 7px !important;
+    border: 1px solid rgba(212, 175, 55, 0.18) !important;
+    border-left: 3px solid #d4af37 !important;
+    background:
+      linear-gradient(90deg, rgba(212, 175, 55, 0.12), transparent),
+      rgba(0, 0, 0, 0.28) !important;
+  }
+
+  .canceled-card .master-mobile-service {
+    border-color: rgba(255, 69, 58, 0.16) !important;
+    border-left-color: #ff453a !important;
+    background:
+      linear-gradient(90deg, rgba(255, 69, 58, 0.11), transparent),
+      rgba(0, 0, 0, 0.25) !important;
+  }
+
+  .master-mobile-service span {
+    color: rgba(212, 175, 55, 0.94) !important;
+    font-size: 0.64rem !important;
+    font-weight: 1000 !important;
+    letter-spacing: 1.4px !important;
+    text-transform: uppercase;
+  }
+
+  .canceled-card .master-mobile-service span {
+    color: #ff8b84 !important;
+  }
+
+  .master-mobile-service strong {
+    color: #fff !important;
+    font-size: 0.98rem !important;
+    line-height: 1.3 !important;
+    font-weight: 1000 !important;
+  }
+
+  .master-mobile-service em {
+    width: fit-content;
+    min-height: 28px;
+    padding: 0 9px;
+    display: inline-flex;
+    align-items: center;
+    border: 1px solid rgba(212, 175, 55, 0.26);
+    background: rgba(212, 175, 55, 0.09);
+    color: #f7df8a !important;
+    font-style: normal !important;
+    font-size: 0.78rem !important;
+    font-weight: 1000 !important;
+  }
+
+  .canceled-card .master-mobile-service em {
+    border-color: rgba(255, 69, 58, 0.28);
+    background: rgba(255, 69, 58, 0.09);
+    color: #ff8b84 !important;
+  }
+
+  .appointment-mobile .master-status-pill {
+    position: relative;
+    z-index: 2;
+    margin: 0 14px 10px !important;
+    min-height: 30px !important;
+    padding: 0 11px !important;
+    font-size: 0.64rem !important;
+    letter-spacing: 1.2px !important;
+  }
+
+  .mobile-phone {
+    position: relative;
+    z-index: 2;
+    margin: 4px 14px 0 !important;
+    min-height: 40px !important;
+    width: calc(100% - 28px) !important;
+    display: flex !important;
+    justify-content: center !important;
+    border: 1px solid rgba(10, 132, 255, 0.32) !important;
+    background: rgba(10, 132, 255, 0.08) !important;
+    color: #64b5ff !important;
+    font-size: 0.84rem !important;
+    font-weight: 1000 !important;
+    text-decoration: none !important;
+  }
+
+  .appointment-mobile p {
+    position: relative;
+    z-index: 2;
+    margin: 12px 14px 0 !important;
+    padding: 12px 13px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.075);
+    background: rgba(0, 0, 0, 0.18);
+    color: rgba(255, 255, 255, 0.66) !important;
+    font-size: 0.84rem !important;
+    line-height: 1.6 !important;
+  }
+
+  .mobile-actions.master-mobile-actions {
+    position: relative;
+    z-index: 2;
+    margin: 14px !important;
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+  }
+
+  .master-mobile-actions button,
+  .master-mobile-actions a {
+    min-height: 42px !important;
+    padding: 0 10px !important;
+    border: 1px solid rgba(212, 175, 55, 0.22) !important;
+    background: rgba(255, 255, 255, 0.055) !important;
+    color: #fff !important;
+    font-size: 0.66rem !important;
+    font-weight: 1000 !important;
+    letter-spacing: 0.8px !important;
+    text-transform: uppercase !important;
+    text-decoration: none !important;
+  }
+
+  .master-mobile-actions a.call {
+    border-color: rgba(10, 132, 255, 0.38) !important;
+    background: rgba(10, 132, 255, 0.1) !important;
+    color: #64b5ff !important;
+  }
+
+  .master-mobile-actions a.whatsapp {
+    border-color: rgba(48, 209, 88, 0.42) !important;
+    background: rgba(48, 209, 88, 0.11) !important;
+    color: #30d158 !important;
+  }
+
+  .master-mobile-actions button.delete {
+    border-color: rgba(255, 69, 58, 0.46) !important;
+    background: rgba(255, 69, 58, 0.1) !important;
+    color: #ff6961 !important;
+  }
+
+  .master-mobile-actions button.hard-delete {
+    grid-column: 1 / -1;
+    border-color: rgba(255, 69, 58, 0.45) !important;
+    background: rgba(0, 0, 0, 0.38) !important;
+    color: #ff8b84 !important;
+  }
+
+  .canceled-card .master-mobile-actions button:first-child {
+    grid-column: 1 / -1;
+    border-color: rgba(48, 209, 88, 0.44) !important;
+    background: rgba(48, 209, 88, 0.11) !important;
+    color: #30d158 !important;
+  }
+
+  .master-mobile-actions button:active,
+  .master-mobile-actions a:active {
+    transform: scale(0.98);
+  }
+
+  .load-more-wrap {
+    padding: 14px !important;
+  }
+
+  .load-more-btn {
+    width: 100% !important;
+    min-height: 44px !important;
+    border: 1px solid rgba(212, 175, 55, 0.38) !important;
+    background: rgba(212, 175, 55, 0.11) !important;
+    color: #f7df8a !important;
+    font-size: 0.72rem !important;
+    font-weight: 1000 !important;
+    letter-spacing: 1.2px !important;
+    text-transform: uppercase !important;
+  }
+}
+
+@media (max-width: 430px) {
+  .appointment-top {
+    grid-template-columns: 1fr !important;
+  }
+
+  .appointment-top h3 {
+    max-width: 100% !important;
+  }
+
+  .appointment-top strong {
+    width: fit-content !important;
+  }
+
+  .mobile-actions.master-mobile-actions {
+    grid-template-columns: 1fr !important;
+  }
+
+  .master-mobile-actions button,
+  .master-mobile-actions a {
+    width: 100% !important;
+  }
+}.top-frizer-card .stat-value.small {
+  color: #f7df8a;
+  font-size: clamp(1rem, 2vw, 1.35rem);
+  line-height: 1.28;
+  max-width: 100%;
+  word-break: normal;
+}
+
+.top-frizer-card .stat-note {
+  color: rgba(212, 175, 55, 0.72);
+} /* ==========================================================================
+   FIX FINAL — COMPACT CLIENT: NUME + SUMĂ VIZIBILE
+   ========================================================================== */
+
+.slot-card.occupied {
+  display: grid !important;
+  grid-template-columns: 76px minmax(0, 1fr) 42px !important;
+  min-height: 70px !important;
+}
+
+.slot-card.occupied .slot-content {
+  grid-column: 2 !important;
+  min-width: 0 !important;
+  padding: 10px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.admin-compact-client {
+  width: 100% !important;
+  min-height: 44px !important;
+  padding: 0 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  border: 1px solid rgba(212, 175, 55, 0.24) !important;
+  background:
+    linear-gradient(90deg, rgba(212, 175, 55, 0.11), rgba(255, 255, 255, 0.025)) !important;
+  color: #fff !important;
+  cursor: pointer !important;
+}
+
+.admin-compact-client:hover {
+  border-color: rgba(247, 223, 138, 0.75) !important;
+  background:
+    linear-gradient(90deg, rgba(212, 175, 55, 0.18), rgba(255, 255, 255, 0.04)) !important;
+}
+
+.admin-compact-client .compact-client-name {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  display: block !important;
+  overflow: hidden !important;
+  color: #fff !important;
+  font-size: 0.95rem !important;
+  font-weight: 1000 !important;
+  line-height: 1.1 !important;
+  white-space: nowrap !important;
+  text-overflow: ellipsis !important;
+  text-align: left !important;
+}
+
+.admin-compact-client .compact-client-price {
+  flex: 0 0 auto !important;
+  min-height: 30px !important;
+  padding: 0 11px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border: 1px solid rgba(48, 209, 88, 0.42) !important;
+  background: rgba(48, 209, 88, 0.1) !important;
+  color: #30d158 !important;
+  font-size: 0.78rem !important;
+  font-weight: 1000 !important;
+  letter-spacing: 0.6px !important;
+  white-space: nowrap !important;
+}
+
+/* confirmată = accent verde */
+.admin-compact-client.confirmata {
+  border-color: rgba(48, 209, 88, 0.34) !important;
+  background:
+    linear-gradient(90deg, rgba(48, 209, 88, 0.12), rgba(212, 175, 55, 0.045)) !important;
+}
+
+/* X rămâne pe coloana lui, separat de client */
+.slot-card.occupied .action-btn.btn-del {
+  position: static !important;
+  grid-column: 3 !important;
+  width: 42px !important;
+  height: auto !important;
+  min-height: 70px !important;
+  border: 0 !important;
+  border-left: 1px solid rgba(212, 175, 55, 0.12) !important;
+  background: rgba(0, 0, 0, 0.18) !important;
+  color: #ff8b84 !important;
+  font-size: 1rem !important;
+}
+
+/* ascunde orice element vechi rămas din cardul vechi */
+.slot-card.occupied .slot-main-info,
+.slot-card.occupied .admin-appointment-extra,
+.slot-card.occupied .client-phone,
+.slot-card.occupied .client-msg,
+.slot-card.occupied .admin-slot-actions-clean {
+  display: none !important;
 }

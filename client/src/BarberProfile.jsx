@@ -1,101 +1,363 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './BarberProfile.css';
 
-// --- BAZA DE DATE ---
+const API_BASE = 'http://localhost:5000';
+
+const CONTACT_WHATSAPP = '40741844684';
+
+const BARBER_SERVICES = [
+  {
+    id: 'tuns',
+    name: 'Tuns',
+    price: 50,
+    desc: 'Tuns curat, finisat atent și adaptat stilului tău.'
+  },
+  {
+    id: 'tuns-barba',
+    name: 'Tuns + barbă',
+    price: 75,
+    desc: 'Tuns complet plus barbă aranjată și finisată.',
+    vip: true
+  },
+  {
+    id: 'barba',
+    name: 'Barbă',
+    price: 30,
+    desc: 'Aranjare barbă pentru un aspect curat și îngrijit.'
+  },
+  {
+    id: 'vopsit-barba',
+    name: 'Vopsit barbă',
+    price: 30,
+    desc: 'Vopsit barbă pentru un aspect uniform și definit.'
+  },
+  {
+    id: 'spalat',
+    name: 'Spălat',
+    price: 25,
+    desc: 'Spălat profesional pentru prospețime și confort.'
+  },
+  {
+    id: 'contur-barba',
+    name: 'Contur / aranjat barbă',
+    price: 30,
+    desc: 'Contur clar, simetrie și finisaj precis.'
+  },
+  {
+    id: 'styling',
+    name: 'Styling',
+    price: null,
+    desc: 'Spălat, aranjat și finisaj cu produse premium.'
+  },
+  {
+    id: 'pachet-vip',
+    name: 'Pachet VIP',
+    price: 200,
+    desc: 'Tuns + barbă + spălat + aranjat + prosop fierbinte + tratament facial.',
+    vip: true
+  }
+];
+
+const BROW_SERVICES = [
+  {
+    id: 'pensat',
+    name: 'Pensat',
+    price: 35,
+    desc: 'Pensat precis pentru un aspect curat și îngrijit.'
+  },
+  {
+    id: 'pensat-vopsit',
+    name: 'Pensat + vopsit',
+    price: 50,
+    desc: 'Pensat precis plus vopsit pentru definire și stil.',
+    vip: true
+  },
+  {
+    id: 'pensat-par-nas',
+    name: 'Pensat + păr nas',
+    price: 45,
+    desc: 'Pensat și îngrijire detalii pentru un look complet.'
+  },
+  {
+    id: 'tratament-facial',
+    name: 'Tratament facial',
+    price: 50,
+    desc: 'Tratament facial pentru prospețime și aspect îngrijit.'
+  },
+  {
+    id: 'pachet-complet',
+    name: 'Pachet complet',
+    price: 100,
+    desc: 'Pensat + vopsit + păr nas + tratament facial.',
+    vip: true
+  },
+  {
+    id: 'suvite',
+    name: 'Șuvițe',
+    price: 300,
+    desc: 'Șuvițe lucrate atent pentru un rezultat premium.'
+  },
+  {
+    id: 'global-o-culoare',
+    name: 'Global / total — o culoare',
+    price: 300,
+    desc: 'Vopsit total într-o singură culoare.'
+  },
+  {
+    id: 'global-model',
+    name: 'Global / total — model',
+    price: 400,
+    desc: 'Vopsit total cu model personalizat.',
+    vip: true
+  }
+];
+
 const barbersDB = {
-  alex: { 
-    name: "Alexandru Popescu", 
-    role: "Master Barber", 
-    image: "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=800", 
-    gallery: [
-      "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600", 
-      "https://images.unsplash.com/photo-1593702295094-aea8cdd39d68?w=600",
-      "https://images.unsplash.com/photo-1503951914875-befca74f4e90?w=600",
-      "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600",
-      "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=600",
-      "https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?w=600"
-    ] 
+  'dani-frizeru': {
+    barberId: 'dani-frizeru',
+    name: 'Dani Frizeru',
+    role: 'Master Barber',
+    badge: 'MASTER',
+    image: '/dani-frizeru.png',
+    isMaster: true,
+    description: 'Nu este doar o tunsoare, este o experiență.',
+    services: BARBER_SERVICES,
+    gallery: []
   },
-  mihai: { 
-    name: "Mihai Ionescu", 
-    role: "Senior Stylist", 
-    image: "https://images.unsplash.com/photo-1622286342621-4bd786c2447c?w=800", 
-    gallery: [
-      "https://images.unsplash.com/photo-1599351431202-1e0f0137899a?w=600", 
-      "https://images.unsplash.com/photo-1605497788044-5a32c7078486?w=600",
-      "https://images.unsplash.com/photo-1503951914875-befca74f4e90?w=600",
-      "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600",
-      "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600",
-      "https://images.unsplash.com/photo-1593702295094-aea8cdd39d68?w=600"
-    ] 
+
+  'flavius-frizeru': {
+    barberId: 'flavius-frizeru',
+    name: 'Flavius Frizeru',
+    role: 'Barber Specialist',
+    badge: 'STIL & PRECIZIE',
+    image: '/flavius-frizeru.png',
+    isMaster: false,
+    description: 'Mai mult decât o tunsoare, e despre stilul tău.',
+    services: BARBER_SERVICES,
+    gallery: []
   },
-  andrei: { 
-    name: "Andrei Radu", 
-    role: "Barber", 
-    image: "https://images.unsplash.com/photo-1534308143481-c55f00be8bd7?w=800", 
-    gallery: [
-      "https://images.unsplash.com/photo-1517832207067-4db24a2ae47b?w=600", 
-      "https://images.unsplash.com/photo-1520338661084-680395057c93?w=600",
-      "https://images.unsplash.com/photo-1503951914875-befca74f4e90?w=600",
-      "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?w=600",
-      "https://images.unsplash.com/photo-1621605815971-fbc98d665033?w=600",
-      "https://images.unsplash.com/photo-1593702295094-aea8cdd39d68?w=600"
-    ] 
+
+  'alex-frizeru': {
+    barberId: 'alex-frizeru',
+    name: 'Alex Frizeru',
+    role: 'Premium Barber',
+    badge: 'TUNSORI PREMIUM',
+    image: '/alex-frizeru.png',
+    isMaster: false,
+    description: 'Stil premium, detalii curate și finisaj elegant.',
+    services: BARBER_SERVICES,
+    gallery: []
+  },
+
+  'vali-frizeru': {
+    barberId: 'vali-frizeru',
+    name: 'Vali Frizeru',
+    role: 'Barber Specialist',
+    badge: 'SONIC STYLE',
+    image: '/vali-frizeru.png',
+    isMaster: false,
+    description: 'Stilul tău, semnătura noastră.',
+    services: BARBER_SERVICES,
+    gallery: []
+  },
+
+  'pensat-precis': {
+    barberId: 'pensat-precis',
+    name: 'Pensat Precis',
+    role: 'Brow Specialist',
+    badge: 'STIL PERFECT',
+    image: '/pensat-precis.png',
+    isMaster: false,
+    description: 'Detaliul face diferența.',
+    services: BROW_SERVICES,
+    gallery: []
   }
 };
 
-const allTimeSlots = ["09:00", "10:00", "11:00", "12:00", "13:00", "14:00", "15:00", "16:00", "17:00", "18:00", "19:00"];
+const allTimeSlots = [
+  '09:00',
+  '10:00',
+  '11:00',
+  '12:00',
+  '13:00',
+  '14:00',
+  '15:00',
+  '16:00',
+  '17:00',
+  '18:00',
+  '19:00'
+];
 
 const getNextMonths = (count = 12) => {
   const months = [];
   const today = new Date();
+
   for (let i = 0; i < count; i++) {
     const d = new Date(today.getFullYear(), today.getMonth() + i, 1);
+
     months.push({
       index: i,
       dateObj: d,
-      label: d.toLocaleString('ro-RO', { month: 'long', year: 'numeric' }).toUpperCase()
+      label: d.toLocaleString('ro-RO', {
+        month: 'long',
+        year: 'numeric'
+      }).toUpperCase()
     });
   }
+
   return months;
+};
+
+const normalizeGalleryUrl = (url) => {
+  if (!url) return '';
+
+  const clean = String(url).trim();
+
+  if (clean.startsWith('http://') || clean.startsWith('https://')) {
+    return clean;
+  }
+
+  if (clean.startsWith('/')) {
+    return `${API_BASE}${clean}`;
+  }
+
+  return `${API_BASE}/${clean}`;
+};
+
+const formatPrice = (price) => {
+  if (price === null || price === undefined) {
+    return 'LA SALON';
+  }
+
+  return `${price} LEI`;
+};
+
+const formatDateRo = (dateString) => {
+  if (!dateString) return '';
+
+  const [year, month, day] = String(dateString).split('-').map(Number);
+  const date = new Date(year, month - 1, day);
+
+  return date.toLocaleDateString('ro-RO', {
+    weekday: 'long',
+    day: '2-digit',
+    month: 'long',
+    year: 'numeric'
+  });
+};
+
+const isSelectedDateToday = (dateString) => {
+  if (!dateString) return false;
+
+  const [year, month, day] = String(dateString).split('-').map(Number);
+  const selected = new Date(year, month - 1, day);
+  const today = new Date();
+
+  return (
+    selected.getFullYear() === today.getFullYear() &&
+    selected.getMonth() === today.getMonth() &&
+    selected.getDate() === today.getDate()
+  );
+};
+
+const isTimeSlotInFuture = (dateString, time) => {
+  if (!dateString || !time) return true;
+
+  if (!isSelectedDateToday(dateString)) {
+    return true;
+  }
+
+  const [hours, minutes] = String(time).split(':').map(Number);
+  const slotDate = new Date();
+
+  slotDate.setHours(hours || 0, minutes || 0, 0, 0);
+
+  const now = new Date();
+
+  return slotDate > now;
+};
+
+const createWhatsAppLink = ({ name, barber, service, date, time }) => {
+  const text = [
+    `Salut, am făcut o programare la Gentleman’s Club.`,
+    `Nume: ${name}`,
+    `Specialist: ${barber}`,
+    `Serviciu: ${service}`,
+    `Data: ${formatDateRo(date)}`,
+    `Ora: ${time}`
+  ].join('\n');
+
+  return `https://wa.me/${CONTACT_WHATSAPP}?text=${encodeURIComponent(text)}`;
 };
 
 function BarberProfile() {
   const { id } = useParams();
   const barber = barbersDB[id];
 
-  const [monthsList] = useState(getNextMonths(12)); 
-  const [selectedMonthIndex, setSelectedMonthIndex] = useState(0); 
+  const [monthsList] = useState(getNextMonths(12));
+  const [selectedMonthIndex, setSelectedMonthIndex] = useState(0);
   const [daysInMonth, setDaysInMonth] = useState([]);
+
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
+  const [selectedServiceId, setSelectedServiceId] = useState('');
+
   const [occupiedSlots, setOccupiedSlots] = useState([]);
   const [galleryExpanded, setGalleryExpanded] = useState(false);
+  const [galleryImages, setGalleryImages] = useState([]);
 
-  // Form State
   const [clientName, setClientName] = useState('');
   const [clientPhone, setClientPhone] = useState('');
   const [clientMessage, setClientMessage] = useState('');
+
   const [submitStatus, setSubmitStatus] = useState('');
+  const [successDetails, setSuccessDetails] = useState(null);
+  const [errors, setErrors] = useState({});
 
-  // --- STARE NOUĂ PENTRU ERORI (Ce câmpuri înroșim) ---
-  const [errors, setErrors] = useState({}); 
+  const selectedService = useMemo(() => {
+    return barber?.services?.find((service) => service.id === selectedServiceId) || null;
+  }, [barber, selectedServiceId]);
 
-  // 1. Fetch Ore
+  const visibleTimeSlots = useMemo(() => {
+    if (!selectedDate) return [];
+
+    return allTimeSlots.filter((time) =>
+      isTimeSlotInFuture(selectedDate.fullDate, time)
+    );
+  }, [selectedDate]);
+
   useEffect(() => {
-    setOccupiedSlots([]); 
+    setSelectedDate(null);
     setSelectedTime(null);
-    if (selectedDate && barber) {
-      const url = `http://localhost:5000/api/ocupate?frizer=${encodeURIComponent(barber.name)}&data=${selectedDate.fullDate}`;
-      fetch(url)
-        .then(res => res.ok ? res.json() : [])
-        .then(data => setOccupiedSlots(data))
-        .catch(err => setOccupiedSlots([]));
+    setSelectedServiceId('');
+    setSuccessDetails(null);
+    setSubmitStatus('');
+    setErrors({});
+  }, [id]);
+
+  useEffect(() => {
+    setOccupiedSlots([]);
+    setSelectedTime(null);
+
+    if (!selectedDate || !barber) {
+      return;
     }
+
+    const url = `${API_BASE}/api/ocupate?barberId=${encodeURIComponent(
+      barber.barberId
+    )}&data=${encodeURIComponent(selectedDate.fullDate)}`;
+
+    fetch(url)
+      .then((res) => (res.ok ? res.json() : []))
+      .then((data) => {
+        setOccupiedSlots(Array.isArray(data) ? data : []);
+      })
+      .catch(() => {
+        setOccupiedSlots([]);
+      });
   }, [selectedDate, barber]);
 
-  // 2. Calcul Calendar
   useEffect(() => {
     const today = new Date();
     const targetMonthObj = monthsList[selectedMonthIndex].dateObj;
@@ -106,276 +368,559 @@ function BarberProfile() {
 
     for (let i = 1; i <= daysInMonthCount; i++) {
       const d = new Date(year, monthIndex, i);
+
       if (selectedMonthIndex === 0 && i < today.getDate()) continue;
-      if (d.getDay() === 0) continue; 
-      const monthStr = (monthIndex + 1).toString().padStart(2, '0');
-      const dayStr = i.toString().padStart(2, '0');
+      if (d.getDay() === 0) continue;
+
+      const monthStr = String(monthIndex + 1).padStart(2, '0');
+      const dayStr = String(i).padStart(2, '0');
+
       days.push({
         fullDate: `${year}-${monthStr}-${dayStr}`,
         dayName: d.toLocaleString('ro-RO', { weekday: 'short' }).toUpperCase(),
         dayNumber: i
       });
     }
+
     setDaysInMonth(days);
   }, [selectedMonthIndex, monthsList]);
 
-  // 3. SUBMIT CU EVIDENȚIERE ERORI
+  useEffect(() => {
+    let ignore = false;
+
+    const loadGallery = async () => {
+      if (!barber) return;
+
+      try {
+        const response = await fetch(
+          `${API_BASE}/api/galerie/${encodeURIComponent(barber.barberId)}`
+        );
+
+        if (!response.ok) {
+          throw new Error('Galeria nu s-a putut încărca.');
+        }
+
+        const data = await response.json();
+
+        const arr = Array.isArray(data)
+          ? data
+          : data.poze || data.galerie || data.images || [];
+
+        const urls = arr
+          .map((item) => item.url || item.image || item.src)
+          .filter(Boolean)
+          .map(normalizeGalleryUrl);
+
+        if (!ignore) {
+          setGalleryImages(urls);
+        }
+      } catch {
+        if (!ignore) {
+          setGalleryImages([]);
+        }
+      }
+    };
+
+    loadGallery();
+
+    return () => {
+      ignore = true;
+    };
+  }, [barber]);
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     setSubmitStatus('');
-    
-    // --- VALIDARE STRICTĂ ---
-    let newErrors = {};
+    setSuccessDetails(null);
+
+    const newErrors = {};
     let hasError = false;
 
     if (!selectedDate) {
       newErrors.date = true;
       hasError = true;
     }
+
     if (!selectedTime) {
       newErrors.time = true;
       hasError = true;
     }
+
+    if (!selectedService) {
+      newErrors.service = true;
+      hasError = true;
+    }
+
     if (!clientName.trim()) {
       newErrors.name = true;
       hasError = true;
     }
-    
-    // Validare Telefon (Regex RO)
-    const phoneRegex = /^07\d{8}$/;
-    if (!clientPhone.trim() || !phoneRegex.test(clientPhone)) {
+
+    const cleanPhone = clientPhone.replace(/\s/g, '');
+    const phoneRegex = /^(07\d{8}|\+407\d{8})$/;
+
+    if (!cleanPhone || !phoneRegex.test(cleanPhone)) {
       newErrors.phone = true;
       hasError = true;
     }
 
-    setErrors(newErrors); // Actualizăm state-ul cu erori
+    setErrors(newErrors);
 
     if (hasError) {
-      setSubmitStatus('❌ Verifică câmpurile marcate cu roșu!');
+      setSubmitStatus('❌ Completează câmpurile marcate cu roșu.');
       return;
     }
 
-    // Dacă ajungem aici, totul e OK
-    setSubmitStatus('⏳ Se trimite...');
+    if (!isTimeSlotInFuture(selectedDate.fullDate, selectedTime)) {
+      setSubmitStatus('❌ Ora selectată a trecut deja. Alege altă oră.');
+      setSelectedTime(null);
+      return;
+    }
+
+    setSubmitStatus('⏳ Trimitem programarea...');
 
     const appointmentData = {
-      nume_client: clientName,
-      telefon: clientPhone,
+      nume_client: clientName.trim(),
+      telefon: cleanPhone,
+      barberId: barber.barberId,
       frizer: barber.name,
       data: selectedDate.fullDate,
       ora: selectedTime,
-      mesaj: clientMessage,
-      tip: 'client'
+      serviciu: selectedService.name,
+      pret: formatPrice(selectedService.price),
+      pretValoare: selectedService.price,
+      mesaj: clientMessage.trim(),
+      tip: 'client',
+      status: 'noua'
     };
 
     try {
-      const response = await fetch('http://localhost:5000/api/programari', {
+      const response = await fetch(`${API_BASE}/api/programari`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json'
+        },
         body: JSON.stringify(appointmentData)
       });
-      
-      if (response.ok) {
-        setSubmitStatus('✅ Rezervare Confirmată!');
-        setOccupiedSlots(prev => [...prev, selectedTime]); 
-        setClientName(''); setClientPhone(''); setClientMessage('');
-        setSelectedTime(null);
-        setErrors({}); // Curățăm erorile
-        setTimeout(() => setSubmitStatus(''), 5000);
-      } else {
-        setSubmitStatus('❌ Ora a fost ocupată între timp.');
+
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        setSubmitStatus(data.mesaj || '❌ Ora a fost ocupată între timp. Alege altă oră.');
+        return;
       }
-    } catch (err) {
+
+      const details = {
+        name: clientName.trim(),
+        phone: cleanPhone,
+        barber: barber.name,
+        service: selectedService.name,
+        price: formatPrice(selectedService.price),
+        date: selectedDate.fullDate,
+        time: selectedTime,
+        whatsappLink: createWhatsAppLink({
+          name: clientName.trim(),
+          barber: barber.name,
+          service: selectedService.name,
+          date: selectedDate.fullDate,
+          time: selectedTime
+        })
+      };
+
+      setSuccessDetails(details);
+      setSubmitStatus('✅ Programarea a fost trimisă!');
+      setOccupiedSlots((prev) => [...prev, selectedTime]);
+
+      setClientName('');
+      setClientPhone('');
+      setClientMessage('');
+      setSelectedServiceId('');
+      setSelectedTime(null);
+      setErrors({});
+    } catch {
       setSubmitStatus('❌ Eroare conexiune server.');
     }
   };
 
-  if (!barber) return <div className="loading-screen">Frizer necunoscut.</div>;
+  if (!barber) {
+    return (
+      <div className="loading-screen">
+        Profilul nu există.
+      </div>
+    );
+  }
+
+  const galleryToShow = galleryImages.length > 0 ? galleryImages : barber.gallery;
 
   return (
-    <div className="profile-page">
-      <div className="profile-nav">
-        <Link to="/" className="btn-back-main">← PAGINA PRINCIPALĂ</Link>
+    <div className="profile-page-supreme">
+      <div className="supreme-cover">
+        <div className="supreme-cover-overlay"></div>
+
+        <Link to="/" className="btn-back-supreme">
+          ← ÎNAPOI
+        </Link>
       </div>
 
-      <div className="profile-container">
-        
-        {/* PARTEA STÂNGĂ - INFO */}
-        <div className="profile-info-side">
-          <div className="profile-hero">
-            <div className="profile-img-box">
-              <img src={barber.image} alt={barber.name} />
+      <div className="profile-container-supreme">
+        <div className="profile-info-side-supreme">
+          <div className="profile-hero-supreme">
+            <div className="avatar-wrapper-supreme">
+              <img
+                src={barber.image}
+                alt={barber.name}
+                className="avatar-img-supreme"
+              />
+
+              <div className="avatar-glow"></div>
+              <div className="verified-badge-supreme">✓</div>
             </div>
-            <h1 className="profile-name">{barber.name}</h1>
-            <p className="profile-role">{barber.role}</p>
-            <div className="profile-badges">
-                <span>✂️ Expert Tuns</span>
-                <span>⭐ 4.9 Rating</span>
+
+            <h1 className="profile-name-supreme">{barber.name}</h1>
+
+            <p className="profile-role-supreme">
+              {barber.role}
+              {barber.isMaster ? ' • MASTER' : ''}
+            </p>
+
+            <p
+              style={{
+                color: '#aaa',
+                maxWidth: '420px',
+                margin: '12px auto 0',
+                lineHeight: 1.6,
+                textAlign: 'center'
+              }}
+            >
+              {barber.description}
+            </p>
+
+            <div className="profile-stats-supreme">
+              <div className="stat-box">
+                <span className="stat-number">5.0</span>
+                <span className="stat-label">Rating</span>
+              </div>
+
+              <div className="stat-box">
+                <span className="stat-number">VIP</span>
+                <span className="stat-label">{barber.badge}</span>
+              </div>
+
+              <div className="stat-box">
+                <span className="stat-number">GC</span>
+                <span className="stat-label">Premium</span>
+              </div>
             </div>
           </div>
         </div>
 
-        {/* PARTEA DREAPTĂ - CALENDAR & FORMULAR */}
-        <div className="profile-booking-side">
-          <div className="booking-card-modern">
-            <h2 className="booking-title">REZERVARE ONLINE</h2>
-            
-            <form onSubmit={handleSubmit}>
-              
-              <div className="month-tabs-container">
-                 <div className="month-tabs-scroll">
-                    {monthsList.map((m) => (
-                      <button 
-                        key={m.index} 
-                        type="button" 
-                        className={`month-tab ${selectedMonthIndex === m.index ? 'active' : ''}`} 
-                        onClick={() => {
-                            setSelectedMonthIndex(m.index);
-                            setSelectedDate(null);
-                        }}
-                      >
-                        {m.label}
-                      </button>
-                    ))}
-                 </div>
-              </div>
+        <div className="profile-booking-side-supreme">
+          <div className="booking-card-supreme">
+            <div className="booking-header-supreme">
+              <h2>PROGRAMEAZĂ-TE ACUM</h2>
+              <p>Alege ziua, ora și serviciul dorit</p>
+            </div>
 
-              {/* 1. SELECTOR ZI */}
-              <div className="selector-section">
-                <label className={`section-label ${errors.date ? 'text-error' : ''}`}>
-                  1. ALEGE ZIUA {errors.date && '(Obligatoriu!)'}
-                </label>
-                
-                <div className={`dates-scroller ${errors.date ? 'border-error-container' : ''}`}>
-                  {daysInMonth.map((date, idx) => (
-                    <div 
-                        key={idx} 
-                        // Adăugăm clasa 'error-border' dacă nu e selectată data
-                        className={`date-card 
-                          ${selectedDate?.fullDate === date.fullDate ? 'active' : ''} 
-                          ${errors.date && !selectedDate ? 'error-border' : ''}
-                        `} 
-                        onClick={() => {
-                          setSelectedDate(date);
-                          setErrors(prev => ({...prev, date: false})); // Șterge eroarea când dă click
-                        }}
+            <form onSubmit={handleSubmit} className="booking-form-supreme">
+              <div className="month-tabs-wrapper-supreme">
+                <div className="month-tabs-scroll-supreme">
+                  {monthsList.map((m) => (
+                    <button
+                      key={m.index}
+                      type="button"
+                      className={`month-tab-supreme ${
+                        selectedMonthIndex === m.index ? 'active' : ''
+                      }`}
+                      onClick={() => {
+                        setSelectedMonthIndex(m.index);
+                        setSelectedDate(null);
+                        setSelectedTime(null);
+                        setErrors((prev) => ({ ...prev, date: false, time: false }));
+                      }}
                     >
-                      <span className="day-name">{date.dayName}</span>
-                      <span className="day-number">{date.dayNumber}</span>
-                    </div>
+                      {m.label}
+                    </button>
                   ))}
                 </div>
               </div>
 
-              {/* 2. SELECTOR ORĂ */}
-              <div className="selector-section">
-                <label className={`section-label ${errors.time ? 'text-error' : ''}`}>
-                   2. ALEGE ORA {errors.time && '(Obligatoriu!)'}
+              <div className="selector-section-supreme">
+                <label className={`section-label-supreme ${errors.date ? 'error-pulse' : ''}`}>
+                  1. SELECTEAZĂ ZIUA
                 </label>
+
+                <div className={`dates-scroller-supreme ${errors.date ? 'border-error-supreme' : ''}`}>
+                  {daysInMonth.map((date) => (
+                    <button
+                      key={date.fullDate}
+                      type="button"
+                      className={`date-card-supreme ${
+                        selectedDate?.fullDate === date.fullDate ? 'active' : ''
+                      }`}
+                      onClick={() => {
+                        setSelectedDate(date);
+                        setSelectedTime(null);
+                        setErrors((prev) => ({ ...prev, date: false }));
+                      }}
+                    >
+                      <span className="day-name-supreme">{date.dayName}</span>
+                      <span className="day-number-supreme">{date.dayNumber}</span>
+
+                      {selectedDate?.fullDate === date.fullDate && (
+                        <div className="active-dot"></div>
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="selector-section-supreme">
+                <label className={`section-label-supreme ${errors.time ? 'error-pulse' : ''}`}>
+                  2. SELECTEAZĂ ORA
+                </label>
+
                 {!selectedDate ? (
-                    <p className="hint-text">Alege o dată din calendar.</p>
+                  <p className="hint-text-supreme">
+                    Te rugăm să alegi o zi din calendarul de mai sus.
+                  </p>
+                ) : visibleTimeSlots.length === 0 ? (
+                  <p className="hint-text-supreme">
+                    Pentru azi nu mai sunt ore disponibile. Alege o altă zi.
+                  </p>
                 ) : (
-                    <div className="time-grid">
-                    {allTimeSlots.map(t => {
-                        const isTaken = occupiedSlots.includes(t);
-                        return (
-                        <button 
-                            key={t} 
-                            type="button" 
-                            disabled={isTaken} 
-                            className={`time-btn 
-                              ${selectedTime === t ? 'active' : ''} 
-                              ${isTaken ? 'occupied' : ''}
-                              ${errors.time && !selectedTime ? 'error-border' : ''}
-                            `} 
-                            onClick={() => {
-                              setSelectedTime(t);
-                              setErrors(prev => ({...prev, time: false}));
-                            }}
+                  <div className={`time-grid-supreme ${errors.time ? 'border-error-supreme' : ''}`}>
+                    {visibleTimeSlots.map((time) => {
+                      const isTaken = occupiedSlots.includes(time);
+
+                      return (
+                        <button
+                          key={time}
+                          type="button"
+                          disabled={isTaken}
+                          className={`time-btn-supreme ${
+                            selectedTime === time ? 'active' : ''
+                          } ${isTaken ? 'occupied' : ''}`}
+                          onClick={() => {
+                            setSelectedTime(time);
+                            setErrors((prev) => ({ ...prev, time: false }));
+                          }}
                         >
-                            {t}
+                          {isTaken ? 'Ocupat' : time}
                         </button>
-                        );
+                      );
                     })}
-                    </div>
+                  </div>
                 )}
               </div>
 
-              {/* 3. INPUTS & SUBMIT */}
-              <div className="final-inputs">
-                
-                {/* Input Nume */}
-                <input 
-                  type="text" 
-                  placeholder={errors.name ? "⚠️ Introdu Numele!" : "Nume Complet"} 
-                  className={`clean-input ${errors.name ? 'input-error' : ''}`} 
-                  value={clientName} 
-                  onChange={(e) => {
-                    setClientName(e.target.value);
-                    if(e.target.value) setErrors(prev => ({...prev, name: false}));
-                  }} 
-                />
-                
-                {/* Input Telefon */}
-                <input 
-                  type="tel" 
-                  placeholder={errors.phone ? "⚠️ Telefon Invalid!" : "Telefon (07xxxxxxxx)"} 
-                  className={`clean-input ${errors.phone ? 'input-error' : ''}`} 
-                  value={clientPhone} 
-                  onChange={(e) => {
-                    setClientPhone(e.target.value);
-                    if(e.target.value) setErrors(prev => ({...prev, phone: false}));
-                  }} 
-                />
-                
-                <textarea 
-                  placeholder="Mesaj (opțional)" 
-                  className="clean-input" 
-                  value={clientMessage} 
-                  onChange={(e) => setClientMessage(e.target.value)} 
-                  rows="2"
-                ></textarea>
+              <div className="selector-section-supreme">
+                <label className={`section-label-supreme ${errors.service ? 'error-pulse' : ''}`}>
+                  3. ALEGE SERVICIUL
+                </label>
+
+                <div className={`service-dropdown-supreme ${errors.service ? 'border-error-supreme' : ''}`}>
+                  <select
+                    value={selectedServiceId}
+                    onChange={(e) => {
+                      setSelectedServiceId(e.target.value);
+                      setErrors((prev) => ({ ...prev, service: false }));
+                    }}
+                  >
+                    <option value="">Alege serviciul dorit</option>
+
+                    {barber.services.map((service) => (
+                      <option key={service.id} value={service.id}>
+                        {service.name} — {formatPrice(service.price)}
+                      </option>
+                    ))}
+                  </select>
+
+                  <span className="service-select-arrow">⌄</span>
+                </div>
+
+                {selectedService && (
+                  <div className={`selected-service-card-supreme ${selectedService.vip ? 'vip' : ''}`}>
+                    <div>
+                      <span>Serviciu selectat</span>
+                      <strong>{selectedService.name}</strong>
+                      <p>{selectedService.desc}</p>
+                    </div>
+
+                    <em>{formatPrice(selectedService.price)}</em>
+                  </div>
+                )}
               </div>
 
-              <button type="submit" className="btn-book-final">
-                CONFIRMĂ PROGRAMAREA
-              </button>
-              
+              <div className="final-inputs-supreme">
+                <label className="section-label-supreme">4. DATE DE CONTACT</label>
+
+                <div className="input-wrapper-supreme">
+                  <input
+                    type="text"
+                    placeholder=" "
+                    className={`input-supreme ${errors.name ? 'input-error-supreme' : ''}`}
+                    value={clientName}
+                    onChange={(e) => {
+                      setClientName(e.target.value);
+
+                      if (e.target.value) {
+                        setErrors((prev) => ({ ...prev, name: false }));
+                      }
+                    }}
+                  />
+
+                  <span className="floating-label">
+                    Nume complet {errors.name && '*'}
+                  </span>
+                </div>
+
+                <div className="input-wrapper-supreme">
+                  <input
+                    type="tel"
+                    placeholder=" "
+                    className={`input-supreme ${errors.phone ? 'input-error-supreme' : ''}`}
+                    value={clientPhone}
+                    onChange={(e) => {
+                      setClientPhone(e.target.value);
+
+                      if (e.target.value) {
+                        setErrors((prev) => ({ ...prev, phone: false }));
+                      }
+                    }}
+                  />
+
+                  <span className="floating-label">
+                    Telefon 07xxxxxxxx sau +407xxxxxxxx {errors.phone && '*'}
+                  </span>
+                </div>
+
+                <div className="input-wrapper-supreme">
+                  <textarea
+                    placeholder=" "
+                    className="input-supreme textarea-supreme"
+                    value={clientMessage}
+                    onChange={(e) => setClientMessage(e.target.value)}
+                    rows="2"
+                  ></textarea>
+
+                  <span className="floating-label">
+                    Mențiuni speciale opțional
+                  </span>
+                </div>
+              </div>
+
+              <div className="submit-wrapper">
+                <button type="submit" className="btn-book-supreme">
+                  <span>TRIMITE PROGRAMAREA</span>
+                  <div className="btn-glow"></div>
+                </button>
+              </div>
+
               {submitStatus && (
-                <p className={`status-msg ${submitStatus.includes('✅') ? 'success' : 'error'}`}>
-                    {submitStatus}
-                </p>
+                <div className={`status-banner-supreme ${
+                  submitStatus.includes('✅') ? 'success' : 'error'
+                }`}>
+                  {submitStatus}
+                </div>
+              )}
+
+              {successDetails && (
+                <div className="success-summary-supreme">
+                  <span className="success-kicker">Programare trimisă</span>
+
+                  <h3>Te vom contacta pentru confirmare.</h3>
+
+                  <div className="success-grid-supreme">
+                    <p>
+                      <span>Specialist</span>
+                      <strong>{successDetails.barber}</strong>
+                    </p>
+
+                    <p>
+                      <span>Serviciu</span>
+                      <strong>{successDetails.service}</strong>
+                    </p>
+
+                    <p>
+                      <span>Preț</span>
+                      <strong>{successDetails.price}</strong>
+                    </p>
+
+                    <p>
+                      <span>Data</span>
+                      <strong>{formatDateRo(successDetails.date)}</strong>
+                    </p>
+
+                    <p>
+                      <span>Ora</span>
+                      <strong>{successDetails.time}</strong>
+                    </p>
+
+                    <p>
+                      <span>Telefon</span>
+                      <strong>{successDetails.phone}</strong>
+                    </p>
+                  </div>
+
+                  <a
+                    href={successDetails.whatsappLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="btn-whatsapp-supreme"
+                  >
+                    Trimite confirmarea pe WhatsApp
+                  </a>
+                </div>
               )}
             </form>
           </div>
         </div>
       </div>
 
-      {/* GALERIA JOS */}
-      <div className="full-width-gallery">
-         <div className="gallery-header">
-            <h3>Portofoliu {barber.name}</h3>
-            <p>Cele mai recente tunsori realizate</p>
-         </div>
+      <div className="gallery-section-supreme">
+        <div className="gallery-header-supreme">
+          <h3>PORTOFOLIU {barber.name.split(' ')[0]}</h3>
+          <div className="gold-separator"></div>
+        </div>
 
-         <div className={`gallery-grid-wrapper ${galleryExpanded ? 'expanded' : ''}`}>
-             {barber.gallery.map((imgSrc, index) => (
-               <div key={index} className="gallery-card">
-                 <img src={imgSrc} alt="Lucrare" />
-               </div>
-             ))}
-             {!galleryExpanded && <div className="gallery-fade-overlay"></div>}
-         </div>
+        {galleryToShow.length > 0 ? (
+          <div className={`gallery-grid-supreme ${galleryExpanded ? 'expanded' : ''}`}>
+            {galleryToShow.map((imgSrc, index) => (
+              <div key={`${imgSrc}-${index}`} className="gallery-item-supreme">
+                <img loading="lazy" src={imgSrc} alt={`Lucrare ${barber.name} ${index + 1}`} />
+                <div className="img-hover-glow"></div>
+              </div>
+            ))}
 
-         {!galleryExpanded ? (
-            <button className="btn-show-more" onClick={() => setGalleryExpanded(true)}>
-              VEZI MAI MULTE LUCRĂRI ↓
+            {!galleryExpanded && <div className="gallery-fade-supreme"></div>}
+          </div>
+        ) : (
+          <div
+            style={{
+              width: 'min(760px, calc(100% - 32px))',
+              margin: '0 auto',
+              padding: '38px 22px',
+              border: '1px dashed rgba(212, 175, 55, 0.28)',
+              color: '#aaa',
+              textAlign: 'center'
+            }}
+          >
+            Nu sunt poze încărcate încă pentru acest specialist.
+          </div>
+        )}
+
+        {galleryToShow.length > 0 && (
+          <div className="gallery-action">
+            <button
+              type="button"
+              className={`btn-expand-gallery ${galleryExpanded ? 'active' : ''}`}
+              onClick={() => setGalleryExpanded(!galleryExpanded)}
+            >
+              {galleryExpanded ? 'ASCUNDE GALERIA ↑' : 'DESCOPERĂ ARTA ↓'}
             </button>
-         ) : (
-            <button className="btn-show-more" onClick={() => setGalleryExpanded(false)}>
-              STRÂNGE GALERIA ↑
-            </button>
-         )}
+          </div>
+        )}
       </div>
     </div>
   );
