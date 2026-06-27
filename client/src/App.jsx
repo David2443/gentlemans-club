@@ -1,6 +1,7 @@
 // src/App.jsx
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, Link } from 'react-router-dom';
+import { SpeedInsights } from '@vercel/speed-insights/react';
 
 import './App.css';
 
@@ -1052,7 +1053,7 @@ function Home() {
 
             <div className="overall-rating">
               <span className="rating-score">4.9</span>
-              <div className="stars-gold">★★★★★</div>
+              <div className="stars-gold">★★��★★</div>
               <p className="rating-count">Din peste 500 de recenzii ale clienților</p>
             </div>
           </div>
@@ -1565,6 +1566,7 @@ function App() {
     <BrowserRouter>
       <AuthProvider>
         <ScrollToTop />
+        <SpeedInsights />
 
         <Routes>
           {/* PUBLIC */}
@@ -1631,4 +1633,3 @@ function App() {
 }
 
 export default App;
-
