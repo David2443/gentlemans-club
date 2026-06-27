@@ -918,17 +918,7 @@ const handleLogout = async () => {
         </div>
       </nav>
 
-      <button
-  type="button"
-  className={`mobile-floating-filter-btn ${showMobileFilters ? 'active' : ''} ${hasActiveFilters ? 'has-active-filters' : ''}`}
-  onClick={() => {
-    setShowMobileFilters((prev) => !prev);
-    setMobileMenuOpen(false);
-  }}
-  aria-label="Deschide filtrele"
->
-  <span>Filtre</span>
-</button>
+     
 
 {showMobileFilters && (
   <button
