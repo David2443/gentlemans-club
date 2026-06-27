@@ -1,4 +1,5 @@
 // src/GalleryPage.jsx
+import { getApiBase } from './api';
 import React, {
   useState,
   useEffect,
@@ -9,8 +10,7 @@ import React, {
 import { Link } from 'react-router-dom';
 import './GaleriePage.css';
 
-const API_BASE = 'http://localhost:5000';
-
+const API_BASE = getApiBase();
 const BRAND_NAME = "GENTLEMAN'S CLUB";
 const CONTACT_PHONE = '+40 741 844 684';
 

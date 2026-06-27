@@ -1,9 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './BarberProfile.css';
-
-const API_BASE = 'http://localhost:5000';
-
+import { getApiBase } from './api';
+const API_BASE = getApiBase();
 const CONTACT_WHATSAPP = '40741844684';
 
 const BARBER_SERVICES = [
