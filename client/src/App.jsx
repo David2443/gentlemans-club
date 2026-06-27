@@ -32,7 +32,7 @@ const LEGAL_LINKS = {
   anpc: 'https://anpc.ro/',
   sal: 'https://reclamatiisal.anpc.ro/'
 };
-
+const API_BASE = getApiBase();
 const COMPANY_INFO = {
   legalName: "DIAMOND GENTLEMAN'S CLUB S.R.L.",
   cui: '52204852',

@@ -879,16 +879,22 @@ const handleLogout = async () => {
   return (
     <main className="master-messages-page">
       <nav className="mobile-messages-topbar">
-        <button
-          type="button"
-          className={`mobile-burger-btn ${mobileMenuOpen ? 'open' : ''}`}
-          onClick={() => setMobileMenuOpen((prev) => !prev)}
-          aria-label="Deschide meniul"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
+       <button
+  type="button"
+  className={`mobile-menu-pill ${mobileMenuOpen ? 'open' : ''}`}
+  onClick={() => {
+    setMobileMenuOpen((prev) => !prev);
+    setShowMobileFilters(false);
+  }}
+  aria-label={mobileMenuOpen ? 'Închide meniul' : 'Deschide meniul'}
+>
+  <span className="mobile-menu-pill-icon">
+    {mobileMenuOpen ? '×' : '☰'}
+  </span>
+  <span className="mobile-menu-pill-text">
+    {mobileMenuOpen ? 'Închide' : 'Meniu'}
+  </span>
+</button>
 
         <div className="mobile-top-title">
           <span>Gentleman</span>
