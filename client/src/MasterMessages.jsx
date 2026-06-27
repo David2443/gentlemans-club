@@ -920,14 +920,7 @@ const handleLogout = async () => {
 
      
 
-{showMobileFilters && (
-  <button
-    type="button"
-    className="mobile-filters-backdrop"
-    onClick={() => setShowMobileFilters(false)}
-    aria-label="Închide filtrele"
-  ></button>
-)}
+
 
       <div
         className={`mobile-menu-backdrop ${mobileMenuOpen ? 'show' : ''}`}
