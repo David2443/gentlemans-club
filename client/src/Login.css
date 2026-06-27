@@ -1,20 +1,19 @@
 /* ==========================================================================
-   LOGIN — GENTLEMAN'S CLUB PREMIUM
-   Black / Gold / Luxury Admin Access
+   GENTLEMAN'S CLUB — LOGIN PREMIUM
    ========================================================================== */
 
 @import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@700;800;900&family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root {
   --login-black: #030303;
-  --login-black-2: #090909;
+  --login-card: rgba(12, 12, 12, 0.82);
   --login-gold: #d4af37;
   --login-gold-light: #f7df8a;
-  --login-white: #ffffff;
+  --login-text: rgba(255, 255, 255, 0.9);
   --login-muted: rgba(255, 255, 255, 0.56);
-  --login-border: rgba(212, 175, 55, 0.22);
-  --login-red: #ff453a;
-  --login-font-title: "Cinzel", "Playfair Display", Georgia, serif;
+  --login-border: rgba(212, 175, 55, 0.2);
+  --login-danger: #ff453a;
+  --login-font-title: "Cinzel", Georgia, serif;
   --login-font-body: "Inter", Arial, sans-serif;
 }
 
@@ -24,226 +23,361 @@
 }
 
 .login-container {
-  min-height: 100vh;
   width: 100%;
-  position: relative;
-  overflow: hidden;
+  min-height: 100vh;
+  padding: 28px;
   display: grid;
   place-items: center;
-  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  color: var(--login-text);
   font-family: var(--login-font-body);
   background:
-    radial-gradient(circle at 18% 12%, rgba(212, 175, 55, 0.18), transparent 28%),
-    radial-gradient(circle at 82% 18%, rgba(212, 175, 55, 0.1), transparent 30%),
-    radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.045), transparent 42%),
-    linear-gradient(135deg, #020202 0%, #090909 48%, #020202 100%);
-  color: #fff;
+    radial-gradient(circle at 18% 14%, rgba(212, 175, 55, 0.18), transparent 30%),
+    radial-gradient(circle at 88% 12%, rgba(247, 223, 138, 0.08), transparent 28%),
+    radial-gradient(circle at 50% 100%, rgba(255, 255, 255, 0.055), transparent 34%),
+    linear-gradient(135deg, #020202 0%, #101010 46%, #030303 100%);
 }
 
 .login-container::before {
   content: "GENTLEMAN";
   position: absolute;
-  top: 50%;
   left: 50%;
+  top: 50%;
   transform: translate(-50%, -50%);
+  color: rgba(212, 175, 55, 0.045);
   font-family: var(--login-font-title);
-  font-size: clamp(4.5rem, 15vw, 13rem);
+  font-size: clamp(4.8rem, 17vw, 15rem);
   font-weight: 900;
-  letter-spacing: 0.18em;
-  color: rgba(212, 175, 55, 0.04);
-  pointer-events: none;
+  letter-spacing: 0.16em;
   white-space: nowrap;
+  pointer-events: none;
 }
 
 .login-container::after {
   content: "";
   position: absolute;
   inset: 0;
-  background-image:
-    linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
-  background-size: 58px 58px;
-  mask-image: radial-gradient(circle at center, black, transparent 74%);
   pointer-events: none;
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+  background-size: 62px 62px;
+  mask-image: radial-gradient(circle at center, black 0%, transparent 74%);
 }
 
 .login-card {
-  width: min(440px, 100%);
+  width: min(460px, 100%);
   position: relative;
   z-index: 2;
-  overflow: hidden;
-  padding: clamp(28px, 5vw, 42px);
-  border: 1px solid var(--login-border);
-  border-left: 3px solid rgba(212, 175, 55, 0.86);
+  padding: 38px;
+  border: 1px solid rgba(212, 175, 55, 0.26);
+  border-radius: 34px;
   background:
-    radial-gradient(circle at top right, rgba(212, 175, 55, 0.16), transparent 42%),
-    linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.018));
+    radial-gradient(circle at top left, rgba(212, 175, 55, 0.16), transparent 42%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.055), rgba(255, 255, 255, 0.02)),
+    var(--login-card);
   box-shadow:
-    0 34px 110px rgba(0, 0, 0, 0.64),
-    inset 0 1px 0 rgba(255, 255, 255, 0.055);
-  backdrop-filter: blur(16px);
+    0 34px 100px rgba(0, 0, 0, 0.72),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  animation: loginCardIn 0.55s ease both;
 }
 
 .login-card::before {
-  content: "PRIVATE ACCESS";
+  content: "";
   position: absolute;
-  right: -36px;
-  top: 24px;
-  color: rgba(212, 175, 55, 0.055);
-  font-family: var(--login-font-title);
-  font-size: 3.2rem;
-  font-weight: 900;
-  letter-spacing: 0.14em;
-  transform: rotate(90deg);
+  inset: 14px;
+  border: 1px solid rgba(212, 175, 55, 0.08);
+  border-radius: 26px;
   pointer-events: none;
 }
 
-.login-card h2 {
+.login-brand {
+  margin-bottom: 30px;
   position: relative;
-  margin: 0 0 28px;
-  color: #fff;
-  font-family: var(--login-font-title);
-  font-size: clamp(1.55rem, 4vw, 2.15rem);
+  z-index: 2;
+  text-align: center;
+}
+
+.login-brand span {
+  display: inline-flex;
+  margin-bottom: 13px;
+  padding: 8px 13px;
+  border: 1px solid rgba(212, 175, 55, 0.3);
+  border-radius: 999px;
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--login-gold-light);
+  font-size: 0.7rem;
   font-weight: 900;
-  line-height: 1.1;
-  letter-spacing: 0.1em;
+  letter-spacing: 2px;
   text-transform: uppercase;
 }
 
-.login-card h2::after {
-  content: "Gentleman's Club Staff Panel";
-  display: block;
-  margin-top: 10px;
-  color: rgba(212, 175, 55, 0.88);
-  font-family: var(--login-font-body);
-  font-size: 0.68rem;
-  font-weight: 1000;
+.login-brand h1 {
+  margin: 0;
+  color: #fff;
+  font-family: var(--login-font-title);
+  font-size: clamp(2rem, 6vw, 3.2rem);
+  font-weight: 900;
+  line-height: 1;
+  letter-spacing: 0.11em;
+  text-transform: uppercase;
+  text-shadow: 0 0 28px rgba(212, 175, 55, 0.12);
+}
+
+.login-brand p {
+  max-width: 330px;
+  margin: 14px auto 0;
+  color: var(--login-muted);
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.65;
+}
+
+.login-form {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  gap: 18px;
+}
+
+.input-group {
+  display: grid;
+  gap: 9px;
+}
+
+.input-group label {
+  color: var(--login-gold-light);
+  font-size: 0.72rem;
+  font-weight: 900;
   letter-spacing: 1.7px;
   text-transform: uppercase;
 }
 
-.error-msg {
-  margin-bottom: 18px;
-  padding: 13px 14px;
-  border: 1px solid rgba(255, 69, 58, 0.36);
-  border-left: 3px solid var(--login-red);
-  background: rgba(255, 69, 58, 0.09);
-  color: #ff8b84;
-  font-size: 0.82rem;
-  font-weight: 850;
-  line-height: 1.5;
-}
-
-.login-container form {
-  position: relative;
-  display: grid;
-  gap: 17px;
-}
-
-.login-container .input-group {
-  display: grid;
-  gap: 8px;
-  margin: 0;
-}
-
-.login-container .input-group label {
-  color: rgba(212, 175, 55, 0.94);
-  font-size: 0.68rem;
-  font-weight: 1000;
-  letter-spacing: 1.5px;
-  text-transform: uppercase;
-}
-
-.login-container .input-group input {
+.input-group input {
   width: 100%;
-  height: 54px;
-  padding: 0 15px;
+  height: 58px;
+  padding: 0 18px;
   border: 1px solid rgba(212, 175, 55, 0.24);
-  border-radius: 0;
+  border-radius: 18px;
   outline: none;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(0, 0, 0, 0.45));
+    linear-gradient(135deg, rgba(255, 255, 255, 0.05), rgba(0, 0, 0, 0.42));
   color: #fff;
-  font-size: 0.95rem;
-  font-weight: 850;
-  letter-spacing: 0.3px;
+  font-size: 1rem;
+  font-weight: 800;
   transition: 0.22s ease;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.04);
 }
 
-.login-container .input-group input::placeholder {
-  color: rgba(255, 255, 255, 0.3);
-  font-weight: 750;
+.input-group input::placeholder {
+  color: rgba(255, 255, 255, 0.28);
+  font-weight: 700;
 }
 
-.login-container .input-group input:focus {
+.input-group input:focus {
   border-color: rgba(247, 223, 138, 0.78);
   background:
-    linear-gradient(135deg, rgba(212, 175, 55, 0.09), rgba(0, 0, 0, 0.58));
+    linear-gradient(135deg, rgba(212, 175, 55, 0.09), rgba(0, 0, 0, 0.55));
   box-shadow:
-    0 0 0 3px rgba(212, 175, 55, 0.09),
-    inset 0 1px 0 rgba(255, 255, 255, 0.06);
+    0 0 0 4px rgba(212, 175, 55, 0.09),
+    0 14px 34px rgba(0, 0, 0, 0.3);
+}
+
+.input-group input:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.password-field {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 10px;
+}
+
+.password-field input {
+  min-width: 0;
+}
+
+.password-field button {
+  height: 58px;
+  padding: 0 15px;
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  border-radius: 18px;
+  background: rgba(212, 175, 55, 0.08);
+  color: var(--login-gold-light);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.22s ease;
+}
+
+.password-field button:hover:not(:disabled) {
+  border-color: rgba(247, 223, 138, 0.72);
+  background: rgba(212, 175, 55, 0.16);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
+.password-field button:disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.error-msg {
+  margin: 2px 0 0;
+  padding: 14px 15px;
+  border: 1px solid rgba(255, 69, 58, 0.34);
+  border-left: 4px solid var(--login-danger);
+  border-radius: 16px;
+  background: rgba(255, 69, 58, 0.09);
+  color: #ffaaa4;
+  font-size: 0.84rem;
+  font-weight: 800;
+  line-height: 1.45;
 }
 
 .btn-login {
   width: 100%;
-  min-height: 56px;
-  margin-top: 8px;
-  border: 1px solid rgba(247, 223, 138, 0.58);
-  border-radius: 0;
+  height: 60px;
+  margin-top: 6px;
+  border: 1px solid rgba(247, 223, 138, 0.72);
+  border-radius: 19px;
   background:
-    linear-gradient(135deg, #f7df8a 0%, #d4af37 46%, #7e5e13 100%);
-  color: #050505;
-  font-size: 0.78rem;
+    radial-gradient(circle at top left, rgba(247, 223, 138, 0.22), transparent 42%),
+    linear-gradient(135deg, rgba(212, 175, 55, 0.22), rgba(0, 0, 0, 0.52));
+  color: var(--login-gold-light);
+  font-size: 0.86rem;
   font-weight: 1000;
-  letter-spacing: 1.5px;
+  letter-spacing: 1.7px;
   text-transform: uppercase;
   cursor: pointer;
-  transition: 0.22s ease;
-  box-shadow:
-    0 16px 42px rgba(212, 175, 55, 0.2),
-    inset 0 1px 0 rgba(255, 255, 255, 0.34);
+  transition: 0.24s ease;
+  box-shadow: 0 18px 42px rgba(212, 175, 55, 0.12);
 }
 
 .btn-login:hover:not(:disabled) {
-  filter: brightness(1.08);
-  transform: translateY(-1px);
+  transform: translateY(-3px);
+  color: #fff;
+  border-color: #fff;
+  background:
+    radial-gradient(circle at top right, rgba(255, 255, 255, 0.16), transparent 42%),
+    linear-gradient(135deg, rgba(212, 175, 55, 0.32), rgba(0, 0, 0, 0.58));
   box-shadow:
-    0 22px 55px rgba(212, 175, 55, 0.28),
-    inset 0 1px 0 rgba(255, 255, 255, 0.42);
+    0 24px 56px rgba(0, 0, 0, 0.42),
+    0 0 34px rgba(212, 175, 55, 0.18);
 }
 
 .btn-login:active:not(:disabled) {
-  transform: translateY(0);
+  transform: translateY(-1px);
 }
 
 .btn-login:disabled {
-  opacity: 0.62;
   cursor: not-allowed;
-  filter: grayscale(0.25);
+  opacity: 0.58;
+  box-shadow: none;
 }
 
-@media (max-width: 560px) {
+.login-back-home {
+  width: 100%;
+  height: 52px;
+  margin-top: 14px;
+  position: relative;
+  z-index: 2;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.045);
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.8rem;
+  font-weight: 900;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: 0.22s ease;
+}
+
+.login-back-home:hover:not(:disabled) {
+  border-color: rgba(212, 175, 55, 0.46);
+  color: var(--login-gold-light);
+  background: rgba(212, 175, 55, 0.08);
+  transform: translateY(-2px);
+}
+
+.login-back-home:disabled {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+@keyframes loginCardIn {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.98);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@media (max-width: 540px) {
   .login-container {
-    padding: 16px;
-    place-items: stretch;
-    align-content: center;
+    padding: 18px;
+    align-items: center;
+  }
+
+  .login-container::before {
+    font-size: 4.8rem;
+    letter-spacing: 0.08em;
+    transform: translate(-50%, -50%) rotate(-8deg);
   }
 
   .login-card {
-    width: 100%;
     padding: 28px 20px;
+    border-radius: 26px;
   }
 
-  .login-card h2 {
-    font-size: 1.35rem;
+  .login-card::before {
+    inset: 10px;
+    border-radius: 20px;
   }
 
-  .login-container .input-group input {
-    height: 52px;
+  .login-brand {
+    margin-bottom: 24px;
   }
 
+  .login-brand span {
+    font-size: 0.62rem;
+    letter-spacing: 1.5px;
+  }
+
+  .login-brand h1 {
+    font-size: 2.15rem;
+  }
+
+  .login-brand p {
+    font-size: 0.88rem;
+  }
+
+  .password-field {
+    grid-template-columns: 1fr;
+  }
+
+  .password-field button {
+    width: 100%;
+    height: 50px;
+  }
+
+  .input-group input,
   .btn-login {
-    min-height: 54px;
+    height: 56px;
+  }
+
+  .login-back-home {
+    height: 50px;
   }
 }
