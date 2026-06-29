@@ -1,5 +1,6 @@
 // src/GalleryPage.jsx
 import { getApiBase } from './api';
+import { setPageSeo } from './seo';
 import React, {
   useState,
   useEffect,
@@ -407,6 +408,13 @@ function Lightbox({ items, index, onClose, onNav }) {
 }
 
 export default function GalleryPage() {
+  useEffect(() => {
+  setPageSeo({
+    title: 'Galerie tunsori bărbați Pitești | Lucrări Gentleman’s Club',
+    description: 'Vezi galeria Gentleman’s Club Pitești cu tunsori bărbați, fade-uri, barbă, styling, pensat și lucrări premium realizate de specialiștii noștri.',
+    path: '/galerie'
+  });
+}, []);
   const [filtruActiv, setFiltruActiv] = useState('all');
   const [currentView, setCurrentView] = useState('masonry');
   const [lightboxIndex, setLightboxIndex] = useState(null);

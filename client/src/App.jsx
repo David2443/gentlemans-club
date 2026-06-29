@@ -1,7 +1,7 @@
 // src/App.jsx
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, Link } from 'react-router-dom';
-
+import { setPageSeo } from './seo';
 import './App.css';
 import { getApiBase } from './api';
 import { AuthProvider, ProtectedRoute } from './AuthGate';
@@ -156,22 +156,13 @@ function Home() {
     return `${API_BASE}/${clean}`;
   };
 
-  useEffect(() => {
-    document.title = `${BRAND_NAME} Pitești | Frizerie premium, tuns, barbă și pensat`;
-
-    let metaDescription = document.querySelector('meta[name="description"]');
-
-    if (!metaDescription) {
-      metaDescription = document.createElement('meta');
-      metaDescription.setAttribute('name', 'description');
-      document.head.appendChild(metaDescription);
-    }
-
-    metaDescription.setAttribute(
-      'content',
-      `${BRAND_NAME} Pitești — frizerie premium pe ${CONTACT_ADDRESS}. Programări online pentru tuns, barbă, pensat, vopsit și pachete VIP.`
-    );
-  }, []);
+useEffect(() => {
+  setPageSeo({
+    title: "Gentleman's Club Pitești | Frizerie premium, tuns, barbă și pensat",
+    description: "Gentleman's Club Pitești — frizerie premium pe Strada Victoriei Nr. 38. Programări online pentru tuns bărbați, barbă, pensat, vopsit și pachete VIP.",
+    path: '/'
+  });
+}, []);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -573,7 +564,7 @@ const getReviewAvatar = (review, index) => {
           <div className="logo">{BRAND_NAME}</div>
 
           <div className="nav-schedule">
-            <span>Luni - Vineri: 09:00 - 20:00</span>
+            <span>Luni - Vineri: 08:00 - 22:00</span>
             <span>• {CONTACT_PHONE_DISPLAY}</span>
           </div>
 
@@ -764,7 +755,7 @@ const getReviewAvatar = (review, index) => {
 
             <img
               src="/hero-barber.png"
-              alt={`Interior ${BRAND_NAME}`}
+              alt={`Interior ${BRAND_NAME} Pitești - frizerie premium pe Strada Victoriei`}
               className="about-img-main"
             />
 
@@ -877,7 +868,11 @@ const getReviewAvatar = (review, index) => {
             {BARBERS.map((barber) => (
               <div className="team-card" key={barber.id}>
                 <div className="card-inner">
-                  <img loading="lazy" src={barber.image} alt={barber.name} />
+                  <img
+  loading="lazy"
+  src={barber.image}
+  alt={`${barber.name} - specialist la Gentleman's Club Pitești`}
+/>
 
                   <div className="card-info">
                     <h3>{barber.name}</h3>
@@ -1038,7 +1033,11 @@ const getReviewAvatar = (review, index) => {
                 className={`gallery-item ${index >= 4 ? 'fade-item' : ''}`}
                 key={`${src}-${index}`}
               >
-                <img loading="lazy" src={src} alt={`Lucrare ${BRAND_NAME} ${index + 1}`} />
+                <img
+  loading="lazy"
+  src={src}
+  alt={`Lucrare frizerie premium Pitești - Gentleman's Club ${index + 1}`}
+/>
               </div>
             ))}
           </div>
@@ -1134,7 +1133,7 @@ const getReviewAvatar = (review, index) => {
                   <div className="review-user">
                     <img
   src={getReviewAvatar(review, index)}
-  alt={reviewName}
+  alt={`Recenzie ${reviewName} pentru Gentleman's Club Pitești`}
   className="user-avatar"
   loading="lazy"
   decoding="async"
@@ -1350,7 +1349,7 @@ const getReviewAvatar = (review, index) => {
             <h3>PROGRAM</h3>
 
             <ul>
-              <li>Luni - Vineri: 09:00 - 20:00</li>
+              <li>Luni - Vineri: 08:00 - 22:00</li>
               <li>Sâmbătă: 09:00 - 16:00</li>
               <li>Duminică: Închis</li>
               <li>Telefon: {CONTACT_PHONE_DISPLAY}</li>
@@ -1540,6 +1539,13 @@ function LegalLayout({ title, children }) {
 }
 
 function PrivacyPage() {
+  useEffect(() => {
+  setPageSeo({
+    title: "Politica de confidențialitate | Gentleman's Club Pitești",
+    description: "Politica de confidențialitate pentru Gentleman’s Club Pitești. Află cum sunt folosite datele pentru programări, contact și administrarea serviciilor salonului.",
+    path: '/confidentialitate'
+  });
+}, []);
   return (
     <LegalLayout title="Politica de confidențialitate">
       <p>
@@ -1571,6 +1577,14 @@ function PrivacyPage() {
 }
 
 function TermsPage() {
+useEffect(() => {
+  setPageSeo({
+    title: "Termeni și condiții | Gentleman's Club Pitești",
+    description: "Termeni și condiții pentru folosirea site-ului Gentleman’s Club Pitești, programări online, servicii, tarife și informații despre salon.",
+    path: '/termeni'
+  });
+}, []);
+
   return (
     <LegalLayout title="Termeni și condiții">
       <p>
@@ -1601,6 +1615,15 @@ function TermsPage() {
 }
 
 function CookiesPage() {
+
+  useEffect(() => {
+  setPageSeo({
+    title: "Politica de cookies | Gentleman's Club Pitești",
+    description: "Politica de cookies pentru Gentleman’s Club Pitești. Informații despre cookies necesare pentru funcționarea site-ului și a sesiunilor de autentificare.",
+    path: '/cookies'
+  });
+}, []);
+
   return (
     <LegalLayout title="Politica de cookies">
       <p>

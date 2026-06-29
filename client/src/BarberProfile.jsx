@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './BarberProfile.css';
+import { setPageSeo } from './seo';
 import { getApiBase } from './api';
 const API_BASE = getApiBase();
 const CONTACT_WHATSAPP = '40741844684';
@@ -338,6 +339,24 @@ const createWhatsAppLink = ({ name, barber, service, date, time }) => {
 function BarberProfile() {
   const { id } = useParams();
   const barber = barbersDB[id];
+  useEffect(() => {
+  if (!barber) {
+    setPageSeo({
+      title: 'Profil frizer',
+      description: 'Alege specialistul Gentleman’s Club Pitești și programează-te online pentru tuns, barbă sau pensat.',
+      path: `/frizer/${id || ''}`
+    });
+
+    return;
+  }
+
+  setPageSeo({
+    title: `${barber.name} Pitești | Programare online tuns, barbă și servicii premium`,
+    description: `${barber.name} la Gentleman’s Club Pitești. Programează-te online pentru ${barber.role.toLowerCase()}, servicii premium, tuns, barbă, styling sau pensat.`,
+    path: `/frizer/${barber.barberId}`,
+    image: `https://www.gentlemansclub.ro${barber.image}`
+  });
+}, [barber, id]);
 
   const [monthsList] = useState(getNextMonths(12));
   const [selectedMonthIndex, setSelectedMonthIndex] = useState(0);
@@ -620,7 +639,7 @@ function BarberProfile() {
             <div className="avatar-wrapper-supreme">
               <img
                 src={barber.image}
-                alt={barber.name}
+                alt={`${barber.name} - programare online la Gentleman's Club Pitești`}
                 className="avatar-img-supreme"
               />
 
@@ -939,7 +958,11 @@ function BarberProfile() {
           <div className={`gallery-grid-supreme ${galleryExpanded ? 'expanded' : ''}`}>
             {galleryToShow.map((imgSrc, index) => (
               <div key={`${imgSrc}-${index}`} className="gallery-item-supreme">
-                <img loading="lazy" src={imgSrc} alt={`Lucrare ${barber.name} ${index + 1}`} />
+                <img
+  loading="lazy"
+  src={imgSrc}
+  alt={`Lucrare ${barber.name} - Gentleman’s Club Pitești ${index + 1}`}
+/>
                 <div className="img-hover-glow"></div>
               </div>
             ))}
