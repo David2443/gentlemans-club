@@ -435,7 +435,8 @@ const TEAM_BARBERS = [
   }
 ];
 
-const ORE_PROGRAM = [
+const ORE_PROGRAM_STANDARD = [
+  '08:00',
   '09:00',
   '10:00',
   '11:00',
@@ -446,8 +447,55 @@ const ORE_PROGRAM = [
   '16:00',
   '17:00',
   '18:00',
-  '19:00'
+  '19:00',
+  '20:00',
+  '21:00',
+  '22:00'
 ];
+
+const ORE_PROGRAM_EXTINS_HALF_HOUR = [
+  '08:00',
+  '08:30',
+  '09:00',
+  '09:30',
+  '10:00',
+  '10:30',
+  '11:00',
+  '11:30',
+  '12:00',
+  '12:30',
+  '13:00',
+  '13:30',
+  '14:00',
+  '14:30',
+  '15:00',
+  '15:30',
+  '16:00',
+  '16:30',
+  '17:00',
+  '17:30',
+  '18:00',
+  '18:30',
+  '19:00',
+  '19:30',
+  '20:00',
+  '20:30',
+  '21:00',
+  '21:30',
+  '22:00'
+];
+
+const BARBERI_PROGRAM_EXTINS = ['alex-frizeru', 'vali-frizeru'];
+
+const getOreProgramPentruBarber = (barberId) => {
+  return BARBERI_PROGRAM_EXTINS.includes(barberId)
+    ? ORE_PROGRAM_EXTINS_HALF_HOUR
+    : ORE_PROGRAM_STANDARD;
+};
+
+const isOraValidaPentruBarber = (barberId, ora) => {
+  return getOreProgramPentruBarber(barberId).includes(ora);
+};
 
 const STATUS_PROGRAMARE = ['noua', 'confirmata', 'anulata', 'finalizata', 'blocat'];
 const TIP_PROGRAMARE = ['client', 'blocat'];
@@ -769,8 +817,11 @@ const programareSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+programareSchema.index({ barberId: 1, data: 1 });
 programareSchema.index({ barberId: 1, data: 1, ora: 1 });
-programareSchema.index({ data: 1, ora: 1 });
+programareSchema.index({ data: -1 });
+programareSchema.index({ status: 1, data: -1 });
+
 
 const Programare = mongoose.model('Programare', programareSchema);
 
@@ -822,13 +873,20 @@ const galerieSchema = new mongoose.Schema(
       required: true,
       maxlength: 1000
     },
+    thumbnailUrl: {
+      type: String,
+      default: '',
+      maxlength: 1000
+    },
     filename: {
       type: String,
-      default: ''
+      default: '',
+      maxlength: 500
     },
     publicId: {
       type: String,
-      default: ''
+      default: '',
+      maxlength: 500
     },
     originalName: {
       type: String,
@@ -852,7 +910,8 @@ const galerieSchema = new mongoose.Schema(
     },
     format: {
       type: String,
-      default: ''
+      default: '',
+      maxlength: 40
     },
     storage: {
       type: String,
@@ -866,6 +925,8 @@ const galerieSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+galerieSchema.index({ barberId: 1, data: -1 });
 galerieSchema.index({ data: -1 });
 
 const Galerie = mongoose.model('Galerie', galerieSchema);
@@ -1071,6 +1132,21 @@ const getOptimizedCloudinaryUrl = (publicId) => {
       {
         width: 1600,
         crop: 'limit',
+        quality: 'auto',
+        fetch_format: 'auto'
+      }
+    ]
+  });
+};
+const getThumbnailCloudinaryUrl = (publicId) => {
+  return cloudinary.url(publicId, {
+    secure: true,
+    transformation: [
+      {
+        width: 600,
+        height: 800,
+        crop: 'fill',
+        gravity: 'auto',
         quality: 'auto',
         fetch_format: 'auto'
       }
@@ -1430,7 +1506,7 @@ app.post('/api/programari', optionalToken, async (req, res) => {
       });
     }
 
-    if (!ORE_PROGRAM.includes(ora)) {
+    if (!isOraValidaPentruBarber(finalBarberId, ora)) {
       return res.status(400).json({
         succes: false,
         mesaj: 'Ora este invalidă.'
@@ -1756,7 +1832,7 @@ app.patch('/api/programari/:id', verificaToken, async (req, res) => {
       });
     }
 
-    if (!ORE_PROGRAM.includes(nextOra)) {
+    if (!isOraValidaPentruBarber(programare.barberId, nextOra)) {
       return res.status(400).json({
         succes: false,
         mesaj: 'Ora este invalidă.'
@@ -1889,13 +1965,55 @@ app.delete('/api/programari/:id', verificaToken, async (req, res) => {
 
 app.get('/api/galerie', async (req, res) => {
   try {
-    const poze = await Galerie.find().sort({
-      data: -1,
-      createdAt: -1
-    });
+    const {
+      barberId,
+      limit = '30',
+      page = '1'
+    } = req.query;
 
-    res.json(poze);
+    const query = {};
+
+    if (barberId && barberId !== 'all') {
+      const finalBarberId = normalizeBarberId(barberId);
+
+      if (!getTeamBarberById(finalBarberId)) {
+        return res.status(400).json({
+          succes: false,
+          mesaj: 'Specialist invalid.'
+        });
+      }
+
+      query.barberId = finalBarberId;
+    }
+
+    const safeLimit = Math.min(Math.max(parseInt(limit, 10) || 30, 1), 60);
+    const safePage = Math.max(parseInt(page, 10) || 1, 1);
+    const skip = (safePage - 1) * safeLimit;
+
+    const [poze, total] = await Promise.all([
+      Galerie.find(query)
+        .sort({
+          data: -1,
+          createdAt: -1
+        })
+        .skip(skip)
+        .limit(safeLimit)
+        .lean(),
+
+      Galerie.countDocuments(query)
+    ]);
+
+    res.json({
+      succes: true,
+      poze,
+      total,
+      page: safePage,
+      limit: safeLimit,
+      hasMore: skip + poze.length < total
+    });
   } catch (err) {
+    console.error('Eroare GET /api/galerie:', err);
+
     res.status(500).json({
       succes: false,
       mesaj: 'Eroare la citirea galeriei.'
@@ -1921,20 +2039,48 @@ app.get('/api/galerie/:frizer', async (req, res) => {
     const barberName = barber?.nume || teamBarber?.nume || frizerParam;
     const displayName = barber?.displayName || teamBarber?.displayName || barberName;
 
-    const poze = await Galerie.find({
+    const {
+      limit = '30',
+      page = '1'
+    } = req.query;
+
+    const safeLimit = Math.min(Math.max(parseInt(limit, 10) || 30, 1), 60);
+    const safePage = Math.max(parseInt(page, 10) || 1, 1);
+    const skip = (safePage - 1) * safeLimit;
+
+    const query = {
       $or: [
         { barberId: finalBarberId },
         { frizer: barberName },
         { frizer: displayName },
         { frizer: frizerParam }
       ]
-    }).sort({
-      data: -1,
-      createdAt: -1
-    });
+    };
 
-    res.json(poze);
+    const [poze, total] = await Promise.all([
+      Galerie.find(query)
+        .sort({
+          data: -1,
+          createdAt: -1
+        })
+        .skip(skip)
+        .limit(safeLimit)
+        .lean(),
+
+      Galerie.countDocuments(query)
+    ]);
+
+    res.json({
+      succes: true,
+      poze,
+      total,
+      page: safePage,
+      limit: safeLimit,
+      hasMore: skip + poze.length < total
+    });
   } catch (err) {
+    console.error('Eroare GET /api/galerie/:frizer:', err);
+
     res.status(500).json({
       succes: false,
       mesaj: 'Eroare la citirea galeriei frizerului.'
@@ -2015,19 +2161,20 @@ app.post('/api/galerie/upload', verificaToken, uploadLimiter, (req, res) => {
 );
 
       const pozeCreate = uploaded.map(({ file, result }) => ({
-        barberId: barber.barberId,
-        frizer: barber.nume,
-        url: getOptimizedCloudinaryUrl(result.public_id),
-        filename: result.public_id,
-        publicId: result.public_id,
-        originalName: sanitizeText(file.originalname, 300),
-        mimeType: file.mimetype,
-        size: result.bytes || file.size,
-        width: result.width,
-        height: result.height,
-        format: result.format,
-        storage: 'cloudinary'
-      }));
+  barberId: barber.barberId,
+  frizer: barber.nume,
+  url: getOptimizedCloudinaryUrl(result.public_id),
+  thumbnailUrl: getThumbnailCloudinaryUrl(result.public_id),
+  filename: result.public_id,
+  publicId: result.public_id,
+  originalName: sanitizeText(file.originalname, 300),
+  mimeType: file.mimetype,
+  size: result.bytes || file.size,
+  width: result.width,
+  height: result.height,
+  format: result.format,
+  storage: 'cloudinary'
+}));
 
       const pozeSalvate = await Galerie.insertMany(pozeCreate);
 
@@ -2100,11 +2247,12 @@ app.post('/api/galerie', verificaToken, async (req, res) => {
     }
 
     const poza = await Galerie.create({
-      barberId: barber.barberId,
-      frizer: barber.nume,
-      url,
-      storage: 'url'
-    });
+  barberId: barber.barberId,
+  frizer: barber.nume,
+  url,
+  thumbnailUrl: url,
+  storage: 'url'
+});
 
     res.status(201).json({
       succes: true,

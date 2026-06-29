@@ -6,8 +6,10 @@ import './AdminPanel.css';
 
 
 const API_BASE = getApiBase();
+const ADMIN_GALLERY_PAGE_SIZE = 30;
 
-const ORE_PROGRAM = [
+const ORE_PROGRAM_STANDARD = [
+  '08:00',
   '09:00',
   '10:00',
   '11:00',
@@ -18,8 +20,51 @@ const ORE_PROGRAM = [
   '16:00',
   '17:00',
   '18:00',
-  '19:00'
+  '19:00',
+  '20:00',
+  '21:00',
+  '22:00'
 ];
+
+const ORE_PROGRAM_EXTINS_HALF_HOUR = [
+  '08:00',
+  '08:30',
+  '09:00',
+  '09:30',
+  '10:00',
+  '10:30',
+  '11:00',
+  '11:30',
+  '12:00',
+  '12:30',
+  '13:00',
+  '13:30',
+  '14:00',
+  '14:30',
+  '15:00',
+  '15:30',
+  '16:00',
+  '16:30',
+  '17:00',
+  '17:30',
+  '18:00',
+  '18:30',
+  '19:00',
+  '19:30',
+  '20:00',
+  '20:30',
+  '21:00',
+  '21:30',
+  '22:00'
+];
+
+const BARBERI_PROGRAM_EXTINS = ['alex-frizeru', 'vali-frizeru'];
+
+const getOreProgramPentruBarber = (barberId) => {
+  return BARBERI_PROGRAM_EXTINS.includes(barberId)
+    ? ORE_PROGRAM_EXTINS_HALF_HOUR
+    : ORE_PROGRAM_STANDARD;
+};
 
 const BARBERS = [
   { id: 'dani-frizeru', label: 'Dani Frizeru', short: 'Dani' },
@@ -57,6 +102,29 @@ const getLocalDateString = (date = new Date()) => {
   const d = String(date.getDate()).padStart(2, '0');
 
   return `${y}-${m}-${d}`;
+};
+const getMonthDateRange = (date = new Date()) => {
+  const year = date.getFullYear();
+  const month = date.getMonth();
+
+  const firstDay = new Date(year, month, 1);
+  const lastDay = new Date(year, month + 1, 0);
+
+  return {
+    from: getLocalDateString(firstDay),
+    to: getLocalDateString(lastDay)
+  };
+};
+const getGalleryThumbUrl = (poza) => {
+  return (
+    poza?.thumbnailUrl ||
+    poza?.thumbUrl ||
+    poza?.thumbnail ||
+    poza?.url ||
+    poza?.image ||
+    poza?.src ||
+    ''
+  );
 };
 
 const formatPrice = (price) => {
@@ -170,6 +238,10 @@ function AdminPanel() {
   return fromUser || BARBERS[0];
 }, [id, user?.barberId]);
 
+const oreProgramCurent = useMemo(() => {
+  return getOreProgramPentruBarber(currentBarber.id);
+}, [currentBarber.id]);
+
   const serviceOptions = useMemo(() => {
     return currentBarber.id === 'pensat-precis' ? BROW_SERVICES : BARBER_SERVICES;
   }, [currentBarber.id]);
@@ -182,8 +254,13 @@ function AdminPanel() {
   const [selectedDay, setSelectedDay] = useState(getLocalDateString());
 
   const [galerie, setGalerie] = useState([]);
-  const [selectedFiles, setSelectedFiles] = useState([]);
-  const [previewUrl, setPreviewUrl] = useState(null);
+const [galeriePage, setGaleriePage] = useState(1);
+const [galerieTotal, setGalerieTotal] = useState(0);
+const [hasMoreGalerie, setHasMoreGalerie] = useState(false);
+const [loadingMoreGalerie, setLoadingMoreGalerie] = useState(false);
+
+const [selectedFiles, setSelectedFiles] = useState([]);
+const [previewUrl, setPreviewUrl] = useState(null);
 
   const [modalDeschis, setModalDeschis] = useState(false);
   const [oraActiva, setOraActiva] = useState('');
@@ -263,7 +340,17 @@ const [editAppointmentForm, setEditAppointmentForm] = useState({
   setLoading(true);
 
   try {
-    const data = await apiGet('/api/programari');
+    const { from, to } = getMonthDateRange(viewDate);
+
+    const params = new URLSearchParams({
+      from,
+      to,
+      barberId: currentBarber.id,
+      limit: '150',
+      page: '1'
+    });
+
+    const data = await apiGet(`/api/programari?${params.toString()}`);
 
     const programariList = Array.isArray(data)
       ? data
@@ -287,12 +374,21 @@ const [editAppointmentForm, setEditAppointmentForm] = useState({
   } finally {
     setLoading(false);
   }
-}, [logout, navigate]);
+}, [logout, navigate, viewDate, currentBarber.id]);
 
-  const fetchGalerie = useCallback(async () => {
+  const fetchGalerie = useCallback(async ({ pageToLoad = 1, replace = true } = {}) => {
+  if (!replace) {
+    setLoadingMoreGalerie(true);
+  }
+
   try {
+    const params = new URLSearchParams({
+      limit: String(ADMIN_GALLERY_PAGE_SIZE),
+      page: String(pageToLoad)
+    });
+
     const data = await apiGet(
-      `/api/galerie/${encodeURIComponent(currentBarber.id)}`
+      `/api/galerie/${encodeURIComponent(currentBarber.id)}?${params.toString()}`
     );
 
     const galleryList = Array.isArray(data)
@@ -303,12 +399,45 @@ const [editAppointmentForm, setEditAppointmentForm] = useState({
           ? data.galerie
           : [];
 
-    setGalerie(galleryList);
+    setGalerie((prev) => {
+      if (replace) {
+        return galleryList;
+      }
+
+      const next = [...prev, ...galleryList];
+      const unique = new Map();
+
+      next.forEach((poza) => {
+        unique.set(poza._id || poza.id || poza.url, poza);
+      });
+
+      return [...unique.values()];
+    });
+
+    setGaleriePage(pageToLoad);
+    setGalerieTotal(Number(data?.total) || galleryList.length);
+    setHasMoreGalerie(Boolean(data?.hasMore));
   } catch (err) {
     console.error('Eroare fetch galerie:', err);
-    setGalerie([]);
+
+    if (replace) {
+      setGalerie([]);
+      setGalerieTotal(0);
+      setHasMoreGalerie(false);
+    }
+  } finally {
+    setLoadingMoreGalerie(false);
   }
 }, [currentBarber.id]);
+
+const loadMoreGalerie = () => {
+  if (loadingMoreGalerie || !hasMoreGalerie) return;
+
+  fetchGalerie({
+    pageToLoad: galeriePage + 1,
+    replace: false
+  });
+};
 
   useEffect(() => {
     fetchData();
@@ -363,7 +492,10 @@ const handleAddPhoto = async () => {
     await apiPost('/api/galerie/upload', formData);
 
     clearSelectedFiles();
-    await fetchGalerie();
+    await fetchGalerie({
+  pageToLoad: 1,
+  replace: true
+});
   } catch (err) {
     console.error('Eroare upload:', err);
     alert(err.message || 'Eroare server la upload.');
@@ -375,16 +507,26 @@ const handleAddPhoto = async () => {
 const handleDeletePhoto = async (photoId) => {
   try {
     await apiDelete(`/api/galerie/${photoId}`);
-    await fetchGalerie();
+    await fetchGalerie({
+  pageToLoad: 1,
+  replace: true
+});
   } catch (err) {
     console.error('Eroare ștergere poză:', err);
     alert(err.message || 'Eroare la ștergerea imaginii.');
   }
 };
 
-  const changeMonth = (offset) => {
-    setViewDate((prev) => new Date(prev.getFullYear(), prev.getMonth() + offset, 1));
-  };
+const changeMonth = (offset) => {
+  const nextMonth = new Date(
+    viewDate.getFullYear(),
+    viewDate.getMonth() + offset,
+    1
+  );
+
+  setViewDate(nextMonth);
+  setSelectedDay(getLocalDateString(nextMonth));
+};
 
   const generateSquareCalendar = () => {
     const year = viewDate.getFullYear();
@@ -511,7 +653,7 @@ const updateStatus = async (programare, status) => {
     }
 
     if (confirmModal.type === 'block_day') {
-      const oreLibere = ORE_PROGRAM.filter((ora) => {
+      const oreLibere = oreProgramCurent.filter((ora) => {
         const esteOcupat = programari.some((p) =>
           p.data === selectedDay &&
           p.ora === ora &&
@@ -853,7 +995,7 @@ const requestCancelAppointmentFromModal = () => {
           </div>
 
           <div className="slots-list">
-            {ORE_PROGRAM.map((ora) => {
+            {oreProgramCurent.map((ora) => {
               const app = selectedDayProgramari.find((p) => p.ora === ora);
               const blocked = isBlockedEntry(app);
 
@@ -966,7 +1108,7 @@ const requestCancelAppointmentFromModal = () => {
         <div className="admin-gallery-grid">
           {galerie.map((poza) => (
             <div key={poza._id} className="admin-photo-card">
-              <img loading="lazy" src={poza.url} alt="Lucrare" />
+              <img loading="lazy" src={getGalleryThumbUrl(poza)} alt="Lucrare" />
 
               <button
                 className="btn-delete-photo"
@@ -990,6 +1132,22 @@ const requestCancelAppointmentFromModal = () => {
             </p>
           )}
         </div>
+        {hasMoreGalerie && (
+  <div className="admin-gallery-load-more">
+    <button
+      type="button"
+      className="btn-gold"
+      onClick={loadMoreGalerie}
+      disabled={loadingMoreGalerie}
+    >
+      {loadingMoreGalerie ? 'SE ÎNCARCĂ...' : 'ÎNCARCĂ MAI MULTE POZE'}
+    </button>
+
+    <span>
+      {galerie.length} / {galerieTotal || galerie.length} poze afișate
+    </span>
+  </div>
+)}
       </section>
 
       {modalDeschis && (
@@ -1189,7 +1347,7 @@ const requestCancelAppointmentFromModal = () => {
               })
             }
           >
-            {ORE_PROGRAM.map((ora) => (
+            {oreProgramCurent.map((ora) => (
               <option key={ora} value={ora}>
                 {ora}
               </option>

@@ -193,7 +193,7 @@ function Home() {
       setGalleryLoading(true);
 
       try {
-        const response = await fetch(`${API_BASE}/api/galerie`);
+        const response = await fetch(`${API_BASE}/api/galerie?limit=6&page=1`);
 
         if (!response.ok) {
           throw new Error('Nu s-a putut încărca galeria.');
@@ -206,7 +206,14 @@ function Home() {
           : data.poze || data.galerie || data.images || [];
 
         const urls = arr
-          .map((item) => item.url || item.image || item.src)
+          .map((item) =>
+  item.thumbnailUrl ||
+  item.thumbUrl ||
+  item.thumbnail ||
+  item.url ||
+  item.image ||
+  item.src
+)
           .filter(Boolean)
           .map(normalizeGalleryUrl);
 

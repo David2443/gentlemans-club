@@ -13,6 +13,7 @@ import './GaleriePage.css';
 const API_BASE = getApiBase();
 const BRAND_NAME = "GENTLEMAN'S CLUB";
 const CONTACT_PHONE = '+40 741 844 684';
+const GALLERY_PAGE_SIZE = 30;
 
 const BARBER_FILTERS = [
   {
@@ -132,12 +133,22 @@ const formatDateRo = (dateValue) => {
 const mapBackendPhotoToGalleryItem = (photo, index) => {
   const rawBarber = photo.barberId || photo.frizer || photo.specialist || photo.username;
   const barber = findBarberFilter(rawBarber);
-  const url = normalizeImageUrl(photo.url || photo.image || photo.src);
+
+  const fullUrl = normalizeImageUrl(photo.url || photo.image || photo.src);
+
+  const thumbnailUrl = normalizeImageUrl(
+    photo.thumbnailUrl ||
+    photo.thumbUrl ||
+    photo.thumbnail ||
+    photo.thumb ||
+    fullUrl
+  );
 
   return {
-    id: photo._id || photo.id || `${url}-${index}`,
+    id: photo._id || photo.id || `${fullUrl || thumbnailUrl}-${index}`,
     cat: barber.value,
-    src: url,
+    src: thumbnailUrl || fullUrl,
+    fullSrc: fullUrl || thumbnailUrl,
     titlu: photo.titlu || photo.title || `Lucrare ${barber.display}`,
     desc: photo.desc || photo.description || `${barber.display} · ${formatDateRo(photo.data || photo.createdAt)}`,
     size: SIZE_PATTERN[index % SIZE_PATTERN.length],
@@ -245,7 +256,7 @@ function GalleryItem({ item, index, onClick }) {
       style={{ transitionDelay: `${index * 0.06}s` }}
       onClick={onClick}
     >
-      <img src={item.src} loading="lazy" alt={item.titlu} loading="lazy" />
+      <img src={item.src} loading="lazy" alt={item.titlu} />
 
       <div className="gs-gallery-overlay">
         <span className="gs-overlay-index">
@@ -355,7 +366,7 @@ function Lightbox({ items, index, onClose, onNav }) {
 
         <img
           className="gs-lightbox-img"
-          src={item.src}
+          src={item.fullSrc || item.src}
           alt={item.titlu}
         />
 
@@ -401,66 +412,101 @@ export default function GalleryPage() {
   const [lightboxIndex, setLightboxIndex] = useState(null);
   const [tooltip, setTooltip] = useState(false);
 
-  const [portofoliu, setPortofoliu] = useState([]);
-  const [loadingGallery, setLoadingGallery] = useState(true);
-  const [galleryError, setGalleryError] = useState('');
+ const [portofoliu, setPortofoliu] = useState([]);
+const [loadingGallery, setLoadingGallery] = useState(true);
+const [loadingMoreGallery, setLoadingMoreGallery] = useState(false);
+const [galleryError, setGalleryError] = useState('');
+const [galleryPage, setGalleryPage] = useState(1);
+const [galleryTotal, setGalleryTotal] = useState(0);
+const [hasMoreGallery, setHasMoreGallery] = useState(false);
 
   const tooltipTimeout = useRef(null);
 
-  const fetchGallery = useCallback(async () => {
+  const fetchGallery = useCallback(async ({ pageToLoad = 1, replace = true, activeFilter = filtruActiv } = {}) => {
+  if (replace) {
     setLoadingGallery(true);
-    setGalleryError('');
+  } else {
+    setLoadingMoreGallery(true);
+  }
 
-    try {
-      const response = await fetch(`${API_BASE}/api/galerie`);
+  setGalleryError('');
 
-      if (!response.ok) {
-        throw new Error('Nu s-a putut încărca galeria.');
-      }
-
-      const data = await response.json();
-
-      const arr = Array.isArray(data)
-        ? data
-        : data.poze || data.galerie || data.images || [];
-
-      const mapped = arr
-        .map((photo, index) => mapBackendPhotoToGalleryItem(photo, index))
-        .filter((item) => item.src);
-
-      setPortofoliu(mapped);
-    } catch (err) {
-      console.error('Eroare la galeria completă:', err);
-      setGalleryError('Nu am putut încărca pozele din backend.');
-      setPortofoliu([]);
-    } finally {
-      setLoadingGallery(false);
-    }
-  }, []);
-
-  useEffect(() => {
-    fetchGallery();
-  }, [fetchGallery]);
-
-  const filteredItems = useMemo(() => {
-    if (filtruActiv === 'all') return portofoliu;
-
-    return portofoliu.filter((p) => p.cat === filtruActiv);
-  }, [filtruActiv, portofoliu]);
-
-  const counts = useMemo(() => {
-    const base = {
-      all: portofoliu.length
-    };
-
-    BARBER_FILTERS.forEach((filter) => {
-      if (filter.value !== 'all') {
-        base[filter.value] = portofoliu.filter((p) => p.cat === filter.value).length;
-      }
+  try {
+    const params = new URLSearchParams({
+      limit: String(GALLERY_PAGE_SIZE),
+      page: String(pageToLoad)
     });
 
-    return base;
-  }, [portofoliu]);
+    if (activeFilter && activeFilter !== 'all') {
+      params.set('barberId', activeFilter);
+    }
+
+    const response = await fetch(`${API_BASE}/api/galerie?${params.toString()}`);
+
+    if (!response.ok) {
+      throw new Error('Nu s-a putut încărca galeria.');
+    }
+
+    const data = await response.json();
+
+    const arr = Array.isArray(data)
+      ? data
+      : data.poze || data.galerie || data.images || [];
+
+    const mapped = arr
+      .map((photo, index) => mapBackendPhotoToGalleryItem(photo, (pageToLoad - 1) * GALLERY_PAGE_SIZE + index))
+      .filter((item) => item.src);
+
+    setPortofoliu((prev) => {
+      if (replace) {
+        return mapped;
+      }
+
+      const next = [...prev, ...mapped];
+      const unique = new Map();
+
+      next.forEach((item) => {
+        unique.set(item.id, item);
+      });
+
+      return [...unique.values()];
+    });
+
+    setGalleryPage(pageToLoad);
+    setGalleryTotal(Number(data.total) || mapped.length);
+    setHasMoreGallery(Boolean(data.hasMore));
+  } catch (err) {
+    console.error('Eroare la galeria completă:', err);
+    setGalleryError('Nu am putut încărca pozele din backend.');
+
+    if (replace) {
+      setPortofoliu([]);
+      setGalleryTotal(0);
+      setHasMoreGallery(false);
+    }
+  } finally {
+    setLoadingGallery(false);
+    setLoadingMoreGallery(false);
+  }
+}, [filtruActiv]);
+
+  useEffect(() => {
+  setLightboxIndex(null);
+  fetchGallery({
+    pageToLoad: 1,
+    replace: true,
+    activeFilter: filtruActiv
+  });
+}, [fetchGallery, filtruActiv]);
+
+  const filteredItems = portofoliu;
+
+  const counts = useMemo(() => {
+  return BARBER_FILTERS.reduce((acc, filter) => {
+    acc[filter.value] = filter.value === filtruActiv ? galleryTotal : '';
+    return acc;
+  }, {});
+}, [filtruActiv, galleryTotal]);
 
   const openLightbox = (i) => {
     setLightboxIndex(i);
@@ -469,6 +515,16 @@ export default function GalleryPage() {
   const closeLightbox = () => {
     setLightboxIndex(null);
   };
+
+  const loadMoreGallery = () => {
+  if (loadingMoreGallery || !hasMoreGallery) return;
+
+  fetchGallery({
+    pageToLoad: galleryPage + 1,
+    replace: false,
+    activeFilter: filtruActiv
+  });
+};
 
   const navLightbox = useCallback((dir) => {
     setLightboxIndex((prev) => {
@@ -543,8 +599,8 @@ export default function GalleryPage() {
         <div className="gs-hero-stats">
           <div className="gs-hero-stat">
             <div className="gs-stat-num">
-              {portofoliu.length}
-            </div>
+  {galleryTotal || portofoliu.length}
+</div>
             <div className="gs-stat-label">
               LUCRĂRI ÎNCĂRCATE
             </div>
@@ -586,9 +642,11 @@ export default function GalleryPage() {
                 }}
               >
                 {filter.label}
-                <span className="gs-filter-count">
-                  {counts[filter.value] || 0}
-                </span>
+                {counts[filter.value] !== '' && (
+  <span className="gs-filter-count">
+    {counts[filter.value]}
+  </span>
+)}
               </button>
             </React.Fragment>
           ))}
@@ -624,8 +682,8 @@ export default function GalleryPage() {
           <div className="gs-section-label-line gs-line-right" />
 
           <span className="gs-section-label-count">
-            {filteredItems.length} / {portofoliu.length}
-          </span>
+  {filteredItems.length} / {galleryTotal || filteredItems.length}
+</span>
         </div>
 
         {loadingGallery && (
@@ -650,7 +708,13 @@ export default function GalleryPage() {
               style={{
                 marginTop: '22px'
               }}
-              onClick={fetchGallery}
+              onClick={() => {
+  fetchGallery({
+    pageToLoad: 1,
+    replace: true,
+    activeFilter: filtruActiv
+  });
+}}
             >
               REÎNCEARCĂ
             </button>
@@ -707,6 +771,19 @@ export default function GalleryPage() {
             ))}
           </div>
         )}
+
+        {!loadingGallery && !galleryError && hasMoreGallery && (
+  <div className="gs-load-more-wrap">
+    <button
+      type="button"
+      className="gs-load-more-btn"
+      onClick={loadMoreGallery}
+      disabled={loadingMoreGallery}
+    >
+      {loadingMoreGallery ? 'SE ÎNCARCĂ...' : 'ÎNCARCĂ MAI MULTE'}
+    </button>
+  </div>
+)}
       </div>
 
       <footer className="gs-footer">

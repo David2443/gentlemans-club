@@ -174,7 +174,9 @@ const barbersDB = {
   }
 };
 
-const allTimeSlots = [
+
+const STANDARD_TIME_SLOTS = [
+  '08:00',
   '09:00',
   '10:00',
   '11:00',
@@ -185,8 +187,51 @@ const allTimeSlots = [
   '16:00',
   '17:00',
   '18:00',
-  '19:00'
+  '19:00',
+  '20:00',
+  '21:00',
+  '22:00'
 ];
+
+const HALF_HOUR_TIME_SLOTS = [
+  '08:00',
+  '08:30',
+  '09:00',
+  '09:30',
+  '10:00',
+  '10:30',
+  '11:00',
+  '11:30',
+  '12:00',
+  '12:30',
+  '13:00',
+  '13:30',
+  '14:00',
+  '14:30',
+  '15:00',
+  '15:30',
+  '16:00',
+  '16:30',
+  '17:00',
+  '17:30',
+  '18:00',
+  '18:30',
+  '19:00',
+  '19:30',
+  '20:00',
+  '20:30',
+  '21:00',
+  '21:30',
+  '22:00'
+];
+
+const BARBERS_HALF_HOUR = ['alex-frizeru', 'vali-frizeru'];
+
+const getTimeSlotsForBarber = (barberId) => {
+  return BARBERS_HALF_HOUR.includes(barberId)
+    ? HALF_HOUR_TIME_SLOTS
+    : STANDARD_TIME_SLOTS;
+};
 
 const getNextMonths = (count = 12) => {
   const months = [];
@@ -319,12 +364,12 @@ function BarberProfile() {
   }, [barber, selectedServiceId]);
 
   const visibleTimeSlots = useMemo(() => {
-    if (!selectedDate) return [];
+  if (!selectedDate || !barber) return [];
 
-    return allTimeSlots.filter((time) =>
-      isTimeSlotInFuture(selectedDate.fullDate, time)
-    );
-  }, [selectedDate]);
+  return getTimeSlotsForBarber(barber.barberId).filter((time) =>
+    isTimeSlotInFuture(selectedDate.fullDate, time)
+  );
+}, [selectedDate, barber]);
 
   useEffect(() => {
     setSelectedDate(null);
@@ -406,7 +451,14 @@ function BarberProfile() {
           : data.poze || data.galerie || data.images || [];
 
         const urls = arr
-          .map((item) => item.url || item.image || item.src)
+          .map((item) =>
+  item.thumbnailUrl ||
+  item.thumbUrl ||
+  item.thumbnail ||
+  item.url ||
+  item.image ||
+  item.src
+)
           .filter(Boolean)
           .map(normalizeGalleryUrl);
 

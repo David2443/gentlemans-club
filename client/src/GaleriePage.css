@@ -948,3 +948,46 @@
     letter-spacing: 2px;
   }
 }
+.gs-load-more-wrap {
+  display: flex;
+  justify-content: center;
+  margin-top: 38px;
+}
+
+.gs-load-more-btn {
+  border: 1px solid rgba(212, 175, 55, 0.55);
+  background: rgba(212, 175, 55, 0.08);
+  color: #d4af37;
+  padding: 15px 34px;
+  border-radius: 999px;
+  font-family: 'Oswald', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  cursor: pointer;
+  transition: all 0.25s ease;
+}
+
+.gs-load-more-btn:hover:not(:disabled) {
+  background: #d4af37;
+  color: #0b0b0b;
+  transform: translateY(-2px);
+}
+
+.gs-load-more-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+@media (max-width: 768px) {
+  .gs-load-more-wrap {
+    margin-top: 28px;
+  }
+
+  .gs-load-more-btn {
+    width: 100%;
+    max-width: 320px;
+    padding: 14px 22px;
+    font-size: 11px;
+  }
+}
