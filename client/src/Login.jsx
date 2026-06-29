@@ -54,20 +54,20 @@ function Login() {
   }, [location.state]);
 
   const getRedirectPath = useCallback((authUser) => {
-    if (!authUser) return '';
+  if (!authUser) return '';
 
-    if (isAdminUser(authUser)) {
-      return requestedPath || '/master';
-    }
+  if (isAdminUser(authUser)) {
+    return '/master';
+  }
 
-    const barberId = getBarberId(authUser);
+  const barberId = getBarberId(authUser);
 
-    if (barberId) {
-      return `/admin/${encodeURIComponent(barberId)}`;
-    }
+  if (barberId) {
+    return `/admin/${encodeURIComponent(barberId)}`;
+  }
 
-    return '';
-  }, [requestedPath]);
+  return '';
+}, []);
 
   useEffect(() => {
     clearLegacyStorage();
