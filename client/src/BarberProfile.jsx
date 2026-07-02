@@ -126,17 +126,7 @@ const barbersDB = {
     gallery: []
   },
 
-  'flavius-frizeru': {
-    barberId: 'flavius-frizeru',
-    name: 'Flavius Frizeru',
-    role: 'Barber Specialist',
-    badge: 'STIL & PRECIZIE',
-    image: '/flavius-frizeru.png',
-    isMaster: false,
-    description: 'Mai mult decât o tunsoare, e despre stilul tău.',
-    services: BARBER_SERVICES,
-    gallery: []
-  },
+
 
   'alex-frizeru': {
     barberId: 'alex-frizeru',

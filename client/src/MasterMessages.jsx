@@ -13,12 +13,7 @@ const BARBERS = [
     short: 'Dani',
     path: '/admin/dani-frizeru'
   },
-  {
-    value: 'flavius-frizeru',
-    label: 'Flavius Frizeru',
-    short: 'Flavius',
-    path: '/admin/flavius-frizeru'
-  },
+
   {
     value: 'alex-frizeru',
     label: 'Alex Frizeru',

@@ -10,7 +10,6 @@ const INITIAL_VISIBLE_COUNT = 80;
 const BARBERS = [
   { value: 'all', label: 'Toți specialiștii', short: 'Toți' },
   { value: 'dani-frizeru', label: 'Dani Frizeru', short: 'Dani' },
-  { value: 'flavius-frizeru', label: 'Flavius Frizeru', short: 'Flavius' },
   { value: 'alex-frizeru', label: 'Alex Frizeru', short: 'Alex' },
   { value: 'vali-frizeru', label: 'Vali Frizeru', short: 'Vali' },
   { value: 'pensat-precis', label: 'Pensat Precis', short: 'Pensat' }

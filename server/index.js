@@ -373,21 +373,7 @@ const TEAM_BARBERS = [
     order: 1,
     services: BARBER_SERVICES
   },
-  {
-    barberId: 'flavius-frizeru',
-    username: 'flavius',
-    password: requireStrongEnv('PASS_FLAVIUS', 12),
-    nume: 'Flavius Frizeru',
-    displayName: 'Flavius Frizeru',
-    role: 'Barber Specialist',
-    specialty: 'Tunsori moderne, fade-uri curate și barbă aranjată impecabil.',
-    description: 'Mai mult decât o tunsoare, e despre stilul tău.',
-    image: '/flavius-frizeru.png',
-    isMaster: false,
-    isAdmin: false,
-    order: 2,
-    services: BARBER_SERVICES
-  },
+  
   {
     barberId: 'alex-frizeru',
     username: 'alex',
@@ -400,7 +386,7 @@ const TEAM_BARBERS = [
     image: '/alex-frizeru.png',
     isMaster: false,
     isAdmin: false,
-    order: 3,
+    order: 2,
     services: BARBER_SERVICES
   },
   {
@@ -415,7 +401,7 @@ const TEAM_BARBERS = [
     image: '/vali-frizeru.png',
     isMaster: false,
     isAdmin: false,
-    order: 4,
+    order: 3,
     services: BARBER_SERVICES
   },
   {
@@ -430,7 +416,7 @@ const TEAM_BARBERS = [
     image: '/pensat-precis.png',
     isMaster: false,
     isAdmin: false,
-    order: 5,
+    order: 4,
     services: BROW_SERVICES
   }
 ];
@@ -1214,7 +1200,17 @@ const runSetup = async () => {
       isMaster: user.isMaster
     });
   }
+     const activeBarberIds = TEAM_BARBERS.map((barber) => barber.barberId);
 
+  await User.updateMany(
+    { barberId: { $nin: activeBarberIds } },
+    { activ: false }
+  );
+
+  await Barber.updateMany(
+    { barberId: { $nin: activeBarberIds } },
+    { activ: false }
+  );
   return rezultate;
 };
 

@@ -29,12 +29,7 @@ const BARBER_FILTERS = [
     display: 'Dani Frizeru',
     aliases: ['dani', 'dani frizeru', 'master']
   },
-  {
-    value: 'flavius-frizeru',
-    label: 'FLAVIUS',
-    display: 'Flavius Frizeru',
-    aliases: ['flavius', 'flavius frizeru']
-  },
+
    {
     value: 'vali-frizeru',
     label: 'VALI',
@@ -616,7 +611,7 @@ const [hasMoreGallery, setHasMoreGallery] = useState(false);
 
           <div className="gs-hero-stat">
             <div className="gs-stat-num">
-              5
+              4
             </div>
             <div className="gs-stat-label">
               SPECIALIȘTI

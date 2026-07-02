@@ -68,7 +68,6 @@ const getOreProgramPentruBarber = (barberId) => {
 
 const BARBERS = [
   { id: 'dani-frizeru', label: 'Dani Frizeru', short: 'Dani' },
-  { id: 'flavius-frizeru', label: 'Flavius Frizeru', short: 'Flavius' },
   { id: 'alex-frizeru', label: 'Alex Frizeru', short: 'Alex' },
   { id: 'vali-frizeru', label: 'Vali Frizeru', short: 'Vali' },
   { id: 'pensat-precis', label: 'Pensat Precis', short: 'Pensat' }

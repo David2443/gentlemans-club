@@ -55,16 +55,7 @@ const BARBERS = [
     image: '/dani-frizeru.png',
     isMaster: true
   },
-  {
-    id: 'flavius-frizeru',
-    name: 'Flavius Frizeru',
-    role: 'Barber Specialist',
-    label: 'STIL & PRECIZIE',
-    specialty: 'Tunsori moderne, fade-uri curate și barbă aranjată impecabil.',
-    description: 'Mai mult decât o tunsoare, e despre stilul tău.',
-    image: '/flavius-frizeru.png',
-    isMaster: false
-  },
+
   {
     id: 'alex-frizeru',
     name: 'Alex Frizeru',
@@ -419,7 +410,7 @@ useEffect(() => {
   const heroStats = [
     { value: '4.9★', label: 'rating clienți' },
     { value: '500+', label: 'recenzii' },
-    { value: '5', label: 'specialiști' }
+    { value: '4', label: 'specialiști' }
   ];
 
   const highlights = [
@@ -524,7 +515,7 @@ const getReviewAvatar = (review, index) => {
     {
       name: 'Cătălin Stoica',
       date: 'Acum 5 zile',
-      text: 'Flavius lucrează foarte precis. Fade-ul a ieșit exact cum am vrut, fără grabă și fără compromis.',
+      text: 'Dani lucrează foarte precis. Fade-ul a ieșit exact cum am vrut, fără grabă și fără compromis.',
       avatar: 'https://i.pravatar.cc/100?u=gentlemans-4'
     },
     {
