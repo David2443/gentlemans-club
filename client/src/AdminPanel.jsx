@@ -348,41 +348,9 @@ const [editAppointmentForm, setEditAppointmentForm] = useState({
 }, [isAdmin]);
 
 useEffect(() => {
-  const params = new URLSearchParams(window.location.search);
-
-  if (params.get('testNotif') !== '1') return;
-
-  setLoginNotifications([
-    {
-      _id: 'test-login-notification-1',
-      nume_client: 'Mihai Test',
-      telefon: '0712345678',
-      serviciu: 'Tuns + barbă',
-      data: getLocalDateString(),
-      ora: '10:30',
-      frizer: currentBarber.label
-    },
-    {
-      _id: 'test-login-notification-2',
-      nume_client: 'Andrei Test',
-      telefon: '0798765432',
-      serviciu: 'Tuns',
-      data: getLocalDateString(),
-      ora: '12:00',
-      frizer: currentBarber.label
-    }
-  ]);
-
-  setLoginNotificationsOpen(true);
-}, [currentBarber.label]);
-
-useEffect(() => {
   let ignore = false;
 
   const loadLoginNotifications = async () => {
-    const params = new URLSearchParams(window.location.search);
-
-    if (params.get('testNotif') === '1') return;
     if (!user) return;
 
     try {
@@ -1577,61 +1545,37 @@ const requestCancelAppointmentFromModal = () => {
         </div>
       )}
       {loginNotificationsOpen && loginNotifications.length > 0 && (
-  <div className="modal-backdrop confirm-backdrop">
-    <div className="modal-box confirm-box" style={{ maxWidth: '680px' }}>
-      <h3 className="confirm-title">🔔 Programări noi</h3>
+  <div className="login-notification-backdrop">
+    <div className="login-notification-modal">
+      <h3 className="login-notification-title">🔔 Programări noi</h3>
 
-      <p className="confirm-msg">
+      <p className="login-notification-subtitle">
         Ai {loginNotifications.length} programare/programări noi de când nu ai mai intrat.
       </p>
 
-      <div
-        style={{
-          display: 'grid',
-          gap: '12px',
-          maxHeight: '55vh',
-          overflowY: 'auto',
-          margin: '18px 0'
-        }}
-      >
+      <div className="login-notification-list">
         {loginNotifications.map((programare) => {
           const phoneForWhatsApp = normalizePhoneForWhatsApp(programare.telefon);
 
           return (
-            <div
-              key={programare._id}
-              style={{
-                padding: '14px',
-                border: '1px solid rgba(212, 175, 55, 0.28)',
-                borderRadius: '14px',
-                background: 'rgba(255, 255, 255, 0.04)',
-                textAlign: 'left'
-              }}
-            >
-              <strong
-                style={{
-                  display: 'block',
-                  color: '#fff',
-                  marginBottom: '6px',
-                  fontSize: '1rem'
-                }}
-              >
+            <div key={programare._id} className="login-notification-card">
+              <strong className="login-notification-client">
                 {programare.nume_client || 'Client'}
               </strong>
 
-              <p style={{ margin: '0 0 6px', color: '#d4af37', fontWeight: 800 }}>
+              <p className="login-notification-service">
                 {programare.serviciu || 'Serviciu nespecificat'}
               </p>
 
-              <p style={{ margin: '0 0 6px', color: '#aaa' }}>
+              <p className="login-notification-detail">
                 {formatNotificationDate(programare.data)} · ora {programare.ora}
               </p>
 
-              <p style={{ margin: '0 0 6px', color: '#aaa' }}>
+              <p className="login-notification-detail">
                 Specialist: {programare.frizer || currentBarber.label}
               </p>
 
-              <p style={{ margin: '0 0 10px', color: '#aaa' }}>
+              <p className="login-notification-detail">
                 Telefon: {programare.telefon || 'N/A'}
               </p>
 
@@ -1640,8 +1584,7 @@ const requestCancelAppointmentFromModal = () => {
                   href={`https://wa.me/${phoneForWhatsApp}`}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="btn-modal-whatsapp"
-                  style={{ display: 'inline-flex', textDecoration: 'none' }}
+                  className="login-notification-whatsapp"
                 >
                   Scrie pe WhatsApp
                 </a>
@@ -1651,15 +1594,13 @@ const requestCancelAppointmentFromModal = () => {
         })}
       </div>
 
-      <div className="modal-actions confirm-actions">
-        <button
-          type="button"
-          className="btn-gold"
-          onClick={() => setLoginNotificationsOpen(false)}
-        >
-          AM VĂZUT
-        </button>
-      </div>
+      <button
+        type="button"
+        className="login-notification-close"
+        onClick={() => setLoginNotificationsOpen(false)}
+      >
+        AM VĂZUT
+      </button>
     </div>
   </div>
 )}
