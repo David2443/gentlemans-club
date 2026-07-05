@@ -1514,6 +1514,250 @@ app.patch('/api/barberi/:barberId', verificaToken, verificaAdmin, async (req, re
 });
 
 /* =====================================================
+   RECENZII
+===================================================== */
+
+app.get('/api/reviews', async (req, res) => {
+  try {
+    const limit = Math.min(Math.max(Number(req.query.limit) || 6, 1), 20);
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const skip = (page - 1) * limit;
+
+    const query = {
+      active: true
+    };
+
+    const [reviews, total] = await Promise.all([
+      Review.find(query)
+        .sort({ order: 1, createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Review.countDocuments(query)
+    ]);
+
+    res.json({
+      succes: true,
+      reviews,
+      total,
+      page,
+      limit,
+      hasMore: skip + reviews.length < total
+    });
+  } catch (err) {
+    console.error('Eroare GET /api/reviews:', err);
+
+    res.status(500).json({
+      succes: false,
+      mesaj: 'Eroare la citirea recenziilor.'
+    });
+  }
+});
+
+app.post('/api/reviews', contactLimiter, async (req, res) => {
+  try {
+    const name = sanitizeText(req.body.name || req.body.nume, 120);
+    const text = sanitizeText(req.body.text || req.body.mesaj, 700);
+    const rating = Number(req.body.rating || req.body.stele || 5);
+
+    if (!name || name.length < 2) {
+      return res.status(400).json({
+        succes: false,
+        mesaj: 'Numele este obligatoriu.'
+      });
+    }
+
+    if (!text || text.length < 10) {
+      return res.status(400).json({
+        succes: false,
+        mesaj: 'Recenzia trebuie să aibă minim 10 caractere.'
+      });
+    }
+
+    if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+      return res.status(400).json({
+        succes: false,
+        mesaj: 'Rating-ul trebuie să fie între 1 și 5.'
+      });
+    }
+
+    const review = await Review.create({
+      name,
+      text,
+      rating,
+      active: false,
+      order: 99,
+      dateLabel: 'Recent'
+    });
+
+    res.status(201).json({
+      succes: true,
+      mesaj: 'Mulțumim! Recenzia ta va apărea după aprobare.',
+      review
+    });
+  } catch (err) {
+    console.error('Eroare POST /api/reviews:', err);
+
+    res.status(500).json({
+      succes: false,
+      mesaj: 'Eroare la trimiterea recenziei.'
+    });
+  }
+});
+
+app.get('/api/admin/reviews', verificaToken, verificaAdmin, async (req, res) => {
+  try {
+    const status = sanitizeText(req.query.status, 20);
+    const limit = Math.min(Math.max(Number(req.query.limit) || 50, 1), 100);
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const skip = (page - 1) * limit;
+
+    const query = {};
+
+    if (status === 'active') {
+      query.active = true;
+    }
+
+    if (status === 'pending') {
+      query.active = false;
+    }
+
+    const [reviews, total] = await Promise.all([
+      Review.find(query)
+        .sort({ active: 1, createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Review.countDocuments(query)
+    ]);
+
+    res.json({
+      succes: true,
+      reviews,
+      total,
+      page,
+      limit,
+      hasMore: skip + reviews.length < total
+    });
+  } catch (err) {
+    console.error('Eroare GET /api/admin/reviews:', err);
+
+    res.status(500).json({
+      succes: false,
+      mesaj: 'Eroare la citirea recenziilor din admin.'
+    });
+  }
+});
+
+app.patch('/api/admin/reviews/:id', verificaToken, verificaAdmin, async (req, res) => {
+  try {
+    const reviewId = req.params.id;
+
+    if (!isValidObjectId(reviewId)) {
+      return res.status(400).json({
+        succes: false,
+        mesaj: 'ID recenzie invalid.'
+      });
+    }
+
+    const update = {};
+
+    if (req.body.name !== undefined || req.body.nume !== undefined) {
+      update.name = sanitizeText(req.body.name || req.body.nume, 120);
+    }
+
+    if (req.body.text !== undefined || req.body.mesaj !== undefined) {
+      update.text = sanitizeText(req.body.text || req.body.mesaj, 700);
+    }
+
+    if (req.body.rating !== undefined || req.body.stele !== undefined) {
+      const rating = Number(req.body.rating || req.body.stele);
+
+      if (!Number.isFinite(rating) || rating < 1 || rating > 5) {
+        return res.status(400).json({
+          succes: false,
+          mesaj: 'Rating-ul trebuie să fie între 1 și 5.'
+        });
+      }
+
+      update.rating = rating;
+    }
+
+    if (req.body.active !== undefined) {
+      update.active = parseBoolean(req.body.active, false);
+    }
+
+    if (req.body.order !== undefined) {
+      update.order = Number(req.body.order) || 99;
+    }
+
+    if (req.body.dateLabel !== undefined) {
+      update.dateLabel = sanitizeText(req.body.dateLabel, 80);
+    }
+
+    const review = await Review.findByIdAndUpdate(
+      reviewId,
+      update,
+      { new: true }
+    );
+
+    if (!review) {
+      return res.status(404).json({
+        succes: false,
+        mesaj: 'Recenzia nu există.'
+      });
+    }
+
+    res.json({
+      succes: true,
+      mesaj: 'Recenzie actualizată.',
+      review
+    });
+  } catch (err) {
+    console.error('Eroare PATCH /api/admin/reviews/:id:', err);
+
+    res.status(500).json({
+      succes: false,
+      mesaj: 'Eroare la actualizarea recenziei.'
+    });
+  }
+});
+
+app.delete('/api/admin/reviews/:id', verificaToken, verificaAdmin, async (req, res) => {
+  try {
+    const reviewId = req.params.id;
+
+    if (!isValidObjectId(reviewId)) {
+      return res.status(400).json({
+        succes: false,
+        mesaj: 'ID recenzie invalid.'
+      });
+    }
+
+    const review = await Review.findByIdAndDelete(reviewId);
+
+    if (!review) {
+      return res.status(404).json({
+        succes: false,
+        mesaj: 'Recenzia nu există.'
+      });
+    }
+
+    res.json({
+      succes: true,
+      mesaj: 'Recenzie ștearsă.'
+    });
+  } catch (err) {
+    console.error('Eroare DELETE /api/admin/reviews/:id:', err);
+
+    res.status(500).json({
+      succes: false,
+      mesaj: 'Eroare la ștergerea recenziei.'
+    });
+  }
+});
+
+/* =====================================================
    PROGRAMĂRI
 ===================================================== */
 

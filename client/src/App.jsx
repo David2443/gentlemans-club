@@ -5,7 +5,7 @@ import { setPageSeo } from './seo';
 import './App.css';
 import { getApiBase } from './api';
 import { AuthProvider, ProtectedRoute } from './AuthGate';
-
+import ReviewsPage from './ReviewsPage';  
 import BarberProfile from './BarberProfile';
 import AdminPanel from './AdminPanel';
 import GalleryPage from './GalleryPage';
@@ -13,6 +13,8 @@ import ScrollToTop from './ScrollToTop';
 import Login from './Login';
 import MasterDashboard from './MasterDashboard';
 import MasterMessages from './MasterMessages';
+import MasterReviews from './MasterReviews';
+import CookieConsent from './CookieConsent';
 
 const BRAND_NAME = "Gentleman's Club";
 const CONTACT_PHONE_DISPLAY = '+40 741 844 684';
@@ -226,36 +228,40 @@ useEffect(() => {
 
 
   useEffect(() => {
-    let ignore = false;
+  let ignore = false;
 
-    const loadReviews = async () => {
-      try {
-        const response = await fetch(`${API_BASE}/api/reviews?limit=8`);
+  const loadReviews = async () => {
+    try {
+      const response = await fetch(`${API_BASE}/api/reviews?limit=6&page=1`);
 
-        if (!response.ok) {
-          throw new Error('Nu s-au putut încărca recenziile.');
-        }
-
-        const data = await response.json();
-
-        if (!ignore && Array.isArray(data)) {
-          setReviews(data);
-        }
-      } catch (error) {
-        console.error('Eroare recenzii homepage:', error);
-
-        if (!ignore) {
-          setReviews([]);
-        }
+      if (!response.ok) {
+        throw new Error('Nu s-au putut încărca recenziile.');
       }
-    };
 
-    loadReviews();
+      const data = await response.json();
 
-    return () => {
-      ignore = true;
-    };
-  }, []);
+      const list = Array.isArray(data?.reviews)
+        ? data.reviews
+        : [];
+
+      if (!ignore) {
+        setReviews(list);
+      }
+    } catch (error) {
+      console.error('Eroare recenzii homepage:', error);
+
+      if (!ignore) {
+        setReviews([]);
+      }
+    }
+  };
+
+  loadReviews();
+
+  return () => {
+    ignore = true;
+  };
+}, []);
 
   const handleContactSubmit = async (e) => {
     e.preventDefault();
@@ -1144,11 +1150,23 @@ const getReviewAvatar = (review, index) => {
             })}
           </div>
 
-          <div className="reviews-cta">
-            <a href="#contact" className="btn-outline-gold">
-              Programează-te la {BRAND_NAME}
-            </a>
-          </div>
+          <div
+  className="reviews-cta"
+  style={{
+    display: 'flex',
+    justifyContent: 'center',
+    gap: '14px',
+    flexWrap: 'wrap'
+  }}
+>
+  <Link to="/recenzii" className="btn-gold" style={{ textDecoration: 'none' }}>
+    VEZI TOATE RECENZIILE
+  </Link>
+
+  <a href="#contact" className="btn-outline-gold">
+    Programează-te la {BRAND_NAME}
+  </a>
+</div>
         </div>
       </section>
 
@@ -1638,11 +1656,12 @@ function CookiesPage() {
 }
 function App() {
   return (
-    <BrowserRouter>
-      <AuthProvider>
-        <ScrollToTop />
+   <BrowserRouter>
+  <AuthProvider>
+    <ScrollToTop />
+    <CookieConsent />
 
-        <Routes>
+    <Routes>
           {/* PUBLIC */}
           <Route path="/" element={<Home />} />
 
@@ -1655,6 +1674,8 @@ function App() {
           <Route path="/confidentialitate" element={<PrivacyPage />} />
 
           <Route path="/termeni" element={<TermsPage />} />
+
+          <Route path="/recenzii" element={<ReviewsPage />} />
 
           <Route path="/cookies" element={<CookiesPage />} />
 
@@ -1686,6 +1707,15 @@ function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+  path="/master/recenzii"
+  element={
+    <ProtectedRoute requireAdmin>
+      <MasterReviews />
+    </ProtectedRoute>
+  }
+/>
 
           {/* REDIRECTURI VECHI */}
           <Route

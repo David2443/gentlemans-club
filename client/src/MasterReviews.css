@@ -1,0 +1,208 @@
+.master-reviews-page {
+  min-height: 100vh;
+  background:
+    radial-gradient(circle at top, rgba(212, 175, 55, 0.12), transparent 36%),
+    #050505;
+  color: #fff;
+  padding: 34px 20px 70px;
+}
+
+.master-reviews-header {
+  width: min(1180px, 100%);
+  margin: 0 auto 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+
+.master-reviews-back {
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  background: rgba(212, 175, 55, 0.08);
+  color: #d4af37;
+  border-radius: 999px;
+  padding: 10px 15px;
+  font-weight: 900;
+  cursor: pointer;
+  margin-bottom: 18px;
+}
+
+.master-reviews-header h1 {
+  margin: 0;
+  font-size: clamp(2rem, 5vw, 4rem);
+  text-transform: uppercase;
+}
+
+.master-reviews-header p {
+  margin: 10px 0 0;
+  color: #aaa;
+  font-weight: 700;
+  line-height: 1.6;
+}
+
+.master-reviews-refresh {
+  border: none;
+  border-radius: 999px;
+  padding: 14px 22px;
+  background: linear-gradient(135deg, #d4af37, #9f7b1d);
+  color: #050505;
+  font-weight: 950;
+  cursor: pointer;
+}
+
+.master-reviews-filters {
+  width: min(1180px, 100%);
+  margin: 0 auto 24px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.master-reviews-filters button {
+  border: 1px solid rgba(212, 175, 55, 0.24);
+  background: rgba(255, 255, 255, 0.045);
+  color: #aaa;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.master-reviews-filters button.active {
+  background: rgba(212, 175, 55, 0.16);
+  color: #d4af37;
+  border-color: rgba(212, 175, 55, 0.55);
+}
+
+.master-reviews-list {
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  display: grid;
+  gap: 16px;
+}
+
+.master-review-card {
+  border-radius: 24px;
+  border: 1px solid rgba(212, 175, 55, 0.2);
+  background: rgba(255, 255, 255, 0.045);
+  padding: 22px;
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.35);
+}
+
+.master-review-card.pending {
+  border-color: rgba(255, 179, 0, 0.38);
+}
+
+.master-review-card.approved {
+  border-color: rgba(48, 209, 88, 0.35);
+}
+
+.master-review-top {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  align-items: flex-start;
+  margin-bottom: 14px;
+}
+
+.master-review-top h2 {
+  margin: 7px 0 0;
+  font-size: 1.35rem;
+}
+
+.master-review-top strong {
+  color: #d4af37;
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+
+.master-review-status {
+  display: inline-flex;
+  color: #d4af37;
+  font-size: 0.75rem;
+  font-weight: 950;
+  letter-spacing: 1.4px;
+  text-transform: uppercase;
+}
+
+.master-review-card p {
+  margin: 0;
+  color: #ddd;
+  line-height: 1.7;
+  font-weight: 650;
+}
+
+.master-review-meta {
+  margin-top: 16px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  color: #888;
+  font-weight: 800;
+  font-size: 0.88rem;
+}
+
+.master-review-actions {
+  margin-top: 18px;
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.master-review-actions button {
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  background: rgba(255, 255, 255, 0.055);
+  color: #fff;
+  border-radius: 999px;
+  padding: 11px 15px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.master-review-actions button.approve {
+  background: rgba(48, 209, 88, 0.12);
+  border-color: rgba(48, 209, 88, 0.48);
+  color: #30d158;
+}
+
+.master-review-actions button.hide {
+  background: rgba(255, 179, 0, 0.11);
+  border-color: rgba(255, 179, 0, 0.45);
+  color: #ffb300;
+}
+
+.master-review-actions button.delete {
+  background: rgba(255, 69, 58, 0.12);
+  border-color: rgba(255, 69, 58, 0.48);
+  color: #ff453a;
+}
+
+.master-review-actions button:disabled,
+.master-reviews-refresh:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.master-reviews-empty {
+  padding: 34px;
+  border-radius: 22px;
+  border: 1px dashed rgba(212, 175, 55, 0.28);
+  color: #aaa;
+  text-align: center;
+  font-weight: 800;
+}
+
+@media (max-width: 700px) {
+  .master-reviews-page {
+    padding: 24px 14px 60px;
+  }
+
+  .master-review-top {
+    flex-direction: column;
+  }
+
+  .master-review-actions button {
+    width: 100%;
+  }
+}

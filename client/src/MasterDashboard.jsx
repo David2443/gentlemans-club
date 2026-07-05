@@ -934,6 +934,10 @@ const handleLogout = async () => {
             💬 Mesaje{messageCount > 0 ? ` (${messageCount})` : ''}
           </button>
 
+          <button className="nav-item" onClick={() => navigate('/master/recenzii')}>
+  ⭐ Recenzii
+</button>
+
           <div className="divider"></div>
 
           <button className="nav-item logout" onClick={handleLogout}>
