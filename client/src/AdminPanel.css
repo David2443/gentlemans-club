@@ -2041,4 +2041,187 @@
     width: 100%;
     max-width: 320px;
   }
+}.login-notification-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.78);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px;
+}
+
+.login-notification-modal {
+  width: min(680px, 100%);
+  max-height: 88vh;
+  overflow: hidden;
+  border-radius: 26px;
+  border: 1px solid rgba(212, 175, 55, 0.35);
+  background:
+    radial-gradient(circle at top, rgba(212, 175, 55, 0.16), transparent 38%),
+    linear-gradient(145deg, rgba(18, 18, 18, 0.98), rgba(5, 5, 5, 0.98));
+  box-shadow:
+    0 30px 90px rgba(0, 0, 0, 0.75),
+    0 0 45px rgba(212, 175, 55, 0.12);
+  padding: 26px;
+  animation: notificationPop 0.28s ease-out;
+}
+
+@keyframes notificationPop {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.96);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.login-notification-title {
+  margin: 0;
+  color: #fff;
+  font-size: clamp(1.35rem, 4vw, 2rem);
+  font-weight: 900;
+  letter-spacing: 0.5px;
+}
+
+.login-notification-subtitle {
+  margin: 10px 0 20px;
+  color: #b8b8b8;
+  line-height: 1.6;
+  font-weight: 700;
+}
+
+.login-notification-list {
+  display: grid;
+  gap: 14px;
+  max-height: 54vh;
+  overflow-y: auto;
+  padding-right: 4px;
+  margin: 18px 0 24px;
+}
+
+.login-notification-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.login-notification-list::-webkit-scrollbar-thumb {
+  background: rgba(212, 175, 55, 0.55);
+  border-radius: 999px;
+}
+
+.login-notification-card {
+  position: relative;
+  padding: 16px;
+  border-radius: 18px;
+  border: 1px solid rgba(212, 175, 55, 0.25);
+  background: rgba(255, 255, 255, 0.045);
+  text-align: left;
+  overflow: hidden;
+}
+
+.login-notification-card::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 4px;
+  border-radius: 999px;
+  background: linear-gradient(180deg, #d4af37, #8f6f16);
+}
+
+.login-notification-client {
+  display: block;
+  margin-bottom: 8px;
+  padding-left: 10px;
+  color: #fff;
+  font-size: 1.05rem;
+  font-weight: 900;
+}
+
+.login-notification-service {
+  margin: 0 0 8px;
+  padding-left: 10px;
+  color: #d4af37;
+  font-weight: 900;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.login-notification-detail {
+  margin: 0 0 6px;
+  padding-left: 10px;
+  color: #aaa;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.login-notification-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 20px;
+}
+
+.login-notification-whatsapp {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  margin-left: 10px;
+  margin-top: 8px;
+  padding: 10px 14px;
+  border-radius: 999px;
+  background: rgba(37, 211, 102, 0.12);
+  border: 1px solid rgba(37, 211, 102, 0.45);
+  color: #25d366;
+  font-size: 0.82rem;
+  font-weight: 900;
+  text-decoration: none;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+}
+
+.login-notification-whatsapp:hover {
+  background: rgba(37, 211, 102, 0.2);
+}
+
+.login-notification-close {
+  width: 100%;
+  border: none;
+  border-radius: 999px;
+  padding: 15px 20px;
+  background: linear-gradient(135deg, #d4af37, #9f7b1d);
+  color: #050505;
+  font-weight: 950;
+  letter-spacing: 1px;
+  cursor: pointer;
+  text-transform: uppercase;
+  box-shadow: 0 12px 35px rgba(212, 175, 55, 0.22);
+}
+
+.login-notification-close:hover {
+  transform: translateY(-1px);
+}
+
+@media (max-width: 600px) {
+  .login-notification-modal {
+    padding: 22px 16px;
+    border-radius: 22px;
+  }
+
+  .login-notification-list {
+    max-height: 58vh;
+  }
+
+  .login-notification-card {
+    padding: 15px 13px;
+  }
 }

@@ -348,10 +348,6 @@ const [editAppointmentForm, setEditAppointmentForm] = useState({
 }, [isAdmin]);
 
 useEffect(() => {
-  let ignore = false;
-
-  const loadLoginNotifications = async () => {
-    useEffect(() => {
   const params = new URLSearchParams(window.location.search);
 
   if (params.get('testNotif') !== '1') return;
@@ -379,6 +375,14 @@ useEffect(() => {
 
   setLoginNotificationsOpen(true);
 }, [currentBarber.label]);
+
+useEffect(() => {
+  let ignore = false;
+
+  const loadLoginNotifications = async () => {
+    const params = new URLSearchParams(window.location.search);
+
+    if (params.get('testNotif') === '1') return;
     if (!user) return;
 
     try {
