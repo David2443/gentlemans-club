@@ -70,7 +70,7 @@ const BARBERS = [
   { id: 'dani-frizeru', label: 'Dani Frizeru', short: 'Dani' },
   { id: 'alex-frizeru', label: 'Alex Frizeru', short: 'Alex' },
   { id: 'vali-frizeru', label: 'Vali Frizeru', short: 'Vali' },
-  { id: 'pensat-precis', label: 'Pensat Precis', short: 'Pensat' }
+  { id: 'pensat-precis', label: 'Bianca Pensat', short: 'Bianca' }
 ];
 
 const BARBER_SERVICES = [

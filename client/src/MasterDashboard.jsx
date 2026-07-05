@@ -12,7 +12,7 @@ const BARBERS = [
   { value: 'dani-frizeru', label: 'Dani Frizeru', short: 'Dani' },
   { value: 'alex-frizeru', label: 'Alex Frizeru', short: 'Alex' },
   { value: 'vali-frizeru', label: 'Vali Frizeru', short: 'Vali' },
-  { value: 'pensat-precis', label: 'Pensat Precis', short: 'Pensat' }
+  { value: 'pensat-precis', label: 'Bianca Pensat', short: 'Bianca' }
 ];
 
 const RANGE_OPTIONS = [

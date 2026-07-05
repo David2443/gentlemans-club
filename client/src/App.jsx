@@ -80,7 +80,7 @@ const BARBERS = [
   },
   {
     id: 'pensat-precis',
-    name: 'Pensat Precis',
+    name: 'Bianca Pensat',
     role: 'Brow Specialist',
     label: 'STIL PERFECT',
     specialty: 'Pensat precis, formă curată și detaliu premium.',

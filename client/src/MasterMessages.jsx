@@ -28,8 +28,8 @@ const BARBERS = [
   },
   {
     value: 'pensat-precis',
-    label: 'Pensat Precis',
-    short: 'Pensat',
+    label: 'Bianca Pensat',
+    short: 'Bianca',
     path: '/admin/pensat-precis'
   }
 ];

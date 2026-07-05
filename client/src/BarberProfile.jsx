@@ -154,7 +154,7 @@ const barbersDB = {
 
   'pensat-precis': {
     barberId: 'pensat-precis',
-    name: 'Pensat Precis',
+    name: 'Bianca Pensat',
     role: 'Brow Specialist',
     badge: 'STIL PERFECT',
     image: '/pensat-precis.png',

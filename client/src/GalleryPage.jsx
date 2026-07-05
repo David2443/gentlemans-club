@@ -45,8 +45,8 @@ const BARBER_FILTERS = [
   {
     value: 'pensat-precis',
     label: 'PENSAT',
-    display: 'Pensat Precis',
-    aliases: ['pensat', 'pensat precis', 'brow specialist']
+    display: 'Bianca Pensat',
+    aliases: ['pensat', 'pensat precis', 'bianca pensat', 'brow specialist']
   }
 ];
 
