@@ -4998,3 +4998,10 @@ select {
     grid-template-columns: 1fr !important;
   }
 }
+.review-user-no-avatar {
+  align-items: flex-start;
+}
+
+.review-user-no-avatar .user-info h4 {
+  margin-top: 0;
+}

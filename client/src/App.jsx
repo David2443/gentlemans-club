@@ -1127,20 +1127,12 @@ const getReviewAvatar = (review, index) => {
 
               return (
                 <div className="review-card" key={`${reviewName}-${index}`}>
-                  <div className="review-user">
-                    <img
-  src={getReviewAvatar(review, index)}
-  alt={`Recenzie ${reviewName} pentru Gentleman's Club Pitești`}
-  className="user-avatar"
-  loading="lazy"
-  decoding="async"
-/>
-
-                    <div className="user-info">
-                      <h4>{reviewName}</h4>
-                      <span>{review.dateLabel || review.date || 'Recent'}</span>
-                    </div>
-                  </div>
+                 <div className="review-user review-user-no-avatar">
+  <div className="user-info">
+    <h4>{reviewName}</h4>
+    <span>{review.dateLabel || review.date || 'Recent'}</span>
+  </div>
+</div>
 
                   <div className="review-stars">{'★'.repeat(rating)}</div>
 

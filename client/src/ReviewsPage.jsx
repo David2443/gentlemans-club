@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import { apiGet, apiPost } from './api';
 import { setPageSeo } from './seo';
 import './ReviewsPage.css';
@@ -32,7 +33,6 @@ function ReviewsPage() {
 
     try {
       const data = await apiGet(`/api/reviews?limit=${REVIEWS_LIMIT}&page=${pageToLoad}`);
-
       const list = Array.isArray(data?.reviews) ? data.reviews : [];
 
       setReviews((prev) => (replace ? list : [...prev, ...list]));
@@ -67,9 +67,9 @@ function ReviewsPage() {
 
     try {
       const data = await apiPost('/api/reviews', {
-        name: form.name,
+        name: form.name.trim(),
         rating: Number(form.rating),
-        text: form.text
+        text: form.text.trim()
       });
 
       setMessage(data?.mesaj || 'Mulțumim! Recenzia ta va apărea după aprobare.');
@@ -87,106 +87,171 @@ function ReviewsPage() {
   };
 
   const renderStars = (rating) => {
-    const value = Number(rating) || 5;
+    const value = Math.max(1, Math.min(5, Number(rating) || 5));
     return '★'.repeat(value) + '☆'.repeat(5 - value);
   };
 
+  const averageRating = reviews.length
+    ? (
+        reviews.reduce((sum, review) => sum + (Number(review.rating) || 5), 0) /
+        reviews.length
+      ).toFixed(1)
+    : '5.0';
+
   return (
     <main className="reviews-page">
-      <section className="reviews-hero">
-        <span className="reviews-eyebrow">Recenzii clienți</span>
+      <div className="reviews-bg-glow one"></div>
+      <div className="reviews-bg-glow two"></div>
 
-        <h1>Ce spun clienții despre Gentleman’s Club</h1>
+      <nav className="reviews-topbar">
+        <Link to="/" className="reviews-home-btn">
+          ← Acasă
+        </Link>
+
+        <a href="/#contact" className="reviews-book-btn">
+          Programează-te
+        </a>
+      </nav>
+
+      <section className="reviews-hero">
+        <span className="reviews-eyebrow">Recenzii reale</span>
+
+        <h1>Experiențele clienților Gentleman’s Club</h1>
 
         <p>
-          Lasă-ne o recenzie sinceră. Recenzia va apărea pe site după aprobare.
+          Citește părerile clienților și lasă-ne o recenzie sinceră.
+          Recenzia apare pe site doar după aprobare.
         </p>
+
+        <div className="reviews-hero-stats">
+          <article>
+            <strong>{averageRating}</strong>
+            <span>rating mediu</span>
+          </article>
+
+          <article>
+            <strong>{reviews.length}</strong>
+            <span>recenzii afișate</span>
+          </article>
+
+          <article>
+            <strong>100%</strong>
+            <span>moderate manual</span>
+          </article>
+        </div>
       </section>
 
       <section className="reviews-layout">
-        <form className="review-form-card" onSubmit={handleSubmit}>
-          <h2>Lasă o recenzie</h2>
+        <aside className="review-form-card">
+          <span className="review-card-label">Lasă părerea ta</span>
 
-          <div className="review-input-group">
-            <label>Numele tău</label>
-            <input
-              type="text"
-              placeholder="Ex: Andrei"
-              value={form.name}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  name: e.target.value
-                })
-              }
-            />
-          </div>
+          <h2>Scrie o recenzie</h2>
 
-          <div className="review-input-group">
-            <label>Rating</label>
-            <select
-              value={form.rating}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  rating: e.target.value
-                })
-              }
-            >
-              <option value="5">5 stele</option>
-              <option value="4">4 stele</option>
-              <option value="3">3 stele</option>
-              <option value="2">2 stele</option>
-              <option value="1">1 stea</option>
-            </select>
-          </div>
+          <p className="review-form-intro">
+            Spune-ne cum a fost experiența ta la salon. Nu afișăm poze de profil,
+            doar numele, ratingul și mesajul.
+          </p>
 
-          <div className="review-input-group">
-            <label>Recenzia ta</label>
-            <textarea
-              rows="5"
-              placeholder="Scrie experiența ta..."
-              value={form.text}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  text: e.target.value
-                })
-              }
-            />
-          </div>
+          <form onSubmit={handleSubmit}>
+            <div className="review-input-group">
+              <label>Numele tău</label>
+              <input
+                type="text"
+                placeholder="Ex: Andrei"
+                value={form.name}
+                maxLength="80"
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    name: e.target.value
+                  })
+                }
+              />
+            </div>
 
-          {message && <p className="review-form-message">{message}</p>}
+            <div className="review-input-group">
+              <label>Rating</label>
+              <select
+                value={form.rating}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    rating: e.target.value
+                  })
+                }
+              >
+                <option value="5">★★★★★ — Excelent</option>
+                <option value="4">★★★★☆ — Foarte bine</option>
+                <option value="3">★★★☆☆ — Ok</option>
+                <option value="2">★★☆☆☆ — Slab</option>
+                <option value="1">★☆☆☆☆ — Foarte slab</option>
+              </select>
+            </div>
 
-          <button type="submit" className="review-submit-btn" disabled={sending}>
-            {sending ? 'SE TRIMITE...' : 'TRIMITE RECENZIA'}
-          </button>
-        </form>
+            <div className="review-input-group">
+              <label>Recenzia ta</label>
+              <textarea
+                rows="6"
+                placeholder="Scrie experiența ta..."
+                value={form.text}
+                maxLength="700"
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    text: e.target.value
+                  })
+                }
+              />
+            </div>
 
-        <div className="reviews-list-area">
+            <div className="review-form-bottom">
+              <span>{form.text.length}/700</span>
+            </div>
+
+            {message && <p className="review-form-message">{message}</p>}
+
+            <button type="submit" className="review-submit-btn" disabled={sending}>
+              {sending ? 'SE TRIMITE...' : 'TRIMITE RECENZIA'}
+            </button>
+          </form>
+        </aside>
+
+        <section className="reviews-list-area">
           <div className="reviews-list-head">
-            <h2>Recenzii aprobate</h2>
-            <span>{reviews.length} afișate</span>
+            <div>
+              <span className="review-card-label">Feedback clienți</span>
+              <h2>Recenzii aprobate</h2>
+            </div>
+
+            <span className="reviews-count">{reviews.length} afișate</span>
           </div>
 
           <div className="reviews-list">
-            {reviews.map((review) => (
-              <article key={review._id} className="review-public-card">
+            {reviews.map((review, index) => (
+              <article key={review._id || index} className="review-public-card">
                 <div className="review-public-top">
-                  <strong>{review.name}</strong>
-                  <span>{renderStars(review.rating)}</span>
+                  <div>
+                    <span className="review-verified">Client Gentleman’s Club</span>
+                    <h3>{review.name || 'Client'}</h3>
+                  </div>
+
+                  <strong>{renderStars(review.rating)}</strong>
                 </div>
 
-                <p>{review.text}</p>
+                <p>“{review.text}”</p>
 
-                <small>{review.dateLabel || 'Recent'}</small>
+                <div className="review-public-footer">
+                  <span>{review.dateLabel || 'Recent'}</span>
+                  <span>Recenzie aprobată</span>
+                </div>
               </article>
             ))}
 
             {!loading && reviews.length === 0 && (
-              <p className="reviews-empty">
-                Nu există recenzii aprobate momentan.
-              </p>
+              <div className="reviews-empty">
+                <strong>Nu există recenzii aprobate momentan.</strong>
+                <p>Fii primul care lasă o recenzie după vizita la salon.</p>
+              </div>
             )}
           </div>
 
@@ -205,7 +270,7 @@ function ReviewsPage() {
               {loading ? 'SE ÎNCARCĂ...' : 'ÎNCARCĂ MAI MULTE'}
             </button>
           )}
-        </div>
+        </section>
       </section>
     </main>
   );
