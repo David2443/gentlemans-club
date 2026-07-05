@@ -551,6 +551,32 @@ const normalizeBarberId = (value) => {
 const getTeamBarberById = (barberId) => {
   return TEAM_BARBERS.find((barber) => barber.barberId === barberId) || null;
 };
+const LEGACY_BARBER_NAMES = {
+  'dani-frizeru': ['Dani', 'Dani Frizeru', 'dani', 'dani-frizeru'],
+  'alex-frizeru': ['Alex', 'Alex Frizeru', 'alex', 'alex-frizeru'],
+  'vali-frizeru': ['Vali', 'Vali Frizeru', 'vali', 'vali-frizeru'],
+  'pensat-precis': ['Pensat', 'Pensat Precis', 'pensat', 'pensat-precis']
+};
+
+const getAppointmentBarberQuery = (barberId) => {
+  const finalBarberId = normalizeBarberId(barberId);
+  const barber = getTeamBarberById(finalBarberId);
+
+  const names = [
+    finalBarberId,
+    barber?.username,
+    barber?.nume,
+    barber?.displayName,
+    ...(LEGACY_BARBER_NAMES[finalBarberId] || [])
+  ].filter(Boolean);
+
+  return {
+    $or: [
+      { barberId: finalBarberId },
+      { frizer: { $in: [...new Set(names)] } }
+    ]
+  };
+};
 
 const publicBarberFields = '-__v -createdAt -updatedAt';
 
@@ -1644,7 +1670,7 @@ app.get('/api/notificari-login', verificaToken, async (req, res) => {
         query.barberId = requestedBarberId;
       }
     } else {
-      query.barberId = req.user.barberId;
+      Object.assign(query, getAppointmentBarberQuery(req.user.barberId));
     }
 
     const notificari = await Programare.find(query)
@@ -1726,10 +1752,10 @@ app.get('/api/ocupate', async (req, res) => {
     }
 
     const ocupate = await Programare.find({
-      barberId: finalBarberId,
-      data,
-      status: { $ne: 'anulata' }
-    }).select('ora');
+  ...getAppointmentBarberQuery(finalBarberId),
+  data,
+  status: { $ne: 'anulata' }
+}).select('ora');
 
     res.json(ocupate.map((p) => p.ora));
   } catch (err) {
@@ -1983,7 +2009,7 @@ app.get('/api/galerie', async (req, res) => {
         });
       }
 
-      query.barberId = finalBarberId;
+      Object.assign(query, getAppointmentBarberQuery(finalBarberId));
     }
 
     const safeLimit = Math.min(Math.max(parseInt(limit, 10) || 30, 1), 60);
