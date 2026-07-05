@@ -1605,11 +1605,11 @@ app.post('/api/programari', optionalToken, async (req, res) => {
     }
 
     const dejaExista = await Programare.findOne({
-      barberId: finalBarberId,
-      data,
-      ora,
-      status: { $ne: 'anulata' }
-    });
+  ...getAppointmentBarberQuery(finalBarberId),
+  data,
+  ora,
+  status: { $ne: 'anulata' }
+});
 
     if (dejaExista) {
       return res.status(409).json({
@@ -1649,6 +1649,65 @@ app.post('/api/programari', optionalToken, async (req, res) => {
     res.status(500).json({
       succes: false,
       mesaj: 'Eroare server la programare.'
+    });
+  }
+
+  
+});
+
+app.get('/api/programari', verificaToken, async (req, res) => {
+  try {
+    const requestedBarberId = normalizeBarberId(req.query.barberId || req.query.frizer);
+    const data = sanitizeText(req.query.data, 20);
+    const from = sanitizeText(req.query.from, 20);
+    const to = sanitizeText(req.query.to, 20);
+
+    const limit = Math.min(Math.max(Number(req.query.limit) || 150, 1), 500);
+    const page = Math.max(Number(req.query.page) || 1, 1);
+    const skip = (page - 1) * limit;
+
+    const query = {};
+
+    if (data && isValidDateString(data)) {
+      query.data = data;
+    } else if (from && to && isValidDateString(from) && isValidDateString(to)) {
+      query.data = {
+        $gte: from,
+        $lte: to
+      };
+    }
+
+    if (req.user.isAdmin || req.user.isMaster) {
+      if (requestedBarberId && requestedBarberId !== 'all') {
+        Object.assign(query, getAppointmentBarberQuery(requestedBarberId));
+      }
+    } else {
+      Object.assign(query, getAppointmentBarberQuery(req.user.barberId));
+    }
+
+    const [programari, total] = await Promise.all([
+      Programare.find(query)
+        .sort({ data: 1, ora: 1, createdAt: -1 })
+        .skip(skip)
+        .limit(limit)
+        .lean(),
+      Programare.countDocuments(query)
+    ]);
+
+    res.json({
+      succes: true,
+      programari,
+      total,
+      page,
+      limit,
+      hasMore: skip + programari.length < total
+    });
+  } catch (err) {
+    console.error('Eroare GET /api/programari:', err);
+
+    res.status(500).json({
+      succes: false,
+      mesaj: 'Eroare la citirea programărilor.'
     });
   }
 });
