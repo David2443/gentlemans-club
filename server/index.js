@@ -1675,101 +1675,89 @@ app.get('/api/notificari-login', verificaToken, async (req, res) => {
   }
 });
 
-app.get('/api/programari', verificaToken, async (req, res) => {
+app.get('/api/notificari-login', verificaToken, async (req, res) => {
   try {
-    const {
-      from,
-      to,
-      barberId,
-      status,
-      limit = '300',
-      page = '1'
-    } = req.query;
+    const userNotificationKey = String(req.user.id || req.user.barberId || req.user.username);
+    const requestedBarberId = normalizeBarberId(req.query.barberId);
 
-    const query = {};
+    const query = {
+      notifyOnLogin: true,
+      status: { $ne: 'anulata' },
+      tip: 'client',
+      loginNotifiedFor: { $ne: userNotificationKey }
+    };
 
-    const safeLimit = Math.min(Math.max(parseInt(limit, 10) || 300, 1), 500);
-    const safePage = Math.max(parseInt(page, 10) || 1, 1);
-    const skip = (safePage - 1) * safeLimit;
-
-    if (req.user?.isAdmin || req.user?.isMaster) {
-      if (barberId && barberId !== 'all') {
-        const finalBarberId = normalizeBarberId(barberId);
-
-        if (!getTeamBarberById(finalBarberId)) {
-          return res.status(400).json({
-            succes: false,
-            mesaj: 'Specialist invalid.'
-          });
-        }
-
-        query.barberId = finalBarberId;
+    if (req.user.isAdmin || req.user.isMaster) {
+      if (requestedBarberId && requestedBarberId !== 'all') {
+        query.barberId = requestedBarberId;
       }
     } else {
       query.barberId = req.user.barberId;
     }
 
-    if (from || to) {
-      query.data = {};
-
-      if (from) {
-        if (!isValidDateString(from)) {
-          return res.status(400).json({
-            succes: false,
-            mesaj: 'Data de început este invalidă.'
-          });
-        }
-
-        query.data.$gte = from;
-      }
-
-      if (to) {
-        if (!isValidDateString(to)) {
-          return res.status(400).json({
-            succes: false,
-            mesaj: 'Data de final este invalidă.'
-          });
-        }
-
-        query.data.$lte = to;
-      }
-    }
-
-    if (status && status !== 'all') {
-      if (!STATUS_PROGRAMARE.includes(status)) {
-        return res.status(400).json({
-          succes: false,
-          mesaj: 'Status invalid.'
-        });
-      }
-
-      query.status = status;
-    }
-
-    const [programari, total] = await Promise.all([
-      Programare.find(query)
-        .sort({ data: -1, ora: -1, createdAt: -1 })
-        .skip(skip)
-        .limit(safeLimit)
-        .lean(),
-
-      Programare.countDocuments(query)
-    ]);
+    const notificari = await Programare.find(query)
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean();
 
     res.json({
       succes: true,
-      programari,
-      total,
-      page: safePage,
-      limit: safeLimit,
-      hasMore: skip + programari.length < total
+      notificari,
+      total: notificari.length
     });
   } catch (err) {
-    console.error('Eroare GET /api/programari:', err);
+    console.error('Eroare GET /api/notificari-login:', err);
 
     res.status(500).json({
       succes: false,
-      mesaj: 'Eroare la încărcarea programărilor.'
+      mesaj: 'Eroare la încărcarea notificărilor.'
+    });
+  }
+});
+
+app.post('/api/notificari-login/vazute', verificaToken, async (req, res) => {
+  try {
+    const userNotificationKey = String(req.user.id || req.user.barberId || req.user.username);
+
+    const ids = Array.isArray(req.body.ids)
+      ? req.body.ids.map(String).filter((id) => isValidObjectId(id))
+      : [];
+
+    if (!ids.length) {
+      return res.json({
+        succes: true,
+        updated: 0
+      });
+    }
+
+    const query = {
+      _id: { $in: ids },
+      notifyOnLogin: true,
+      status: { $ne: 'anulata' },
+      tip: 'client',
+      loginNotifiedFor: { $ne: userNotificationKey }
+    };
+
+    if (!req.user.isAdmin && !req.user.isMaster) {
+      query.barberId = req.user.barberId;
+    }
+
+    const result = await Programare.updateMany(query, {
+      $addToSet: {
+        loginNotifiedFor: userNotificationKey
+      }
+    });
+
+    res.json({
+      succes: true,
+      updated: result.modifiedCount || 0
+    });
+  } catch (err) {
+    console.error('Eroare POST /api/notificari-login/vazute:', err);
+
+    res.status(500).json({
+      succes: false,
+      mesaj: 'Eroare la marcarea notificărilor.'
     });
   }
 });

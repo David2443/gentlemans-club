@@ -181,7 +181,30 @@ const normalizeText = (value) => {
     .replace(/[\u0300-\u036f]/g, '')
     .trim();
 };
+const playNotificationSound = () => {
+  try {
+    const AudioContext = window.AudioContext || window.webkitAudioContext;
+    const audioContext = new AudioContext();
 
+    const oscillator = audioContext.createOscillator();
+    const gainNode = audioContext.createGain();
+
+    oscillator.type = 'sine';
+    oscillator.frequency.setValueAtTime(880, audioContext.currentTime);
+
+    gainNode.gain.setValueAtTime(0.001, audioContext.currentTime);
+    gainNode.gain.exponentialRampToValueAtTime(0.35, audioContext.currentTime + 0.03);
+    gainNode.gain.exponentialRampToValueAtTime(0.001, audioContext.currentTime + 0.45);
+
+    oscillator.connect(gainNode);
+    gainNode.connect(audioContext.destination);
+
+    oscillator.start();
+    oscillator.stop(audioContext.currentTime + 0.45);
+  } catch (err) {
+    console.warn('Sunet notificare blocat de browser:', err);
+  }
+};
 const normalizePhoneForWhatsApp = (phone) => {
   const clean = String(phone || '').replace(/\s+/g, '');
 
@@ -267,6 +290,7 @@ const oreProgramCurent = useMemo(() => {
   const [loading, setLoading] = useState(false);
 const [loginNotifications, setLoginNotifications] = useState([]);
 const [loginNotificationsOpen, setLoginNotificationsOpen] = useState(false);
+
   const [viewDate, setViewDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(getLocalDateString());
 
@@ -349,32 +373,79 @@ const [editAppointmentForm, setEditAppointmentForm] = useState({
 
 useEffect(() => {
   let ignore = false;
+  let intervalId = null;
 
-  const loadLoginNotifications = async () => {
+  const loadLoginNotifications = async ({ silent = false } = {}) => {
     if (!user) return;
 
     try {
-      const data = await apiGet('/api/notificari-login');
+      const data = await apiGet(
+        `/api/notificari-login?barberId=${encodeURIComponent(currentBarber.id)}`
+      );
 
       const list = Array.isArray(data?.notificari)
         ? data.notificari
         : [];
 
-      if (!ignore && list.length > 0) {
-        setLoginNotifications(list);
-        setLoginNotificationsOpen(true);
+      if (ignore || list.length === 0) return;
+
+      const onlyNew = list.filter((item) => {
+        const id = String(item._id || '');
+
+        if (!id || notifiedIdsRef.current.has(id)) {
+          return false;
+        }
+
+        notifiedIdsRef.current.add(id);
+        return true;
+      });
+
+      if (onlyNew.length === 0) return;
+
+      setLoginNotifications((prev) => {
+        const existingIds = new Set(prev.map((item) => String(item._id)));
+
+        const merged = onlyNew.filter((item) => !existingIds.has(String(item._id)));
+
+        if (merged.length === 0) return prev;
+
+        return [...merged, ...prev];
+      });
+
+      setProgramari((prev) => {
+        const existingIds = new Set(prev.map((item) => String(item._id)));
+
+        const merged = onlyNew.filter((item) => !existingIds.has(String(item._id)));
+
+        if (merged.length === 0) return prev;
+
+        return [...merged, ...prev];
+      });
+
+      setLoginNotificationsOpen(true);
+
+      if (!silent) {
+        playNotificationSound();
       }
     } catch (err) {
-      console.error('Eroare notificări login:', err);
+      console.error('Eroare notificări agenda:', err);
     }
   };
 
-  loadLoginNotifications();
+  loadLoginNotifications({ silent: true });
+
+  intervalId = window.setInterval(() => {
+    loadLoginNotifications({ silent: false });
+  }, 10000);
 
   return () => {
     ignore = true;
+
+    if (intervalId) {
+      window.clearInterval(intervalId);
+    }
   };
-}, [user]);
+}, [user, currentBarber.id]);
 
   useEffect(() => {
     return () => {
@@ -918,6 +989,26 @@ const requestCancelAppointmentFromModal = () => {
 
   setAppointmentModalOpen(false);
 };
+
+const closeLoginNotifications = async () => {
+  const ids = loginNotifications
+    .map((item) => item._id)
+    .filter(Boolean);
+
+  setLoginNotificationsOpen(false);
+  setLoginNotifications([]);
+
+  try {
+    if (ids.length > 0) {
+      await apiPost('/api/notificari-login/vazute', {
+        ids
+      });
+    }
+  } catch (err) {
+    console.error('Eroare marcare notificări văzute:', err);
+  }
+};
+
   return (
     <div className="admin-wrapper">
      <nav className="top-navbar admin-top-stacked">
@@ -1555,49 +1646,71 @@ const requestCancelAppointmentFromModal = () => {
 
       <div className="login-notification-list">
         {loginNotifications.map((programare) => {
-          const phoneForWhatsApp = normalizePhoneForWhatsApp(programare.telefon);
+  const phoneForWhatsApp = normalizePhoneForWhatsApp(programare.telefon);
+  const phoneForCall = String(programare.telefon || '').replace(/\s+/g, '');
 
-          return (
-            <div key={programare._id} className="login-notification-card">
-              <strong className="login-notification-client">
-                {programare.nume_client || 'Client'}
-              </strong>
+  const whatsappText = [
+    'Salut, te contactăm de la Gentleman’s Club pentru programarea ta.',
+    programare.frizer ? `Specialist: ${programare.frizer}` : '',
+    programare.serviciu ? `Serviciu: ${programare.serviciu}` : '',
+    programare.data ? `Data: ${programare.data}` : '',
+    programare.ora ? `Ora: ${programare.ora}` : ''
+  ]
+    .filter(Boolean)
+    .join('\n');
 
-              <p className="login-notification-service">
-                {programare.serviciu || 'Serviciu nespecificat'}
-              </p>
+  return (
+    <div key={programare._id} className="login-notification-card">
+      <strong className="login-notification-client">
+        {programare.nume_client || 'Client'}
+      </strong>
 
-              <p className="login-notification-detail">
-                {formatNotificationDate(programare.data)} · ora {programare.ora}
-              </p>
+      <p className="login-notification-service">
+        {programare.serviciu || 'Serviciu nespecificat'}
+      </p>
 
-              <p className="login-notification-detail">
-                Specialist: {programare.frizer || currentBarber.label}
-              </p>
+      <p className="login-notification-detail">
+        {formatNotificationDate(programare.data)} · ora {programare.ora}
+      </p>
 
-              <p className="login-notification-detail">
-                Telefon: {programare.telefon || 'N/A'}
-              </p>
+      <p className="login-notification-detail">
+        Specialist: {programare.frizer || currentBarber.label}
+      </p>
 
-              {phoneForWhatsApp && (
-                <a
-                  href={`https://wa.me/${phoneForWhatsApp}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="login-notification-whatsapp"
-                >
-                  Scrie pe WhatsApp
-                </a>
-              )}
-            </div>
-          );
-        })}
+      <p className="login-notification-detail">
+        Telefon: {programare.telefon || 'N/A'}
+      </p>
+
+      <div className="login-notification-card-actions">
+        {phoneForWhatsApp && (
+          <a
+            href={`https://wa.me/${phoneForWhatsApp}?text=${encodeURIComponent(whatsappText)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="login-notification-whatsapp"
+          >
+            Scrie
+          </a>
+        )}
+
+        {phoneForCall && phoneForCall !== 'N/A' && (
+          <a
+            href={`tel:${phoneForCall}`}
+            className="login-notification-call"
+          >
+            Sună
+          </a>
+        )}
+      </div>
+    </div>
+  );
+})}
       </div>
 
       <button
         type="button"
         className="login-notification-close"
-        onClick={() => setLoginNotificationsOpen(false)}
+        onClick={closeLoginNotifications}
       >
         AM VĂZUT
       </button>
