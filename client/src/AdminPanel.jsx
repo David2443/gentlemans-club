@@ -290,6 +290,7 @@ const oreProgramCurent = useMemo(() => {
   const [loading, setLoading] = useState(false);
 const [loginNotifications, setLoginNotifications] = useState([]);
 const [loginNotificationsOpen, setLoginNotificationsOpen] = useState(false);
+const notifiedIdsRef = useRef(new Set());
 
   const [viewDate, setViewDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(getLocalDateString());
@@ -371,81 +372,7 @@ const [editAppointmentForm, setEditAppointmentForm] = useState({
   setIsBoss(isAdmin);
 }, [isAdmin]);
 
-useEffect(() => {
-  let ignore = false;
-  let intervalId = null;
 
-  const loadLoginNotifications = async ({ silent = false } = {}) => {
-    if (!user) return;
-
-    try {
-      const data = await apiGet(
-        `/api/notificari-login?barberId=${encodeURIComponent(currentBarber.id)}`
-      );
-
-      const list = Array.isArray(data?.notificari)
-        ? data.notificari
-        : [];
-
-      if (ignore || list.length === 0) return;
-
-      const onlyNew = list.filter((item) => {
-        const id = String(item._id || '');
-
-        if (!id || notifiedIdsRef.current.has(id)) {
-          return false;
-        }
-
-        notifiedIdsRef.current.add(id);
-        return true;
-      });
-
-      if (onlyNew.length === 0) return;
-
-      setLoginNotifications((prev) => {
-        const existingIds = new Set(prev.map((item) => String(item._id)));
-
-        const merged = onlyNew.filter((item) => !existingIds.has(String(item._id)));
-
-        if (merged.length === 0) return prev;
-
-        return [...merged, ...prev];
-      });
-
-      setProgramari((prev) => {
-        const existingIds = new Set(prev.map((item) => String(item._id)));
-
-        const merged = onlyNew.filter((item) => !existingIds.has(String(item._id)));
-
-        if (merged.length === 0) return prev;
-
-        return [...merged, ...prev];
-      });
-
-      setLoginNotificationsOpen(true);
-
-      if (!silent) {
-        playNotificationSound();
-      }
-    } catch (err) {
-      console.error('Eroare notificări agenda:', err);
-    }
-  };
-
-  loadLoginNotifications({ silent: true });
-
-  intervalId = window.setInterval(() => {
-    loadLoginNotifications({ silent: false });
-  }, 10000);
-
-  return () => {
-    ignore = true;
-
-    if (intervalId) {
-      window.clearInterval(intervalId);
-    }
-  };
-}, [user, currentBarber.id]);
 
   useEffect(() => {
     return () => {
@@ -492,6 +419,74 @@ useEffect(() => {
     setLoading(false);
   }
 }, [logout, navigate, viewDate, currentBarber.id]);
+
+useEffect(() => {
+  let ignore = false;
+  let intervalId = null;
+
+  const loadLoginNotifications = async ({ silent = false } = {}) => {
+    if (!user) return;
+
+    try {
+      const data = await apiGet(
+        `/api/notificari-login?barberId=${encodeURIComponent(currentBarber.id)}`
+      );
+
+      const list = Array.isArray(data?.notificari)
+        ? data.notificari
+        : [];
+
+      if (ignore || list.length === 0) return;
+
+      const onlyNew = list.filter((item) => {
+        const id = String(item._id || '');
+
+        if (!id || notifiedIdsRef.current.has(id)) {
+          return false;
+        }
+
+        notifiedIdsRef.current.add(id);
+        return true;
+      });
+
+      if (onlyNew.length === 0) return;
+
+      setLoginNotifications((prev) => {
+  const existingIds = new Set(prev.map((item) => String(item._id)));
+
+  const merged = onlyNew.filter((item) => !existingIds.has(String(item._id)));
+
+  if (merged.length === 0) return prev;
+
+  return [...merged, ...prev];
+});
+
+await fetchData();
+
+setLoginNotificationsOpen(true);
+
+if (!silent) {
+  playNotificationSound();
+}
+    } catch (err) {
+      console.error('Eroare notificări agenda:', err);
+    }
+  };
+
+  loadLoginNotifications({ silent: true });
+
+  intervalId = window.setInterval(() => {
+    loadLoginNotifications({ silent: false });
+  }, 10000);
+
+  return () => {
+    ignore = true;
+
+    if (intervalId) {
+      window.clearInterval(intervalId);
+    }
+  };
+}, [user, currentBarber.id, fetchData]);
 
   const fetchGalerie = useCallback(async ({ pageToLoad = 1, replace = true } = {}) => {
   if (!replace) {

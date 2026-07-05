@@ -1630,54 +1630,6 @@ app.post('/api/programari', optionalToken, async (req, res) => {
 app.get('/api/notificari-login', verificaToken, async (req, res) => {
   try {
     const userNotificationKey = String(req.user.id || req.user.barberId || req.user.username);
-
-    const query = {
-      notifyOnLogin: true,
-      status: { $ne: 'anulata' },
-      tip: 'client',
-      loginNotifiedFor: { $ne: userNotificationKey }
-    };
-
-    if (!req.user.isAdmin && !req.user.isMaster) {
-      query.barberId = req.user.barberId;
-    }
-
-    const notificari = await Programare.find(query)
-      .sort({ createdAt: -1 })
-      .limit(20)
-      .lean();
-
-    if (notificari.length > 0) {
-      await Programare.updateMany(
-        {
-          _id: { $in: notificari.map((programare) => programare._id) }
-        },
-        {
-          $addToSet: {
-            loginNotifiedFor: userNotificationKey
-          }
-        }
-      );
-    }
-
-    res.json({
-      succes: true,
-      notificari,
-      total: notificari.length
-    });
-  } catch (err) {
-    console.error('Eroare GET /api/notificari-login:', err);
-
-    res.status(500).json({
-      succes: false,
-      mesaj: 'Eroare la încărcarea notificărilor.'
-    });
-  }
-});
-
-app.get('/api/notificari-login', verificaToken, async (req, res) => {
-  try {
-    const userNotificationKey = String(req.user.id || req.user.barberId || req.user.username);
     const requestedBarberId = normalizeBarberId(req.query.barberId);
 
     const query = {
@@ -1714,6 +1666,8 @@ app.get('/api/notificari-login', verificaToken, async (req, res) => {
     });
   }
 });
+
+
 
 app.post('/api/notificari-login/vazute', verificaToken, async (req, res) => {
   try {
