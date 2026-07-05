@@ -95,6 +95,23 @@ const BROW_SERVICES = [
   { id: 'global-model', name: 'Global / total — model', price: 400 }
 ];
 
+const formatNotificationDate = (dateString) => {
+  if (!dateString) return 'Fără dată';
+
+  try {
+    const [year, month, day] = String(dateString).split('-').map(Number);
+    const date = new Date(year, month - 1, day);
+
+    return date.toLocaleDateString('ro-RO', {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long'
+    });
+  } catch {
+    return dateString;
+  }
+};
+
 const getLocalDateString = (date = new Date()) => {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, '0');
@@ -248,7 +265,8 @@ const oreProgramCurent = useMemo(() => {
   const [programari, setProgramari] = useState([]);
   const [isBoss, setIsBoss] = useState(false);
   const [loading, setLoading] = useState(false);
-
+const [loginNotifications, setLoginNotifications] = useState([]);
+const [loginNotificationsOpen, setLoginNotificationsOpen] = useState(false);
   const [viewDate, setViewDate] = useState(new Date());
   const [selectedDay, setSelectedDay] = useState(getLocalDateString());
 
@@ -328,6 +346,63 @@ const [editAppointmentForm, setEditAppointmentForm] = useState({
   useEffect(() => {
   setIsBoss(isAdmin);
 }, [isAdmin]);
+
+useEffect(() => {
+  let ignore = false;
+
+  const loadLoginNotifications = async () => {
+    useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  if (params.get('testNotif') !== '1') return;
+
+  setLoginNotifications([
+    {
+      _id: 'test-login-notification-1',
+      nume_client: 'Mihai Test',
+      telefon: '0712345678',
+      serviciu: 'Tuns + barbă',
+      data: getLocalDateString(),
+      ora: '10:30',
+      frizer: currentBarber.label
+    },
+    {
+      _id: 'test-login-notification-2',
+      nume_client: 'Andrei Test',
+      telefon: '0798765432',
+      serviciu: 'Tuns',
+      data: getLocalDateString(),
+      ora: '12:00',
+      frizer: currentBarber.label
+    }
+  ]);
+
+  setLoginNotificationsOpen(true);
+}, [currentBarber.label]);
+    if (!user) return;
+
+    try {
+      const data = await apiGet('/api/notificari-login');
+
+      const list = Array.isArray(data?.notificari)
+        ? data.notificari
+        : [];
+
+      if (!ignore && list.length > 0) {
+        setLoginNotifications(list);
+        setLoginNotificationsOpen(true);
+      }
+    } catch (err) {
+      console.error('Eroare notificări login:', err);
+    }
+  };
+
+  loadLoginNotifications();
+
+  return () => {
+    ignore = true;
+  };
+}, [user]);
 
   useEffect(() => {
     return () => {
@@ -714,19 +789,20 @@ const updateStatus = async (programare, status) => {
     return alert('Completează numele și telefonul!');
   }
 
-  const payload = {
-    barberId: currentBarber.id,
-    frizer: currentBarber.label,
-    data: selectedDay,
-    ora: oraActiva,
-    tip,
-    nume_client: tip === 'blocat' ? 'PAUZĂ / BLOCAT' : formRezervare.nume,
-    telefon: tip === 'blocat' ? 'N/A' : formRezervare.telefon,
-    mesaj: tip === 'blocat' ? 'Oră blocată manual' : formRezervare.mesaj,
-    serviciu: tip === 'client' && selectedService ? selectedService.name : '',
-    pret: tip === 'client' && selectedService ? formatPrice(selectedService.price) : '',
-    pretValoare: tip === 'client' && selectedService ? selectedService.price : null
-  };
+ const payload = {
+  barberId: currentBarber.id,
+  frizer: currentBarber.label,
+  data: selectedDay,
+  ora: oraActiva,
+  tip,
+  nume_client: tip === 'blocat' ? 'PAUZĂ / BLOCAT' : formRezervare.nume,
+  telefon: tip === 'blocat' ? 'N/A' : formRezervare.telefon,
+  mesaj: tip === 'blocat' ? 'Oră blocată manual' : formRezervare.mesaj,
+  serviciu: tip === 'client' && selectedService ? selectedService.name : '',
+  pret: tip === 'client' && selectedService ? formatPrice(selectedService.price) : '',
+  pretValoare: tip === 'client' && selectedService ? selectedService.price : null,
+  notifyOnLogin: false
+};
 
   try {
     await apiPost('/api/programari', payload);
@@ -1462,6 +1538,7 @@ const requestCancelAppointmentFromModal = () => {
   </div>
 )}
       {confirmModal.isOpen && (
+        
         <div
           className="modal-backdrop confirm-backdrop"
           onClick={(e) => {
@@ -1495,6 +1572,93 @@ const requestCancelAppointmentFromModal = () => {
           </div>
         </div>
       )}
+      {loginNotificationsOpen && loginNotifications.length > 0 && (
+  <div className="modal-backdrop confirm-backdrop">
+    <div className="modal-box confirm-box" style={{ maxWidth: '680px' }}>
+      <h3 className="confirm-title">🔔 Programări noi</h3>
+
+      <p className="confirm-msg">
+        Ai {loginNotifications.length} programare/programări noi de când nu ai mai intrat.
+      </p>
+
+      <div
+        style={{
+          display: 'grid',
+          gap: '12px',
+          maxHeight: '55vh',
+          overflowY: 'auto',
+          margin: '18px 0'
+        }}
+      >
+        {loginNotifications.map((programare) => {
+          const phoneForWhatsApp = normalizePhoneForWhatsApp(programare.telefon);
+
+          return (
+            <div
+              key={programare._id}
+              style={{
+                padding: '14px',
+                border: '1px solid rgba(212, 175, 55, 0.28)',
+                borderRadius: '14px',
+                background: 'rgba(255, 255, 255, 0.04)',
+                textAlign: 'left'
+              }}
+            >
+              <strong
+                style={{
+                  display: 'block',
+                  color: '#fff',
+                  marginBottom: '6px',
+                  fontSize: '1rem'
+                }}
+              >
+                {programare.nume_client || 'Client'}
+              </strong>
+
+              <p style={{ margin: '0 0 6px', color: '#d4af37', fontWeight: 800 }}>
+                {programare.serviciu || 'Serviciu nespecificat'}
+              </p>
+
+              <p style={{ margin: '0 0 6px', color: '#aaa' }}>
+                {formatNotificationDate(programare.data)} · ora {programare.ora}
+              </p>
+
+              <p style={{ margin: '0 0 6px', color: '#aaa' }}>
+                Specialist: {programare.frizer || currentBarber.label}
+              </p>
+
+              <p style={{ margin: '0 0 10px', color: '#aaa' }}>
+                Telefon: {programare.telefon || 'N/A'}
+              </p>
+
+              {phoneForWhatsApp && (
+                <a
+                  href={`https://wa.me/${phoneForWhatsApp}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="btn-modal-whatsapp"
+                  style={{ display: 'inline-flex', textDecoration: 'none' }}
+                >
+                  Scrie pe WhatsApp
+                </a>
+              )}
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="modal-actions confirm-actions">
+        <button
+          type="button"
+          className="btn-gold"
+          onClick={() => setLoginNotificationsOpen(false)}
+        >
+          AM VĂZUT
+        </button>
+      </div>
+    </div>
+  </div>
+)}
     </div>
   );
 }

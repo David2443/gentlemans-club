@@ -794,11 +794,22 @@ const programareSchema = new mongoose.Schema(
       enum: STATUS_PROGRAMARE,
       default: 'noua'
     },
-    tip: {
-      type: String,
-      enum: TIP_PROGRAMARE,
-      default: 'client'
-    }
+   tip: {
+  type: String,
+  enum: TIP_PROGRAMARE,
+  default: 'client'
+},
+notifyOnLogin: {
+  type: Boolean,
+  default: false
+},
+loginNotifiedFor: [
+  {
+    type: String,
+    trim: true,
+    maxlength: 120
+  }
+]
   },
   { timestamps: true }
 );
@@ -807,7 +818,8 @@ programareSchema.index({ barberId: 1, data: 1 });
 programareSchema.index({ barberId: 1, data: 1, ora: 1 });
 programareSchema.index({ data: -1 });
 programareSchema.index({ status: 1, data: -1 });
-
+programareSchema.index({ notifyOnLogin: 1, barberId: 1, createdAt: -1 });
+programareSchema.index({ notifyOnLogin: 1, createdAt: -1 });
 
 const Programare = mongoose.model('Programare', programareSchema);
 
@@ -1584,19 +1596,21 @@ app.post('/api/programari', optionalToken, async (req, res) => {
     const pretValoare = parseOptionalNumber(req.body.pretValoare);
 
     const nouaProgramare = await Programare.create({
-      nume_client: numeClient,
-      telefon,
-      barberId: finalBarberId,
-      frizer: barber.nume,
-      data,
-      ora,
-      mesaj: sanitizeText(req.body.mesaj, 700),
-      serviciu: sanitizeText(req.body.serviciu, 180),
-      pret,
-      pretValoare,
-      tip,
-      status: tip === 'blocat' ? 'blocat' : 'noua'
-    });
+  nume_client: numeClient,
+  telefon,
+  barberId: finalBarberId,
+  frizer: barber.nume,
+  data,
+  ora,
+  mesaj: sanitizeText(req.body.mesaj, 700),
+  serviciu: sanitizeText(req.body.serviciu, 180),
+  pret,
+  pretValoare,
+  tip,
+  status: tip === 'blocat' ? 'blocat' : 'noua',
+  notifyOnLogin: tip === 'client' && req.body.notifyOnLogin !== false,
+  loginNotifiedFor: []
+});
 
     res.status(201).json({
       succes: true,
@@ -1609,6 +1623,54 @@ app.post('/api/programari', optionalToken, async (req, res) => {
     res.status(500).json({
       succes: false,
       mesaj: 'Eroare server la programare.'
+    });
+  }
+});
+
+app.get('/api/notificari-login', verificaToken, async (req, res) => {
+  try {
+    const userNotificationKey = String(req.user.id || req.user.barberId || req.user.username);
+
+    const query = {
+      notifyOnLogin: true,
+      status: { $ne: 'anulata' },
+      tip: 'client',
+      loginNotifiedFor: { $ne: userNotificationKey }
+    };
+
+    if (!req.user.isAdmin && !req.user.isMaster) {
+      query.barberId = req.user.barberId;
+    }
+
+    const notificari = await Programare.find(query)
+      .sort({ createdAt: -1 })
+      .limit(20)
+      .lean();
+
+    if (notificari.length > 0) {
+      await Programare.updateMany(
+        {
+          _id: { $in: notificari.map((programare) => programare._id) }
+        },
+        {
+          $addToSet: {
+            loginNotifiedFor: userNotificationKey
+          }
+        }
+      );
+    }
+
+    res.json({
+      succes: true,
+      notificari,
+      total: notificari.length
+    });
+  } catch (err) {
+    console.error('Eroare GET /api/notificari-login:', err);
+
+    res.status(500).json({
+      succes: false,
+      mesaj: 'Eroare la încărcarea notificărilor.'
     });
   }
 });
