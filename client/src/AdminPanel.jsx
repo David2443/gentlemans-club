@@ -380,31 +380,46 @@ const [editAppointmentForm, setEditAppointmentForm] = useState({
     };
   }, [previewUrl]);
 
- const fetchData = useCallback(async () => {
+const fetchData = useCallback(async () => {
   setLoading(true);
 
   try {
     const { from, to } = getMonthDateRange(viewDate);
 
-    const params = new URLSearchParams({
-      from,
-      to,
-      barberId: currentBarber.id,
-      limit: '150',
-      page: '1'
-    });
+    const allProgramari = [];
+    let page = 1;
+    let hasMore = true;
 
-    const data = await apiGet(`/api/programari?${params.toString()}`);
+    while (hasMore) {
+      const params = new URLSearchParams({
+        from,
+        to,
+        barberId: currentBarber.id,
+        limit: '500',
+        page: String(page)
+      });
 
-    const programariList = Array.isArray(data)
-      ? data
-      : Array.isArray(data?.programari)
-        ? data.programari
-        : Array.isArray(data?.appointments)
-          ? data.appointments
-          : [];
+      const data = await apiGet(`/api/programari?${params.toString()}`);
 
-    setProgramari(programariList);
+      const programariList = Array.isArray(data)
+        ? data
+        : Array.isArray(data?.programari)
+          ? data.programari
+          : Array.isArray(data?.appointments)
+            ? data.appointments
+            : [];
+
+      allProgramari.push(...programariList);
+
+      hasMore = Boolean(data?.hasMore);
+      page += 1;
+
+      if (page > 20) {
+        hasMore = false;
+      }
+    }
+
+    setProgramari(allProgramari);
   } catch (err) {
     console.error('Eroare fetch programari:', err);
 
