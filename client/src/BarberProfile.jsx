@@ -127,19 +127,6 @@ const barbersDB = {
   },
 
 
-
-  'alex-frizeru': {
-    barberId: 'alex-frizeru',
-    name: 'Alex Frizeru',
-    role: 'Premium Barber',
-    badge: 'TUNSORI PREMIUM',
-    image: '/alex-frizeru.png',
-    isMaster: false,
-    description: 'Stil premium, detalii curate și finisaj elegant.',
-    services: BARBER_SERVICES,
-    gallery: []
-  },
-
   'vali-frizeru': {
     barberId: 'vali-frizeru',
     name: 'Vali Frizeru',
@@ -152,17 +139,7 @@ const barbersDB = {
     gallery: []
   },
 
-  'pensat-precis': {
-    barberId: 'pensat-precis',
-    name: 'Bianca Pensat',
-    role: 'Brow Specialist',
-    badge: 'STIL PERFECT',
-    image: '/pensat-precis.png',
-    isMaster: false,
-    description: 'Detaliul face diferența.',
-    services: BROW_SERVICES,
-    gallery: []
-  }
+
 };
 
 
@@ -216,8 +193,7 @@ const HALF_HOUR_TIME_SLOTS = [
   '22:00'
 ];
 
-const BARBERS_HALF_HOUR = ['alex-frizeru', 'vali-frizeru'];
-
+const BARBERS_HALF_HOUR = ['vali-frizeru'];
 const getTimeSlotsForBarber = (barberId) => {
   return BARBERS_HALF_HOUR.includes(barberId)
     ? HALF_HOUR_TIME_SLOTS

@@ -361,7 +361,7 @@ const TEAM_BARBERS = [
   {
     barberId: 'dani-frizeru',
     username: 'dani',
-    password: requireStrongEnv('PASS_DANI', 12),   
+    password: requireStrongEnv('PASS_DANI', 12),
     nume: 'Dani Frizeru',
     displayName: 'Dani Frizeru',
     role: 'Master Barber',
@@ -371,22 +371,6 @@ const TEAM_BARBERS = [
     isMaster: true,
     isAdmin: true,
     order: 1,
-    services: BARBER_SERVICES
-  },
-  
-  {
-    barberId: 'alex-frizeru',
-    username: 'alex',
-    password: requireStrongEnv('PASS_ALEX', 12),
-    nume: 'Alex Frizeru',
-    displayName: 'Alex Frizeru',
-    role: 'Premium Barber',
-    specialty: 'Tunsori premium, bărbi perfecte, stil și eleganță.',
-    description: 'Stil premium, detalii curate și finisaj elegant.',
-    image: '/alex-frizeru.png',
-    isMaster: false,
-    isAdmin: false,
-    order: 2,
     services: BARBER_SERVICES
   },
   {
@@ -401,24 +385,9 @@ const TEAM_BARBERS = [
     image: '/vali-frizeru.png',
     isMaster: false,
     isAdmin: false,
-    order: 3,
+    order: 2,
     services: BARBER_SERVICES
-  },
-  {
-  barberId: 'pensat-precis',
-  username: 'pensat',
-  password: requireStrongEnv('PASS_PENSAT', 12),
-  nume: 'Bianca Pensat',
-  displayName: 'Bianca Pensat',
-  role: 'Brow Specialist',
-  specialty: 'Pensat precis, formă curată și detaliu premium.',
-  description: 'Detaliul face diferența.',
-  image: '/pensat-precis.png',
-  isMaster: false,
-  isAdmin: false,
-  order: 4,
-  services: BROW_SERVICES
-}
+  }
 ];
 
 const ORE_PROGRAM_STANDARD = [
@@ -471,8 +440,7 @@ const ORE_PROGRAM_EXTINS_HALF_HOUR = [
   '22:00'
 ];
 
-const BARBERI_PROGRAM_EXTINS = ['alex-frizeru', 'vali-frizeru'];
-
+const BARBERI_PROGRAM_EXTINS = ['vali-frizeru'];
 const getOreProgramPentruBarber = (barberId) => {
   return BARBERI_PROGRAM_EXTINS.includes(barberId)
     ? ORE_PROGRAM_EXTINS_HALF_HOUR
@@ -553,9 +521,7 @@ const getTeamBarberById = (barberId) => {
 };
 const LEGACY_BARBER_NAMES = {
   'dani-frizeru': ['Dani', 'Dani Frizeru', 'dani', 'dani-frizeru'],
-  'alex-frizeru': ['Alex', 'Alex Frizeru', 'alex', 'alex-frizeru'],
-  'vali-frizeru': ['Vali', 'Vali Frizeru', 'vali', 'vali-frizeru'],
-  'pensat-precis': ['Pensat', 'Pensat Precis', 'pensat', 'pensat-precis']
+  'vali-frizeru': ['Vali', 'Vali Frizeru', 'vali', 'vali-frizeru']
 };
 
 const getAppointmentBarberQuery = (barberId) => {

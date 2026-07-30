@@ -36,18 +36,7 @@ const BARBER_FILTERS = [
     display: 'Vali Frizeru',
     aliases: ['vali', 'vali frizeru', 'sonic style']
   },
-  {
-    value: 'alex-frizeru',
-    label: 'ALEX',
-    display: 'Alex Frizeru',
-    aliases: ['alex', 'alex frizeru', 'alexandru popescu']
-  },
-  {
-    value: 'pensat-precis',
-    label: 'PENSAT',
-    display: 'Bianca Pensat',
-    aliases: ['pensat', 'pensat precis', 'bianca pensat', 'brow specialist']
-  }
+  
 ];
 
 const SIZE_PATTERN = [

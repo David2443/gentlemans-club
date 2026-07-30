@@ -58,7 +58,7 @@ const ORE_PROGRAM_EXTINS_HALF_HOUR = [
   '22:00'
 ];
 
-const BARBERI_PROGRAM_EXTINS = ['alex-frizeru', 'vali-frizeru'];
+const BARBERI_PROGRAM_EXTINS = ['vali-frizeru'];
 
 const getOreProgramPentruBarber = (barberId) => {
   return BARBERI_PROGRAM_EXTINS.includes(barberId)
@@ -68,9 +68,7 @@ const getOreProgramPentruBarber = (barberId) => {
 
 const BARBERS = [
   { id: 'dani-frizeru', label: 'Dani Frizeru', short: 'Dani' },
-  { id: 'alex-frizeru', label: 'Alex Frizeru', short: 'Alex' },
-  { id: 'vali-frizeru', label: 'Vali Frizeru', short: 'Vali' },
-  { id: 'pensat-precis', label: 'Bianca Pensat', short: 'Bianca' }
+  { id: 'vali-frizeru', label: 'Vali Frizeru', short: 'Vali' }
 ];
 
 const BARBER_SERVICES = [
@@ -282,8 +280,7 @@ const oreProgramCurent = useMemo(() => {
 }, [currentBarber.id]);
 
   const serviceOptions = useMemo(() => {
-    return currentBarber.id === 'pensat-precis' ? BROW_SERVICES : BARBER_SERVICES;
-  }, [currentBarber.id]);
+return BARBER_SERVICES;  }, [currentBarber.id]);
 
   const [programari, setProgramari] = useState([]);
   const [isBoss, setIsBoss] = useState(false);

@@ -13,24 +13,11 @@ const BARBERS = [
     short: 'Dani',
     path: '/admin/dani-frizeru'
   },
-
-  {
-    value: 'alex-frizeru',
-    label: 'Alex Frizeru',
-    short: 'Alex',
-    path: '/admin/alex-frizeru'
-  },
   {
     value: 'vali-frizeru',
     label: 'Vali Frizeru',
     short: 'Vali',
     path: '/admin/vali-frizeru'
-  },
-  {
-    value: 'pensat-precis',
-    label: 'Bianca Pensat',
-    short: 'Bianca',
-    path: '/admin/pensat-precis'
   }
 ];
 

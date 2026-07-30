@@ -57,17 +57,6 @@ const BARBERS = [
     image: '/dani-frizeru.png',
     isMaster: true
   },
-
-  {
-    id: 'alex-frizeru',
-    name: 'Alex Frizeru',
-    role: 'Premium Barber',
-    label: 'TUNSORI PREMIUM',
-    specialty: 'Tunsori premium, bărbi perfecte, stil și eleganță.',
-    description: 'Stil premium, detalii curate și finisaj elegant.',
-    image: '/alex-frizeru.png',
-    isMaster: false
-  },
   {
     id: 'vali-frizeru',
     name: 'Vali Frizeru',
@@ -76,16 +65,6 @@ const BARBERS = [
     specialty: 'Tuns bărbați, barbă & contur, styling profesional.',
     description: 'Stilul tău, semnătura noastră.',
     image: '/vali-frizeru.png',
-    isMaster: false
-  },
-  {
-    id: 'pensat-precis',
-    name: 'Bianca Pensat',
-    role: 'Brow Specialist',
-    label: 'STIL PERFECT',
-    specialty: 'Pensat precis, formă curată și detaliu premium.',
-    description: 'Detaliul face diferența.',
-    image: '/pensat-precis.png',
     isMaster: false
   }
 ];
