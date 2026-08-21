@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+﻿import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAuth } from './AuthGate';
 import { apiGet, apiPost, apiPatch, apiDelete, getApiBase } from './api';
@@ -58,7 +58,7 @@ const ORE_PROGRAM_EXTINS_HALF_HOUR = [
   '22:00'
 ];
 
-const BARBERI_PROGRAM_EXTINS = ['vali-frizeru', 'croco-frizeru'];
+const BARBERI_PROGRAM_EXTINS = [];
 
 const getOreProgramPentruBarber = (barberId) => {
   return BARBERI_PROGRAM_EXTINS.includes(barberId)
@@ -74,11 +74,11 @@ const BARBERS = [
 
 const BARBER_SERVICES = [
   { id: 'tuns', name: 'Tuns', price: 50 },
-  { id: 'tuns-barba', name: 'Tuns + barbă', price: 75 },
-  { id: 'barba', name: 'Barbă', price: 30 },
-  { id: 'vopsit-barba', name: 'Vopsit barbă', price: 30 },
-  { id: 'spalat', name: 'Spălat', price: 25 },
-  { id: 'contur-barba', name: 'Contur / aranjat barbă', price: 30 },
+  { id: 'tuns-barba', name: 'Tuns + barbÄƒ', price: 75 },
+  { id: 'barba', name: 'BarbÄƒ', price: 30 },
+  { id: 'vopsit-barba', name: 'Vopsit barbÄƒ', price: 30 },
+  { id: 'spalat', name: 'SpÄƒlat', price: 25 },
+  { id: 'contur-barba', name: 'Contur / aranjat barbÄƒ', price: 30 },
   { id: 'styling', name: 'Styling', price: null },
   { id: 'pachet-vip', name: 'Pachet VIP', price: 200 }
 ];
@@ -86,16 +86,16 @@ const BARBER_SERVICES = [
 const BROW_SERVICES = [
   { id: 'pensat', name: 'Pensat', price: 35 },
   { id: 'pensat-vopsit', name: 'Pensat + vopsit', price: 50 },
-  { id: 'pensat-par-nas', name: 'Pensat + păr nas', price: 45 },
+  { id: 'pensat-par-nas', name: 'Pensat + pÄƒr nas', price: 45 },
   { id: 'tratament-facial', name: 'Tratament facial', price: 50 },
   { id: 'pachet-complet', name: 'Pachet complet', price: 100 },
-  { id: 'suvite', name: 'Șuvițe', price: 300 },
-  { id: 'global-o-culoare', name: 'Global / total — o culoare', price: 300 },
-  { id: 'global-model', name: 'Global / total — model', price: 400 }
+  { id: 'suvite', name: 'È˜uviÈ›e', price: 300 },
+  { id: 'global-o-culoare', name: 'Global / total â€” o culoare', price: 300 },
+  { id: 'global-model', name: 'Global / total â€” model', price: 400 }
 ];
 
 const formatNotificationDate = (dateString) => {
-  if (!dateString) return 'Fără dată';
+  if (!dateString) return 'FÄƒrÄƒ datÄƒ';
 
   try {
     const [year, month, day] = String(dateString).split('-').map(Number);
@@ -160,7 +160,7 @@ const getAppointmentPriceLabel = (programare) => {
     return formatPrice(programare.pretValoare);
   }
 
-  return 'Fără preț';
+  return 'FÄƒrÄƒ preÈ›';
 };
 
 const getServiceIdFromAppointment = (programare, services) => {
@@ -233,9 +233,9 @@ const getStatusLabel = (status) => {
   const value = normalizeStatus(status);
 
   const labels = {
-    noua: 'Nouă',
-    confirmata: 'Confirmată',
-    anulata: 'Anulată',
+    noua: 'NouÄƒ',
+    confirmata: 'ConfirmatÄƒ',
+    anulata: 'AnulatÄƒ',
     blocat: 'Blocat'
   };
 
@@ -254,7 +254,7 @@ const isBlockedEntry = (programare) => {
     programare.status === 'blocat' ||
     normalizeText(programare.nume_client).includes('blocat') ||
     normalizeText(programare.nume_client).includes('pauza') ||
-    normalizeText(programare.nume_client).includes('pauză') ||
+    normalizeText(programare.nume_client).includes('pauzÄƒ') ||
     normalizeText(programare.nume_client).includes('concediu') ||
     normalizeText(programare.nume_client).includes('liber')
   );
@@ -482,7 +482,7 @@ if (!silent) {
   playNotificationSound();
 }
     } catch (err) {
-      console.error('Eroare notificări agenda:', err);
+      console.error('Eroare notificÄƒri agenda:', err);
     }
   };
 
@@ -599,7 +599,7 @@ const loadMoreGalerie = () => {
 
 const handleAddPhoto = async () => {
   if (!selectedFiles.length) {
-    return alert('Alege cel puțin o poză!');
+    return alert('Alege cel puÈ›in o pozÄƒ!');
   }
 
   const formData = new FormData();
@@ -637,8 +637,8 @@ const handleDeletePhoto = async (photoId) => {
   replace: true
 });
   } catch (err) {
-    console.error('Eroare ștergere poză:', err);
-    alert(err.message || 'Eroare la ștergerea imaginii.');
+    console.error('Eroare È™tergere pozÄƒ:', err);
+    alert(err.message || 'Eroare la È™tergerea imaginii.');
   }
 };
 
@@ -694,10 +694,10 @@ const changeMonth = (offset) => {
         isOpen: true,
         type: 'delete',
         data: app,
-        title: blocked ? 'ȘTERGE BLOCĂRI' : 'ANULEAZĂ PROGRAMARE',
+        title: blocked ? 'È˜TERGE BLOCÄ‚RI' : 'ANULEAZÄ‚ PROGRAMARE',
         message: blocked
-          ? 'Ești sigur că vrei să ștergi această pauză / blocare?'
-          : `Ești sigur că vrei să anulezi programarea lui ${app.nume_client}? Programarea nu va fi ștearsă definitiv, va trece la anulate.`
+          ? 'EÈ™ti sigur cÄƒ vrei sÄƒ È™tergi aceastÄƒ pauzÄƒ / blocare?'
+          : `EÈ™ti sigur cÄƒ vrei sÄƒ anulezi programarea lui ${app.nume_client}? Programarea nu va fi È™tearsÄƒ definitiv, va trece la anulate.`
       });
 
       return;
@@ -718,8 +718,8 @@ const changeMonth = (offset) => {
       isOpen: true,
       type: 'block_day',
       data: null,
-      title: 'BLOCHEAZĂ ZIUA',
-      message: `Vrei să blochezi toate orele rămase libere pentru ${currentBarber.label} în data de ${selectedDay}?`
+      title: 'BLOCHEAZÄ‚ ZIUA',
+      message: `Vrei sÄƒ blochezi toate orele rÄƒmase libere pentru ${currentBarber.label} Ã®n data de ${selectedDay}?`
     });
   };
 
@@ -728,8 +728,8 @@ const changeMonth = (offset) => {
       isOpen: true,
       type: 'unblock_day',
       data: null,
-      title: 'DEBLOCHEAZĂ ZIUA',
-      message: `Vrei să deblochezi toate orele blocate manual pentru ${currentBarber.label} în data de ${selectedDay}?`
+      title: 'DEBLOCHEAZÄ‚ ZIUA',
+      message: `Vrei sÄƒ deblochezi toate orele blocate manual pentru ${currentBarber.label} Ã®n data de ${selectedDay}?`
     });
   };
 
@@ -799,7 +799,7 @@ const updateStatus = async (programare, status) => {
             tip: 'blocat',
             nume_client: 'CONCEDIU / LIBER',
             telefon: 'N/A',
-            mesaj: 'Zi blocată din panoul specialistului'
+            mesaj: 'Zi blocatÄƒ din panoul specialistului'
           })
         )
       );
@@ -837,7 +837,7 @@ const updateStatus = async (programare, status) => {
 
  const salveazaProgramare = async (tip) => {
   if (tip === 'client' && (!formRezervare.nume || !formRezervare.telefon)) {
-    return alert('Completează numele și telefonul!');
+    return alert('CompleteazÄƒ numele È™i telefonul!');
   }
 
  const payload = {
@@ -846,9 +846,9 @@ const updateStatus = async (programare, status) => {
   data: selectedDay,
   ora: oraActiva,
   tip,
-  nume_client: tip === 'blocat' ? 'PAUZĂ / BLOCAT' : formRezervare.nume,
+  nume_client: tip === 'blocat' ? 'PAUZÄ‚ / BLOCAT' : formRezervare.nume,
   telefon: tip === 'blocat' ? 'N/A' : formRezervare.telefon,
-  mesaj: tip === 'blocat' ? 'Oră blocată manual' : formRezervare.mesaj,
+  mesaj: tip === 'blocat' ? 'OrÄƒ blocatÄƒ manual' : formRezervare.mesaj,
   serviciu: tip === 'client' && selectedService ? selectedService.name : '',
   pret: tip === 'client' && selectedService ? formatPrice(selectedService.price) : '',
   pretValoare: tip === 'client' && selectedService ? selectedService.price : null,
@@ -869,7 +869,7 @@ const updateStatus = async (programare, status) => {
     await fetchData();
   } catch (err) {
     console.error('Eroare salvare programare:', err);
-    alert(err.message || 'Ora este ocupată!');
+    alert(err.message || 'Ora este ocupatÄƒ!');
   }
 };
 
@@ -877,10 +877,10 @@ const updateStatus = async (programare, status) => {
     const phone = normalizePhoneForWhatsApp(programare.telefon);
 
     const text = [
-      `Salut, te contactăm de la Gentleman’s Club pentru programarea ta.`,
+      `Salut, te contactÄƒm de la Gentlemanâ€™s Club pentru programarea ta.`,
       `Specialist: ${currentBarber.label}`,
       programare.serviciu ? `Serviciu: ${programare.serviciu}` : '',
-      programare.pret ? `Preț: ${programare.pret}` : '',
+      programare.pret ? `PreÈ›: ${programare.pret}` : '',
       `Data: ${programare.data}`,
       `Ora: ${programare.ora}`
     ]
@@ -917,7 +917,7 @@ const saveAppointmentChanges = async () => {
   }
 
   if (!editAppointmentForm.nume || !editAppointmentForm.telefon) {
-    return alert('Completează numele și telefonul.');
+    return alert('CompleteazÄƒ numele È™i telefonul.');
   }
 
   const payload = {
@@ -991,8 +991,8 @@ const requestCancelAppointmentFromModal = () => {
     isOpen: true,
     type: 'delete',
     data: activeAppointment,
-    title: 'ANULEAZĂ PROGRAMARE',
-    message: `Ești sigur că vrei să anulezi programarea lui ${activeAppointment.nume_client}?`
+    title: 'ANULEAZÄ‚ PROGRAMARE',
+    message: `EÈ™ti sigur cÄƒ vrei sÄƒ anulezi programarea lui ${activeAppointment.nume_client}?`
   });
 
   setAppointmentModalOpen(false);
@@ -1013,7 +1013,7 @@ const closeLoginNotifications = async () => {
       });
     }
   } catch (err) {
-    console.error('Eroare marcare notificări văzute:', err);
+    console.error('Eroare marcare notificÄƒri vÄƒzute:', err);
   }
 };
 
@@ -1027,9 +1027,9 @@ const closeLoginNotifications = async () => {
         fetchGalerie();
       }}
       className="btn-icon refresh"
-      title="Reîncarcă"
+      title="ReÃ®ncarcÄƒ"
     >
-      ↻
+      â†»
     </button>
 
     <button
@@ -1038,16 +1038,16 @@ const closeLoginNotifications = async () => {
   navigate('/login', { replace: true });
 }}
       className="btn-icon logout"
-      title="Ieșire"
+      title="IeÈ™ire"
     >
-      ⏻
+      â»
     </button>
   </div>
 
   <div className="admin-top-main-row">
     {isBoss && (
       <button className="btn-back-dash" onClick={() => navigate('/master')}>
-        ⬅ Panou
+        â¬… Panou
       </button>
     )}
 
@@ -1061,18 +1061,18 @@ const closeLoginNotifications = async () => {
         <aside className="sidebar-calendar">
           <div className="calendar-card-premium">
             <div className="month-header">
-              <button onClick={() => changeMonth(-1)}>‹</button>
+              <button onClick={() => changeMonth(-1)}>â€¹</button>
 
               <div className="month-title">
                 {viewDate.toLocaleString('ro-RO', { month: 'long' }).toUpperCase()}
                 <span>{viewDate.getFullYear()}</span>
               </div>
 
-              <button onClick={() => changeMonth(1)}>›</button>
+              <button onClick={() => changeMonth(1)}>â€º</button>
             </div>
 
             <div className="weekdays-grid">
-              {['LU', 'MA', 'MI', 'JO', 'VI', 'SÂ', 'DU'].map((d) => (
+              {['LU', 'MA', 'MI', 'JO', 'VI', 'SÃ‚', 'DU'].map((d) => (
                 <span key={d}>{d}</span>
               ))}
             </div>
@@ -1116,7 +1116,7 @@ const closeLoginNotifications = async () => {
 
               <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', marginTop: '10px' }}>
                 <button className="btn-block-day" onClick={handleBlockDayRequest}>
-                  ⛔ BLOCHEAZĂ ZIUA
+                  â›” BLOCHEAZÄ‚ ZIUA
                 </button>
 
                 {areBlocajeActive && (
@@ -1129,7 +1129,7 @@ const closeLoginNotifications = async () => {
                     }}
                     onClick={handleUnblockDayRequest}
                   >
-                    🔓 DEBLOCHEAZĂ ZIUA
+                    ðŸ”“ DEBLOCHEAZÄ‚ ZIUA
                   </button>
                 )}
               </div>
@@ -1158,7 +1158,7 @@ const closeLoginNotifications = async () => {
     {blocked ? (
       <div className="admin-compact-blocked">
         <strong>{app.nume_client}</strong>
-        <span>Blocare / pauză</span>
+        <span>Blocare / pauzÄƒ</span>
       </div>
     ) : (
     <button
@@ -1188,7 +1188,7 @@ const closeLoginNotifications = async () => {
                     className={`action-btn ${app ? 'btn-del' : 'btn-add'}`}
                     onClick={() => deschideActiune(ora, app)}
                   >
-                    {app ? '✕' : '+'}
+                    {app ? 'âœ•' : '+'}
                   </button>
                 </div>
               );
@@ -1216,15 +1216,15 @@ const closeLoginNotifications = async () => {
                 <img loading="lazy" src={previewUrl} alt="Preview" className="image-preview" />
 
                 <div className="preview-overlay">
-                  {selectedFiles.length} poză/poze selectate · apasă ca să schimbi
+                  {selectedFiles.length} pozÄƒ/poze selectate Â· apasÄƒ ca sÄƒ schimbi
                 </div>
               </div>
             ) : (
               <div className="upload-placeholder">
-                <span className="upload-icon">📸</span>
+                <span className="upload-icon">ðŸ“¸</span>
 
                 <p>
-                  Apasă aici și alege poze din galeria telefonului sau din fișiere.
+                  ApasÄƒ aici È™i alege poze din galeria telefonului sau din fiÈ™iere.
                 </p>
               </div>
             )}
@@ -1236,7 +1236,7 @@ const closeLoginNotifications = async () => {
               className="btn-gold"
               disabled={!selectedFiles.length || loading}
             >
-              {loading ? 'SE URCĂ PE SERVER...' : `URCĂ ${selectedFiles.length || ''} POZĂ/POZE`}
+              {loading ? 'SE URCÄ‚ PE SERVER...' : `URCÄ‚ ${selectedFiles.length || ''} POZÄ‚/POZE`}
             </button>
 
             {selectedFiles.length > 0 && (
@@ -1245,7 +1245,7 @@ const closeLoginNotifications = async () => {
                 className="btn-dark"
                 type="button"
               >
-                ANULEAZĂ SELECȚIA
+                ANULEAZÄ‚ SELECÈšIA
               </button>
             )}
           </div>
@@ -1260,7 +1260,7 @@ const closeLoginNotifications = async () => {
                 className="btn-delete-photo"
                 onClick={() => handleDeletePhoto(poza._id)}
               >
-                ȘTERGE POZA 🗑
+                È˜TERGE POZA ðŸ—‘
               </button>
             </div>
           ))}
@@ -1274,7 +1274,7 @@ const closeLoginNotifications = async () => {
                 fontStyle: 'italic'
               }}
             >
-              Nu ai adăugat nicio poză în portofoliu încă.
+              Nu ai adÄƒugat nicio pozÄƒ Ã®n portofoliu Ã®ncÄƒ.
             </p>
           )}
         </div>
@@ -1286,11 +1286,11 @@ const closeLoginNotifications = async () => {
       onClick={loadMoreGalerie}
       disabled={loadingMoreGalerie}
     >
-      {loadingMoreGalerie ? 'SE ÎNCARCĂ...' : 'ÎNCARCĂ MAI MULTE POZE'}
+      {loadingMoreGalerie ? 'SE ÃŽNCARCÄ‚...' : 'ÃŽNCARCÄ‚ MAI MULTE POZE'}
     </button>
 
     <span>
-      {galerie.length} / {galerieTotal || galerie.length} poze afișate
+      {galerie.length} / {galerieTotal || galerie.length} poze afiÈ™ate
     </span>
   </div>
 )}
@@ -1310,7 +1310,7 @@ const closeLoginNotifications = async () => {
               className="btn-close-modal"
               onClick={() => setModalDeschis(false)}
             >
-              ✕
+              âœ•
             </button>
 
             <h3>Ora {oraActiva}</h3>
@@ -1359,18 +1359,18 @@ const closeLoginNotifications = async () => {
                   })
                 }
               >
-                <option value="">Fără serviciu ales</option>
+                <option value="">FÄƒrÄƒ serviciu ales</option>
 
                 {serviceOptions.map((service) => (
                   <option key={service.id} value={service.id}>
-                    {service.name} — {formatPrice(service.price)}
+                    {service.name} â€” {formatPrice(service.price)}
                   </option>
                 ))}
               </select>
             </div>
 
             <div className="input-group">
-              <label>Mesaj / notițe</label>
+              <label>Mesaj / notiÈ›e</label>
 
               <textarea
                 rows="3"
@@ -1389,7 +1389,7 @@ const closeLoginNotifications = async () => {
               <div className="admin-selected-service">
                 <span>Serviciu ales</span>
                 <strong>
-                  {selectedService.name} — {formatPrice(selectedService.price)}
+                  {selectedService.name} â€” {formatPrice(selectedService.price)}
                 </strong>
               </div>
             )}
@@ -1399,14 +1399,14 @@ const closeLoginNotifications = async () => {
                 className="btn-gold"
                 onClick={() => salveazaProgramare('client')}
               >
-                SALVEAZĂ CLIENT
+                SALVEAZÄ‚ CLIENT
               </button>
 
               <button
                 className="btn-dark"
                 onClick={() => salveazaProgramare('blocat')}
               >
-                DOAR PAUZĂ
+                DOAR PAUZÄ‚
               </button>
             </div>
           </div>
@@ -1427,7 +1427,7 @@ const closeLoginNotifications = async () => {
         className="appointment-modal-close"
         onClick={closeAppointmentModal}
       >
-        ✕
+        âœ•
       </button>
 
       <div className="appointment-modal-head">
@@ -1435,7 +1435,7 @@ const closeLoginNotifications = async () => {
         <h3>{activeAppointment.nume_client}</h3>
 
         <p>
-          {activeAppointment.data} · {activeAppointment.ora} · {getStatusLabel(activeAppointment.status)}
+          {activeAppointment.data} Â· {activeAppointment.ora} Â· {getStatusLabel(activeAppointment.status)}
         </p>
       </div>
 
@@ -1512,18 +1512,18 @@ const closeLoginNotifications = async () => {
               })
             }
           >
-            <option value="">Fără serviciu ales</option>
+            <option value="">FÄƒrÄƒ serviciu ales</option>
 
             {serviceOptions.map((service) => (
               <option key={service.id} value={service.id}>
-                {service.name} — {formatPrice(service.price)}
+                {service.name} â€” {formatPrice(service.price)}
               </option>
             ))}
           </select>
         </div>
 
         <div className="input-group wide">
-          <label>Mesaj / notițe</label>
+          <label>Mesaj / notiÈ›e</label>
           <textarea
             rows="3"
             value={editAppointmentForm.mesaj}
@@ -1544,7 +1544,7 @@ const closeLoginNotifications = async () => {
         </article>
 
         <article>
-          <span>Sumă</span>
+          <span>SumÄƒ</span>
           <strong>
             {selectedEditService
               ? formatPrice(selectedEditService.price)
@@ -1565,7 +1565,7 @@ const closeLoginNotifications = async () => {
           onClick={saveAppointmentChanges}
           disabled={loading}
         >
-          Salvează modificări
+          SalveazÄƒ modificÄƒri
         </button>
 
         {normalizeStatus(activeAppointment.status) === 'confirmata' ? (
@@ -1574,7 +1574,7 @@ const closeLoginNotifications = async () => {
             className="btn-dark"
             onClick={() => changeAppointmentStatusFromModal('noua')}
           >
-            Deconfirmă
+            DeconfirmÄƒ
           </button>
         ) : (
           <button
@@ -1582,7 +1582,7 @@ const closeLoginNotifications = async () => {
             className="btn-dark"
             onClick={() => changeAppointmentStatusFromModal('confirmata')}
           >
-            Confirmă
+            ConfirmÄƒ
           </button>
         )}
 
@@ -1602,7 +1602,7 @@ const closeLoginNotifications = async () => {
           className="btn-modal-danger"
           onClick={requestCancelAppointmentFromModal}
         >
-          Anulează programarea
+          AnuleazÄƒ programarea
         </button>
       </div>
     </div>
@@ -1630,14 +1630,14 @@ const closeLoginNotifications = async () => {
                   setConfirmModal({ ...confirmModal, isOpen: false })
                 }
               >
-                NU, ANULEAZĂ
+                NU, ANULEAZÄ‚
               </button>
 
               <button
                 className="btn-confirm-yes"
                 onClick={executeConfirmAction}
               >
-                {loading ? 'SE PROCESEAZĂ...' : 'DA, SUNT SIGUR'}
+                {loading ? 'SE PROCESEAZÄ‚...' : 'DA, SUNT SIGUR'}
               </button>
             </div>
           </div>
@@ -1646,10 +1646,10 @@ const closeLoginNotifications = async () => {
       {loginNotificationsOpen && loginNotifications.length > 0 && (
   <div className="login-notification-backdrop">
     <div className="login-notification-modal">
-      <h3 className="login-notification-title">🔔 Programări noi</h3>
+      <h3 className="login-notification-title">ðŸ”” ProgramÄƒri noi</h3>
 
       <p className="login-notification-subtitle">
-        Ai {loginNotifications.length} programare/programări noi de când nu ai mai intrat.
+        Ai {loginNotifications.length} programare/programÄƒri noi de cÃ¢nd nu ai mai intrat.
       </p>
 
       <div className="login-notification-list">
@@ -1658,7 +1658,7 @@ const closeLoginNotifications = async () => {
   const phoneForCall = String(programare.telefon || '').replace(/\s+/g, '');
 
   const whatsappText = [
-    'Salut, te contactăm de la Gentleman’s Club pentru programarea ta.',
+    'Salut, te contactÄƒm de la Gentlemanâ€™s Club pentru programarea ta.',
     programare.frizer ? `Specialist: ${programare.frizer}` : '',
     programare.serviciu ? `Serviciu: ${programare.serviciu}` : '',
     programare.data ? `Data: ${programare.data}` : '',
@@ -1678,7 +1678,7 @@ const closeLoginNotifications = async () => {
       </p>
 
       <p className="login-notification-detail">
-        {formatNotificationDate(programare.data)} · ora {programare.ora}
+        {formatNotificationDate(programare.data)} Â· ora {programare.ora}
       </p>
 
       <p className="login-notification-detail">
@@ -1706,7 +1706,7 @@ const closeLoginNotifications = async () => {
             href={`tel:${phoneForCall}`}
             className="login-notification-call"
           >
-            Sună
+            SunÄƒ
           </a>
         )}
       </div>
@@ -1720,7 +1720,7 @@ const closeLoginNotifications = async () => {
         className="login-notification-close"
         onClick={closeLoginNotifications}
       >
-        AM VĂZUT
+        AM VÄ‚ZUT
       </button>
     </div>
   </div>
@@ -1730,3 +1730,4 @@ const closeLoginNotifications = async () => {
 }
 
 export default AdminPanel;
+

@@ -455,7 +455,7 @@ const ORE_PROGRAM_EXTINS_HALF_HOUR = [
   '22:00'
 ];
 
-const BARBERI_PROGRAM_EXTINS = ['vali-frizeru', 'croco-frizeru'];
+const BARBERI_PROGRAM_EXTINS = [];
 const getOreProgramPentruBarber = (barberId) => {
   return BARBERI_PROGRAM_EXTINS.includes(barberId)
     ? ORE_PROGRAM_EXTINS_HALF_HOUR
@@ -2958,3 +2958,4 @@ app.listen(PORT, () => {
   console.log(`🛠 Setup: http://localhost:${PORT}/api/setup-gentleman?key=${SETUP_KEY}`);
   console.log(`🍪 Cookie auth: ${AUTH_COOKIE_NAME} | SameSite=${COOKIE_SAME_SITE} | Secure=${COOKIE_SECURE}`);
 });
+
