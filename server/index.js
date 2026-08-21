@@ -374,6 +374,21 @@ const TEAM_BARBERS = [
     services: BARBER_SERVICES
   },
   {
+  barberId: 'croco-frizeru',
+  username: 'croco',
+  password: requireStrongEnv('PASS_CROCO', 12),
+  nume: 'Croco Frizeru',
+  displayName: 'Croco Frizeru',
+  role: 'Premium Barber',
+  specialty: 'Tunsori moderne și clasice, barbă aranjată cu precizie.',
+  description: 'Stil. Precizie. Atitudine.',
+  image: '/croco-frizeru.png',
+  isMaster: false,
+  isAdmin: false,
+  order: 2,
+  services: BARBER_SERVICES
+},
+  {
     barberId: 'vali-frizeru',
     username: 'vali',
     password: requireStrongEnv('PASS_VALI', 12),
@@ -440,7 +455,7 @@ const ORE_PROGRAM_EXTINS_HALF_HOUR = [
   '22:00'
 ];
 
-const BARBERI_PROGRAM_EXTINS = ['vali-frizeru'];
+const BARBERI_PROGRAM_EXTINS = ['vali-frizeru', 'croco-frizeru'];
 const getOreProgramPentruBarber = (barberId) => {
   return BARBERI_PROGRAM_EXTINS.includes(barberId)
     ? ORE_PROGRAM_EXTINS_HALF_HOUR
@@ -521,7 +536,8 @@ const getTeamBarberById = (barberId) => {
 };
 const LEGACY_BARBER_NAMES = {
   'dani-frizeru': ['Dani', 'Dani Frizeru', 'dani', 'dani-frizeru'],
-  'vali-frizeru': ['Vali', 'Vali Frizeru', 'vali', 'vali-frizeru']
+  'vali-frizeru': ['Vali', 'Vali Frizeru', 'vali', 'vali-frizeru'],
+  'croco-frizeru': ['Croco', 'Croco Frizeru', 'croco', 'croco-frizeru']
 };
 
 const getAppointmentBarberQuery = (barberId) => {

@@ -58,6 +58,16 @@ const BARBERS = [
     isMaster: true
   },
   {
+  id: 'croco-frizeru',
+  name: 'Croco Frizeru',
+  role: 'Premium Barber',
+  label: 'NOU ÎN ECHIPĂ',
+  specialty: 'Tunsori moderne și clasice, barbă aranjată cu precizie.',
+  description: 'Stil. Precizie. Atitudine.',
+  image: '/croco-frizeru.png',
+  isMaster: false
+},
+  {
     id: 'vali-frizeru',
     name: 'Vali Frizeru',
     role: 'Barber Specialist',

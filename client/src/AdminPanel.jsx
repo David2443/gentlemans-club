@@ -58,7 +58,7 @@ const ORE_PROGRAM_EXTINS_HALF_HOUR = [
   '22:00'
 ];
 
-const BARBERI_PROGRAM_EXTINS = ['vali-frizeru'];
+const BARBERI_PROGRAM_EXTINS = ['vali-frizeru', 'croco-frizeru'];
 
 const getOreProgramPentruBarber = (barberId) => {
   return BARBERI_PROGRAM_EXTINS.includes(barberId)
@@ -68,7 +68,8 @@ const getOreProgramPentruBarber = (barberId) => {
 
 const BARBERS = [
   { id: 'dani-frizeru', label: 'Dani Frizeru', short: 'Dani' },
-  { id: 'vali-frizeru', label: 'Vali Frizeru', short: 'Vali' }
+  { id: 'vali-frizeru', label: 'Vali Frizeru', short: 'Vali' },
+  { id: 'croco-frizeru', label: 'Croco Frizeru', short: 'Croco' }
 ];
 
 const BARBER_SERVICES = [
