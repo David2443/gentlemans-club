@@ -604,7 +604,7 @@ function BarberProfile() {
         <div className="supreme-cover-overlay"></div>
 
         <Link to="/" className="btn-back-supreme">
-          â† ÎNAPOI
+          ← ÎNAPOI
         </Link>
       </div>
 
@@ -619,14 +619,14 @@ function BarberProfile() {
               />
 
               <div className="avatar-glow"></div>
-              <div className="verified-badge-supreme">âœ“</div>
+              <div className="verified-badge-supreme">✓</div>
             </div>
 
             <h1 className="profile-name-supreme">{barber.name}</h1>
 
             <p className="profile-role-supreme">
               {barber.role}
-              {barber.isMaster ? ' â€¢ MASTER' : ''}
+              {barber.isMaster ? ' • MASTER' : ''}
             </p>
 
             <p
@@ -781,7 +781,7 @@ function BarberProfile() {
                     ))}
                   </select>
 
-                  <span className="service-select-arrow">âŒ„</span>
+                  <span className="service-select-arrow">⌄</span>
                 </div>
 
                 {selectedService && (

@@ -1188,7 +1188,7 @@ const closeLoginNotifications = async () => {
                     className={`action-btn ${app ? 'btn-del' : 'btn-add'}`}
                     onClick={() => deschideActiune(ora, app)}
                   >
-                    {app ? 'âœ•' : '+'}
+                    {app ? '✕' : '+'}
                   </button>
                 </div>
               );
@@ -1310,7 +1310,7 @@ const closeLoginNotifications = async () => {
               className="btn-close-modal"
               onClick={() => setModalDeschis(false)}
             >
-              âœ•
+              ✕
             </button>
 
             <h3>Ora {oraActiva}</h3>
@@ -1427,7 +1427,7 @@ const closeLoginNotifications = async () => {
         className="appointment-modal-close"
         onClick={closeAppointmentModal}
       >
-        âœ•
+        ✕
       </button>
 
       <div className="appointment-modal-head">
