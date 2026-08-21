@@ -513,17 +513,17 @@ function BarberProfile() {
     setErrors(newErrors);
 
     if (hasError) {
-      setSubmitStatus('âŒ Completează câmpurile marcate cu roșu.');
+      setSubmitStatus('❌ Completează câmpurile marcate cu roșu.');
       return;
     }
 
     if (!isTimeSlotInFuture(selectedDate.fullDate, selectedTime)) {
-      setSubmitStatus('âŒ Ora selectată a trecut deja. Alege altă oră.');
+      setSubmitStatus('❌ Ora selectată a trecut deja. Alege altă oră.');
       setSelectedTime(null);
       return;
     }
 
-    setSubmitStatus('â³ Trimitem programarea...');
+    setSubmitStatus('⏳ Trimitem programarea...');
 
     const appointmentData = {
       nume_client: clientName.trim(),
@@ -552,7 +552,7 @@ function BarberProfile() {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        setSubmitStatus(data.mesaj || 'âŒ Ora a fost ocupată între timp. Alege altă oră.');
+        setSubmitStatus(data.mesaj || '❌ Ora a fost ocupată între timp. Alege altă oră.');
         return;
       }
 
@@ -584,7 +584,7 @@ function BarberProfile() {
       setSelectedTime(null);
       setErrors({});
     } catch {
-      setSubmitStatus('âŒ Eroare conexiune server.');
+      setSubmitStatus('❌ Eroare conexiune server.');
     }
   };
 
@@ -966,7 +966,7 @@ function BarberProfile() {
               className={`btn-expand-gallery ${galleryExpanded ? 'active' : ''}`}
               onClick={() => setGalleryExpanded(!galleryExpanded)}
             >
-              {galleryExpanded ? 'ASCUNDE GALERIA â†‘' : 'DESCOPERĂ ARTA â†“'}
+              {galleryExpanded ? 'ASCUNDE GALERIA ↑' : 'DESCOPERĂ ARTA ↓'}
             </button>
           </div>
         )}

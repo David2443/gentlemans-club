@@ -1040,14 +1040,14 @@ const closeLoginNotifications = async () => {
       className="btn-icon logout"
       title="Ieșire"
     >
-      â»
+      ⏻
     </button>
   </div>
 
   <div className="admin-top-main-row">
     {isBoss && (
       <button className="btn-back-dash" onClick={() => navigate('/master')}>
-        â¬… Panou
+        ⬅ Panou
       </button>
     )}
 
@@ -1129,7 +1129,7 @@ const closeLoginNotifications = async () => {
                     }}
                     onClick={handleUnblockDayRequest}
                   >
-                    ðŸ”“ DEBLOCHEAZĂ ZIUA
+                    🔓 DEBLOCHEAZĂ ZIUA
                   </button>
                 )}
               </div>
@@ -1216,12 +1216,12 @@ const closeLoginNotifications = async () => {
                 <img loading="lazy" src={previewUrl} alt="Preview" className="image-preview" />
 
                 <div className="preview-overlay">
-                  {selectedFiles.length} poză/poze selectate Â· apasă ca să schimbi
+                  {selectedFiles.length} poză/poze selectate · apasă ca să schimbi
                 </div>
               </div>
             ) : (
               <div className="upload-placeholder">
-                <span className="upload-icon">ðŸ“¸</span>
+                <span className="upload-icon">📸</span>
 
                 <p>
                   Apasă aici și alege poze din galeria telefonului sau din fișiere.
@@ -1435,7 +1435,7 @@ const closeLoginNotifications = async () => {
         <h3>{activeAppointment.nume_client}</h3>
 
         <p>
-          {activeAppointment.data} Â· {activeAppointment.ora} Â· {getStatusLabel(activeAppointment.status)}
+          {activeAppointment.data} · {activeAppointment.ora} · {getStatusLabel(activeAppointment.status)}
         </p>
       </div>
 
@@ -1646,7 +1646,7 @@ const closeLoginNotifications = async () => {
       {loginNotificationsOpen && loginNotifications.length > 0 && (
   <div className="login-notification-backdrop">
     <div className="login-notification-modal">
-      <h3 className="login-notification-title">ðŸ”” Programări noi</h3>
+      <h3 className="login-notification-title">🔔 Programări noi</h3>
 
       <p className="login-notification-subtitle">
         Ai {loginNotifications.length} programare/programări noi de când nu ai mai intrat.
@@ -1678,7 +1678,7 @@ const closeLoginNotifications = async () => {
       </p>
 
       <p className="login-notification-detail">
-        {formatNotificationDate(programare.data)} Â· ora {programare.ora}
+        {formatNotificationDate(programare.data)} · ora {programare.ora}
       </p>
 
       <p className="login-notification-detail">
