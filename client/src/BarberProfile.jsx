@@ -11,50 +11,50 @@ const BARBER_SERVICES = [
     id: 'tuns',
     name: 'Tuns',
     price: 50,
-    desc: 'Tuns curat, finisat atent È™i adaptat stilului tÄƒu.'
+    desc: 'Tuns curat, finisat atent și adaptat stilului tău.'
   },
   {
     id: 'tuns-barba',
-    name: 'Tuns + barbÄƒ',
+    name: 'Tuns + barbă',
     price: 75,
-    desc: 'Tuns complet plus barbÄƒ aranjatÄƒ È™i finisatÄƒ.',
+    desc: 'Tuns complet plus barbă aranjată și finisată.',
     vip: true
   },
   {
     id: 'barba',
-    name: 'BarbÄƒ',
+    name: 'Barbă',
     price: 30,
-    desc: 'Aranjare barbÄƒ pentru un aspect curat È™i Ã®ngrijit.'
+    desc: 'Aranjare barbă pentru un aspect curat și îngrijit.'
   },
   {
     id: 'vopsit-barba',
-    name: 'Vopsit barbÄƒ',
+    name: 'Vopsit barbă',
     price: 30,
-    desc: 'Vopsit barbÄƒ pentru un aspect uniform È™i definit.'
+    desc: 'Vopsit barbă pentru un aspect uniform și definit.'
   },
   {
     id: 'spalat',
-    name: 'SpÄƒlat',
+    name: 'Spălat',
     price: 25,
-    desc: 'SpÄƒlat profesional pentru prospeÈ›ime È™i confort.'
+    desc: 'Spălat profesional pentru prospețime și confort.'
   },
   {
     id: 'contur-barba',
-    name: 'Contur / aranjat barbÄƒ',
+    name: 'Contur / aranjat barbă',
     price: 30,
-    desc: 'Contur clar, simetrie È™i finisaj precis.'
+    desc: 'Contur clar, simetrie și finisaj precis.'
   },
   {
     id: 'styling',
     name: 'Styling',
     price: null,
-    desc: 'SpÄƒlat, aranjat È™i finisaj cu produse premium.'
+    desc: 'Spălat, aranjat și finisaj cu produse premium.'
   },
   {
     id: 'pachet-vip',
     name: 'Pachet VIP',
     price: 200,
-    desc: 'Tuns + barbÄƒ + spÄƒlat + aranjat + prosop fierbinte + tratament facial.',
+    desc: 'Tuns + barbă + spălat + aranjat + prosop fierbinte + tratament facial.',
     vip: true
   }
 ];
@@ -64,49 +64,49 @@ const BROW_SERVICES = [
     id: 'pensat',
     name: 'Pensat',
     price: 35,
-    desc: 'Pensat precis pentru un aspect curat È™i Ã®ngrijit.'
+    desc: 'Pensat precis pentru un aspect curat și îngrijit.'
   },
   {
     id: 'pensat-vopsit',
     name: 'Pensat + vopsit',
     price: 50,
-    desc: 'Pensat precis plus vopsit pentru definire È™i stil.',
+    desc: 'Pensat precis plus vopsit pentru definire și stil.',
     vip: true
   },
   {
     id: 'pensat-par-nas',
-    name: 'Pensat + pÄƒr nas',
+    name: 'Pensat + păr nas',
     price: 45,
-    desc: 'Pensat È™i Ã®ngrijire detalii pentru un look complet.'
+    desc: 'Pensat și îngrijire detalii pentru un look complet.'
   },
   {
     id: 'tratament-facial',
     name: 'Tratament facial',
     price: 50,
-    desc: 'Tratament facial pentru prospeÈ›ime È™i aspect Ã®ngrijit.'
+    desc: 'Tratament facial pentru prospețime și aspect îngrijit.'
   },
   {
     id: 'pachet-complet',
     name: 'Pachet complet',
     price: 100,
-    desc: 'Pensat + vopsit + pÄƒr nas + tratament facial.',
+    desc: 'Pensat + vopsit + păr nas + tratament facial.',
     vip: true
   },
   {
     id: 'suvite',
-    name: 'È˜uviÈ›e',
+    name: 'Șuvițe',
     price: 300,
-    desc: 'È˜uviÈ›e lucrate atent pentru un rezultat premium.'
+    desc: 'Șuvițe lucrate atent pentru un rezultat premium.'
   },
   {
     id: 'global-o-culoare',
-    name: 'Global / total â€” o culoare',
+    name: 'Global / total — o culoare',
     price: 300,
-    desc: 'Vopsit total Ã®ntr-o singurÄƒ culoare.'
+    desc: 'Vopsit total într-o singură culoare.'
   },
   {
     id: 'global-model',
-    name: 'Global / total â€” model',
+    name: 'Global / total — model',
     price: 400,
     desc: 'Vopsit total cu model personalizat.',
     vip: true
@@ -121,7 +121,7 @@ const barbersDB = {
     badge: 'MASTER',
     image: '/dani-frizeru.png',
     isMaster: true,
-    description: 'Nu este doar o tunsoare, este o experienÈ›Äƒ.',
+    description: 'Nu este doar o tunsoare, este o experiență.',
     services: BARBER_SERVICES,
     gallery: []
   },
@@ -130,7 +130,7 @@ const barbersDB = {
     barberId: 'croco-frizeru',
     name: 'Croco Frizeru',
     role: 'Premium Barber',
-    badge: 'NOU ÃŽN ECHIPÄ‚',
+    badge: 'NOU ÎN ECHIPĂ',
     image: '/croco-frizeru.png',
     isMaster: false,
     description: 'Stil. Precizie. Atitudine.',
@@ -145,7 +145,7 @@ const barbersDB = {
     badge: 'SONIC STYLE',
     image: '/vali-frizeru.png',
     isMaster: false,
-    description: 'Stilul tÄƒu, semnÄƒtura noastrÄƒ.',
+    description: 'Stilul tău, semnătura noastră.',
     services: BARBER_SERVICES,
     gallery: []
   }
@@ -300,7 +300,7 @@ const isTimeSlotInFuture = (dateString, time) => {
 
 const createWhatsAppLink = ({ name, barber, service, date, time }) => {
   const text = [
-    `Salut, am fÄƒcut o programare la Gentlemanâ€™s Club.`,
+    `Salut, am făcut o programare la Gentleman’s Club.`,
     `Nume: ${name}`,
     `Specialist: ${barber}`,
     `Serviciu: ${service}`,
@@ -318,7 +318,7 @@ function BarberProfile() {
   if (!barber) {
     setPageSeo({
       title: 'Profil frizer',
-      description: 'Alege specialistul Gentlemanâ€™s Club PiteÈ™ti È™i programeazÄƒ-te online pentru tuns, barbÄƒ sau pensat.',
+      description: 'Alege specialistul Gentleman’s Club Pitești și programează-te online pentru tuns, barbă sau pensat.',
       path: `/frizer/${id || ''}`
     });
 
@@ -326,8 +326,8 @@ function BarberProfile() {
   }
 
   setPageSeo({
-    title: `${barber.name} PiteÈ™ti | Programare online tuns, barbÄƒ È™i servicii premium`,
-    description: `${barber.name} la Gentlemanâ€™s Club PiteÈ™ti. ProgrameazÄƒ-te online pentru ${barber.role.toLowerCase()}, servicii premium, tuns, barbÄƒ, styling sau pensat.`,
+    title: `${barber.name} Pitești | Programare online tuns, barbă și servicii premium`,
+    description: `${barber.name} la Gentleman’s Club Pitești. Programează-te online pentru ${barber.role.toLowerCase()}, servicii premium, tuns, barbă, styling sau pensat.`,
     path: `/frizer/${barber.barberId}`,
     image: `https://www.gentlemansclub.ro${barber.image}`
   });
@@ -435,7 +435,7 @@ function BarberProfile() {
         );
 
         if (!response.ok) {
-          throw new Error('Galeria nu s-a putut Ã®ncÄƒrca.');
+          throw new Error('Galeria nu s-a putut încărca.');
         }
 
         const data = await response.json();
@@ -513,12 +513,12 @@ function BarberProfile() {
     setErrors(newErrors);
 
     if (hasError) {
-      setSubmitStatus('âŒ CompleteazÄƒ cÃ¢mpurile marcate cu roÈ™u.');
+      setSubmitStatus('âŒ Completează câmpurile marcate cu roșu.');
       return;
     }
 
     if (!isTimeSlotInFuture(selectedDate.fullDate, selectedTime)) {
-      setSubmitStatus('âŒ Ora selectatÄƒ a trecut deja. Alege altÄƒ orÄƒ.');
+      setSubmitStatus('âŒ Ora selectată a trecut deja. Alege altă oră.');
       setSelectedTime(null);
       return;
     }
@@ -552,7 +552,7 @@ function BarberProfile() {
       const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        setSubmitStatus(data.mesaj || 'âŒ Ora a fost ocupatÄƒ Ã®ntre timp. Alege altÄƒ orÄƒ.');
+        setSubmitStatus(data.mesaj || 'âŒ Ora a fost ocupată între timp. Alege altă oră.');
         return;
       }
 
@@ -574,7 +574,7 @@ function BarberProfile() {
       };
 
       setSuccessDetails(details);
-      setSubmitStatus('âœ… Programarea a fost trimisÄƒ!');
+      setSubmitStatus('âœ… Programarea a fost trimisă!');
       setOccupiedSlots((prev) => [...prev, selectedTime]);
 
       setClientName('');
@@ -591,7 +591,7 @@ function BarberProfile() {
   if (!barber) {
     return (
       <div className="loading-screen">
-        Profilul nu existÄƒ.
+        Profilul nu există.
       </div>
     );
   }
@@ -604,7 +604,7 @@ function BarberProfile() {
         <div className="supreme-cover-overlay"></div>
 
         <Link to="/" className="btn-back-supreme">
-          â† ÃŽNAPOI
+          â† ÎNAPOI
         </Link>
       </div>
 
@@ -614,7 +614,7 @@ function BarberProfile() {
             <div className="avatar-wrapper-supreme">
               <img
                 src={barber.image}
-                alt={`${barber.name} - programare online la Gentleman's Club PiteÈ™ti`}
+                alt={`${barber.name} - programare online la Gentleman's Club Pitești`}
                 className="avatar-img-supreme"
               />
 
@@ -663,8 +663,8 @@ function BarberProfile() {
         <div className="profile-booking-side-supreme">
           <div className="booking-card-supreme">
             <div className="booking-header-supreme">
-              <h2>PROGRAMEAZÄ‚-TE ACUM</h2>
-              <p>Alege ziua, ora È™i serviciul dorit</p>
+              <h2>PROGRAMEAZĂ-TE ACUM</h2>
+              <p>Alege ziua, ora și serviciul dorit</p>
             </div>
 
             <form onSubmit={handleSubmit} className="booking-form-supreme">
@@ -692,7 +692,7 @@ function BarberProfile() {
 
               <div className="selector-section-supreme">
                 <label className={`section-label-supreme ${errors.date ? 'error-pulse' : ''}`}>
-                  1. SELECTEAZÄ‚ ZIUA
+                  1. SELECTEAZĂ ZIUA
                 </label>
 
                 <div className={`dates-scroller-supreme ${errors.date ? 'border-error-supreme' : ''}`}>
@@ -722,16 +722,16 @@ function BarberProfile() {
 
               <div className="selector-section-supreme">
                 <label className={`section-label-supreme ${errors.time ? 'error-pulse' : ''}`}>
-                  2. SELECTEAZÄ‚ ORA
+                  2. SELECTEAZĂ ORA
                 </label>
 
                 {!selectedDate ? (
                   <p className="hint-text-supreme">
-                    Te rugÄƒm sÄƒ alegi o zi din calendarul de mai sus.
+                    Te rugăm să alegi o zi din calendarul de mai sus.
                   </p>
                 ) : visibleTimeSlots.length === 0 ? (
                   <p className="hint-text-supreme">
-                    Pentru azi nu mai sunt ore disponibile. Alege o altÄƒ zi.
+                    Pentru azi nu mai sunt ore disponibile. Alege o altă zi.
                   </p>
                 ) : (
                   <div className={`time-grid-supreme ${errors.time ? 'border-error-supreme' : ''}`}>
@@ -776,7 +776,7 @@ function BarberProfile() {
 
                     {barber.services.map((service) => (
                       <option key={service.id} value={service.id}>
-                        {service.name} â€” {formatPrice(service.price)}
+                        {service.name} — {formatPrice(service.price)}
                       </option>
                     ))}
                   </select>
@@ -850,7 +850,7 @@ function BarberProfile() {
                   ></textarea>
 
                   <span className="floating-label">
-                    MenÈ›iuni speciale opÈ›ional
+                    Mențiuni speciale opțional
                   </span>
                 </div>
               </div>
@@ -872,7 +872,7 @@ function BarberProfile() {
 
               {successDetails && (
                 <div className="success-summary-supreme">
-                  <span className="success-kicker">Programare trimisÄƒ</span>
+                  <span className="success-kicker">Programare trimisă</span>
 
                   <h3>Te vom contacta pentru confirmare.</h3>
 
@@ -888,7 +888,7 @@ function BarberProfile() {
                     </p>
 
                     <p>
-                      <span>PreÈ›</span>
+                      <span>Preț</span>
                       <strong>{successDetails.price}</strong>
                     </p>
 
@@ -936,7 +936,7 @@ function BarberProfile() {
                 <img
   loading="lazy"
   src={imgSrc}
-  alt={`Lucrare ${barber.name} - Gentlemanâ€™s Club PiteÈ™ti ${index + 1}`}
+  alt={`Lucrare ${barber.name} - Gentleman’s Club Pitești ${index + 1}`}
 />
                 <div className="img-hover-glow"></div>
               </div>
@@ -955,7 +955,7 @@ function BarberProfile() {
               textAlign: 'center'
             }}
           >
-            Nu sunt poze Ã®ncÄƒrcate Ã®ncÄƒ pentru acest specialist.
+            Nu sunt poze încărcate încă pentru acest specialist.
           </div>
         )}
 
@@ -966,7 +966,7 @@ function BarberProfile() {
               className={`btn-expand-gallery ${galleryExpanded ? 'active' : ''}`}
               onClick={() => setGalleryExpanded(!galleryExpanded)}
             >
-              {galleryExpanded ? 'ASCUNDE GALERIA â†‘' : 'DESCOPERÄ‚ ARTA â†“'}
+              {galleryExpanded ? 'ASCUNDE GALERIA â†‘' : 'DESCOPERĂ ARTA â†“'}
             </button>
           </div>
         )}
