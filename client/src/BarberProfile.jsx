@@ -574,7 +574,7 @@ function BarberProfile() {
       };
 
       setSuccessDetails(details);
-      setSubmitStatus('âœ… Programarea a fost trimisă!');
+      setSubmitStatus('✅ Programarea a fost trimisă!');
       setOccupiedSlots((prev) => [...prev, selectedTime]);
 
       setClientName('');
@@ -864,7 +864,7 @@ function BarberProfile() {
 
               {submitStatus && (
                 <div className={`status-banner-supreme ${
-                  submitStatus.includes('âœ…') ? 'success' : 'error'
+                  submitStatus.includes('✅') ? 'success' : 'error'
                 }`}>
                   {submitStatus}
                 </div>

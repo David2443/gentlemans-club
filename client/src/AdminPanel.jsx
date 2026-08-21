@@ -1029,7 +1029,7 @@ const closeLoginNotifications = async () => {
       className="btn-icon refresh"
       title="Reîncarcă"
     >
-      â†»
+      ↻
     </button>
 
     <button
@@ -1061,14 +1061,14 @@ const closeLoginNotifications = async () => {
         <aside className="sidebar-calendar">
           <div className="calendar-card-premium">
             <div className="month-header">
-              <button onClick={() => changeMonth(-1)}>â€¹</button>
+              <button onClick={() => changeMonth(-1)}>‹</button>
 
               <div className="month-title">
                 {viewDate.toLocaleString('ro-RO', { month: 'long' }).toUpperCase()}
                 <span>{viewDate.getFullYear()}</span>
               </div>
 
-              <button onClick={() => changeMonth(1)}>â€º</button>
+              <button onClick={() => changeMonth(1)}>›</button>
             </div>
 
             <div className="weekdays-grid">
@@ -1116,7 +1116,7 @@ const closeLoginNotifications = async () => {
 
               <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', marginTop: '10px' }}>
                 <button className="btn-block-day" onClick={handleBlockDayRequest}>
-                  â›” BLOCHEAZĂ ZIUA
+                  ⛔ BLOCHEAZĂ ZIUA
                 </button>
 
                 {areBlocajeActive && (
@@ -1260,7 +1260,7 @@ const closeLoginNotifications = async () => {
                 className="btn-delete-photo"
                 onClick={() => handleDeletePhoto(poza._id)}
               >
-                ȘTERGE POZA ðŸ—‘
+                ȘTERGE POZA 🗑
               </button>
             </div>
           ))}
