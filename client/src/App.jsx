@@ -48,6 +48,15 @@ const COMPANY_INFO = {
 
 const BARBERS = [
   {
+  id: 'tracy-pensat',
+  name: 'Tracy',
+  role: 'Brow Specialist',
+  specialty: 'Pensat perfect, încredere totală.',
+  image: '/tracy-pensat.png',
+  badge: 'PENSAT',
+  description: 'Mai mult decât un pensat. Este stilul tău.'
+},
+  {
     id: 'dani-frizeru',
     name: 'Dani Frizeru',
     role: 'Master Barber',
