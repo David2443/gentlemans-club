@@ -359,6 +359,21 @@ const BROW_SERVICES = [
 
 const TEAM_BARBERS = [
   {
+  barberId: 'tracy-pensat',
+  username: 'tracy',
+  password: requireStrongEnv('PASS_TRACY', 12),
+  nume: 'Tracy',
+  displayName: 'Tracy',
+  role: 'Brow Specialist',
+  specialty: 'Pensat perfect, încredere totală.',
+  description: 'Mai mult decât un pensat. Este stilul tău.',
+  image: '/tracy-pensat.png',
+  isMaster: false,
+  isAdmin: false,
+  order: 4,
+  services: BROW_SERVICES
+},
+  {
     barberId: 'dani-frizeru',
     username: 'dani',
     password: requireStrongEnv('PASS_DANI', 12),
@@ -535,9 +550,10 @@ const getTeamBarberById = (barberId) => {
   return TEAM_BARBERS.find((barber) => barber.barberId === barberId) || null;
 };
 const LEGACY_BARBER_NAMES = {
-  'dani-frizeru': ['Dani', 'Dani Frizeru', 'dani', 'dani-frizeru'],
+    'dani-frizeru': ['Dani', 'Dani Frizeru', 'dani', 'dani-frizeru'],
+  'croco-frizeru': ['Croco', 'Croco Frizeru', 'croco', 'croco-frizeru'],
   'vali-frizeru': ['Vali', 'Vali Frizeru', 'vali', 'vali-frizeru'],
-  'croco-frizeru': ['Croco', 'Croco Frizeru', 'croco', 'croco-frizeru']
+  'tracy-pensat': ['Tracy', 'Tracy Pensat', 'tracy', 'tracy-pensat']
 };
 
 const getAppointmentBarberQuery = (barberId) => {

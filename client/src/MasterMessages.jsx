@@ -24,8 +24,15 @@ const BARBERS = [
     label: 'Vali Frizeru',
     short: 'Vali',
     path: '/admin/vali-frizeru'
+  },
+  {
+    value: 'tracy-pensat',
+    label: 'Tracy',
+    short: 'Tracy',
+    path: '/admin/tracy-pensat'
   }
 ];
+
 
 const RANGE_OPTIONS = [
   { value: 'all', label: 'Toate' },

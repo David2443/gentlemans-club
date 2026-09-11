@@ -114,6 +114,17 @@ const BROW_SERVICES = [
 ];
 
 const barbersDB = {
+  'tracy-pensat': {
+  barberId: 'tracy-pensat',
+  name: 'Tracy',
+  role: 'Brow Specialist',
+  badge: 'PENSAT PERFECT',
+  image: '/tracy-pensat.png',
+  isMaster: false,
+  description: 'Pensat perfect, încredere totală.',
+  services: BROW_SERVICES,
+  gallery: []
+},
   'dani-frizeru': {
     barberId: 'dani-frizeru',
     name: 'Dani Frizeru',
