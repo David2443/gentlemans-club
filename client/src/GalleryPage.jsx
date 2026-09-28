@@ -17,11 +17,7 @@ const CONTACT_PHONE = '+40 741 844 684';
 const GALLERY_PAGE_SIZE = 30;
 
 const BARBER_FILTERS = [
-  {
-  id: 'croco-frizeru',
-  display: 'Croco Frizeru',
-  aliases: ['croco', 'croco frizeru', 'croco-frizeru']
-},
+ 
   {
     value: 'all',
     label: 'TOATE',

@@ -137,17 +137,6 @@ const barbersDB = {
     gallery: []
   },
 
-  'croco-frizeru': {
-    barberId: 'croco-frizeru',
-    name: 'Croco Frizeru',
-    role: 'Premium Barber',
-    badge: 'NOU ÎN ECHIPĂ',
-    image: '/croco-frizeru.png',
-    isMaster: false,
-    description: 'Stil. Precizie. Atitudine.',
-    services: BARBER_SERVICES,
-    gallery: []
-  },
 
   'vali-frizeru': {
     barberId: 'vali-frizeru',

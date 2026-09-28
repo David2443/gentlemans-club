@@ -388,21 +388,7 @@ const TEAM_BARBERS = [
     order: 1,
     services: BARBER_SERVICES
   },
-  {
-  barberId: 'croco-frizeru',
-  username: 'croco',
-  password: requireStrongEnv('PASS_CROCO', 12),
-  nume: 'Croco Frizeru',
-  displayName: 'Croco Frizeru',
-  role: 'Premium Barber',
-  specialty: 'Tunsori moderne și clasice, barbă aranjată cu precizie.',
-  description: 'Stil. Precizie. Atitudine.',
-  image: '/croco-frizeru.png',
-  isMaster: false,
-  isAdmin: false,
-  order: 2,
-  services: BARBER_SERVICES
-},
+ 
   {
     barberId: 'vali-frizeru',
     username: 'vali',
@@ -551,7 +537,7 @@ const getTeamBarberById = (barberId) => {
 };
 const LEGACY_BARBER_NAMES = {
     'dani-frizeru': ['Dani', 'Dani Frizeru', 'dani', 'dani-frizeru'],
-  'croco-frizeru': ['Croco', 'Croco Frizeru', 'croco', 'croco-frizeru'],
+ 
   'vali-frizeru': ['Vali', 'Vali Frizeru', 'vali', 'vali-frizeru'],
   'tracy-pensat': ['Tracy', 'Tracy Pensat', 'tracy', 'tracy-pensat']
 };
