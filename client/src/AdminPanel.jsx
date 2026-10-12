@@ -74,14 +74,14 @@ const BARBERS = [
 ];
 
 const BARBER_SERVICES = [
-  { id: 'tuns', name: 'Tuns', price: 50 },
-  { id: 'tuns-barba', name: 'Tuns + barbă', price: 75 },
-  { id: 'barba', name: 'Barbă', price: 30 },
-  { id: 'vopsit-barba', name: 'Vopsit barbă', price: 30 },
+  { id: 'tuns', name: 'Tuns', price: 65 },
+  { id: 'tuns-barba', name: 'Tuns + barbă', price: 95 },
+  { id: 'barba', name: 'Barbă', price: 35 },
+  { id: 'vopsit-barba', name: 'Vopsit barbă', price: 35 },
   { id: 'spalat', name: 'Spălat', price: 25 },
   { id: 'contur-barba', name: 'Contur / aranjat barbă', price: 30 },
   { id: 'styling', name: 'Styling', price: null },
-  { id: 'pachet-vip', name: 'Pachet VIP', price: 200 }
+  { id: 'pachet-vip', name: "Pachet Gentleman's Club", price: 250 }
 ];
 
 const BROW_SERVICES = [

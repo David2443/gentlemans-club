@@ -343,7 +343,7 @@ const BARBER_SERVICES = [
   'Spălat',
   'Contur / aranjat barbă',
   'Styling',
-  'Pachet VIP'
+  "Pachet Gentleman's Club"
 ];
 
 const BROW_SERVICES = [

@@ -304,7 +304,7 @@ useEffect(() => {
     tuns: [
       {
         nume: 'TUNS',
-        pret: '50 LEI',
+        pret: '65 LEI',
         desc: 'Tuns curat, finisat atent și adaptat stilului tău.'
       },
       {
@@ -322,7 +322,7 @@ useEffect(() => {
     barba: [
       {
         nume: 'BARBĂ',
-        pret: '30 LEI',
+        pret: '35 LEI',
         desc: 'Aranjare barbă pentru un aspect curat și îngrijit.'
       },
       {
@@ -332,12 +332,12 @@ useEffect(() => {
       },
       {
         nume: 'VOPSIT BARBĂ',
-        pret: '30 LEI',
+        pret: '35 LEI',
         desc: 'Vopsit barbă pentru un aspect uniform și definit.'
       },
       {
         nume: 'TUNS + BARBĂ',
-        pret: '75 LEI',
+        pret: '95 LEI',
         desc: 'Tuns complet plus barbă aranjată și finisată.',
         vip: true
       }
@@ -394,9 +394,9 @@ useEffect(() => {
 
     pachete: [
       {
-        nume: 'PACHET VIP',
-        pret: '200 LEI',
-        desc: 'Tuns + barbă + spălat + aranjat + prosop fierbinte + tratament facial.',
+        nume: "PACHET GENTLEMAN'S CLUB",
+        pret: '250 LEI',
+        desc: 'Tuns + barbă + spălat + finisaj premium.',
         vip: true
       }
     ]

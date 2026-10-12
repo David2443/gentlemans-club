@@ -10,26 +10,26 @@ const BARBER_SERVICES = [
   {
     id: 'tuns',
     name: 'Tuns',
-    price: 50,
+    price: 65,
     desc: 'Tuns curat, finisat atent și adaptat stilului tău.'
   },
   {
     id: 'tuns-barba',
     name: 'Tuns + barbă',
-    price: 75,
+    price: 95,
     desc: 'Tuns complet plus barbă aranjată și finisată.',
     vip: true
   },
   {
     id: 'barba',
     name: 'Barbă',
-    price: 30,
+    price: 35,
     desc: 'Aranjare barbă pentru un aspect curat și îngrijit.'
   },
   {
     id: 'vopsit-barba',
     name: 'Vopsit barbă',
-    price: 30,
+    price: 35,
     desc: 'Vopsit barbă pentru un aspect uniform și definit.'
   },
   {
@@ -52,9 +52,9 @@ const BARBER_SERVICES = [
   },
   {
     id: 'pachet-vip',
-    name: 'Pachet VIP',
-    price: 200,
-    desc: 'Tuns + barbă + spălat + aranjat + prosop fierbinte + tratament facial.',
+    name: "Pachet Gentleman's Club",
+    price: 250,
+    desc: 'Tuns + barbă + spălat + finisaj premium.',
     vip: true
   }
 ];
