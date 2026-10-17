@@ -386,6 +386,26 @@ function BarberProfile() {
     ), [availableSlots, selectedDate]
   );
 
+  // API-ul returnează doar ore libere. Construim grila completă local pentru
+  // a afișa separat orele ocupate / indisponibile, fără a le permite selectarea.
+  const displayedTimeSlots = useMemo(() => {
+    if (!selectedDate || !selectedService) return [];
+    const freeSlotsByTime = new Map(visibleTimeSlots.map((slot) => [slot.ora, slot]));
+    const scheduleBarberId = selectedBarberId === 'any' ? barber?.barberId : selectedBarberId;
+    const duration = selectedService.durationMinutes || 60;
+    return getTimeSlotsForBarber(scheduleBarberId)
+      .filter((time) => isTimeSlotInFuture(selectedDate.fullDate, time))
+      .map((time) => {
+        const [hours, minutes] = time.split(':').map(Number);
+        const outsideHours = hours * 60 + minutes + duration > 23 * 60;
+        return {
+          ora: time,
+          freeSlot: freeSlotsByTime.get(time) || null,
+          outsideHours
+        };
+      });
+  }, [selectedDate, selectedService, selectedBarberId, barber, visibleTimeSlots]);
+
   useEffect(() => {
     setSelectedBarberId(id);
     setChosenBarberId(null);
@@ -419,6 +439,9 @@ function BarberProfile() {
         const body = await res.json().catch(() => ({}));
         if (!res.ok || body.succes !== true || !Array.isArray(body.slots)) {
           throw new Error(body.mesaj || 'Nu am putut verifica orele disponibile.');
+        }
+        if (body.mesaj && body.slots.length === 0) {
+          throw new Error(body.mesaj);
         }
         return body.slots;
       })
@@ -783,7 +806,7 @@ function BarberProfile() {
                     }}
                   >
                     <option value="">Alege serviciul dorit</option>
-                    {ALL_SERVICES.map((service) => (
+                    {barber.services.map((service) => (
                       <option key={service.id} value={service.id}>
                         {service.name} — {formatPrice(service.price)}
                         {service.durationMinutes ? ` · ${service.durationMinutes} min` : ''}
@@ -821,7 +844,9 @@ function BarberProfile() {
                         setChosenBarberId(null);
                         setPendingQuickPick(null);
                       }}>
-                        <option value="any">Oricare specialist disponibil</option>
+                        {eligibleSpecialists.length > 1 && (
+                          <option value="any">Oricare specialist disponibil</option>
+                        )}
                         {eligibleSpecialists.map((item) => (
                           <option key={item.barberId} value={item.barberId}>{item.name}</option>
                         ))}
@@ -899,24 +924,35 @@ function BarberProfile() {
                       <p className="hint-text-supreme">Verificăm orele disponibile...</p>
                     ) : slotsError ? (
                       <p className="hint-text-supreme" role="alert">{slotsError} Încearcă altă zi.</p>
-                    ) : visibleTimeSlots.length === 0 ? (
-                      <p className="hint-text-supreme">Nu sunt ore disponibile în ziua aleasă.</p>
+                    ) : displayedTimeSlots.length === 0 ? (
+                      <p className="hint-text-supreme">Nu mai există intervale de programare pentru ziua aleasă.</p>
                     ) : (
                       <div className={`time-grid-supreme ${errors.time ? 'border-error-supreme' : ''}`}>
-                        {visibleTimeSlots.map((slot) => (
-                          <button
-                            key={`${slot.ora}-${slot.barberId}`}
-                            type="button"
-                            className={`time-btn-supreme ${selectedTime === slot.ora && chosenBarberId === slot.barberId ? 'active' : ''}`}
-                            onClick={() => {
-                              setSelectedTime(slot.ora);
-                              setChosenBarberId(slot.barberId);
-                              setErrors((prev) => ({...prev, time: false}));
-                            }}
-                          >
-                            {slot.ora}{selectedBarberId === 'any' ? ` · ${barbersDB[slot.barberId]?.name || slot.frizer}` : ''}
-                          </button>
-                        ))}
+                        {displayedTimeSlots.map((slot) => {
+                          const free = slot.freeSlot;
+                          const unavailableLabel = slot.outsideHours ? 'Indisponibil' : 'Ocupat';
+                          return (
+                            <button
+                              key={slot.ora}
+                              type="button"
+                              disabled={!free}
+                              aria-label={free
+                                ? `Ora ${slot.ora}, disponibilă${selectedBarberId === 'any' ? ` la ${barbersDB[free.barberId]?.name || free.frizer}` : ''}`
+                                : `Ora ${slot.ora}, ${unavailableLabel.toLowerCase()}`}
+                              className={`time-btn-supreme ${!free ? 'occupied' : ''} ${free && selectedTime === slot.ora && chosenBarberId === free.barberId ? 'active' : ''}`}
+                              onClick={() => {
+                                if (!free) return;
+                                setSelectedTime(free.ora);
+                                setChosenBarberId(free.barberId);
+                                setErrors((prev) => ({...prev, time: false}));
+                              }}
+                            >
+                              {free
+                                ? `${slot.ora}${selectedBarberId === 'any' ? ` · ${barbersDB[free.barberId]?.name || free.frizer}` : ''}`
+                                : `${slot.ora} · ${unavailableLabel}`}
+                            </button>
+                          );
+                        })}
                       </div>
                     )}
                   </div>
