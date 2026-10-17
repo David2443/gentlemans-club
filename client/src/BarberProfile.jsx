@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './BarberProfile.css';
-import './BarberBookingPremium.css';
 import { setPageSeo } from './seo';
 import { getApiBase } from './api';
 const API_BASE = getApiBase();
@@ -119,6 +118,8 @@ const BROW_SERVICES = [
     vip: true
   }
 ];
+
+const ALL_SERVICES = [...BARBER_SERVICES, ...BROW_SERVICES];
 
 const barbersDB = {
   'tracy-pensat': {
@@ -356,7 +357,6 @@ function BarberProfile() {
   const [searchingFirst, setSearchingFirst] = useState(false);
   const [firstAvailableMessage, setFirstAvailableMessage] = useState('');
   const [pendingQuickPick, setPendingQuickPick] = useState(null);
-  const firstSearchRequestRef = useRef(0);
 
   const [galleryExpanded, setGalleryExpanded] = useState(false);
   const [galleryImages, setGalleryImages] = useState([]);
@@ -369,48 +369,15 @@ function BarberProfile() {
   const [successDetails, setSuccessDetails] = useState(null);
   const [errors, setErrors] = useState({});
 
-  // Categoria serviciilor este determinată de profilul deschis, nu de o listă globală.
-  // Astfel, Tracy afișează exclusiv serviciile ei, iar frizerii exclusiv frizeria.
   const selectedService = useMemo(() =>
-    barber?.services.find((service) => service.id === selectedServiceId) || null,
-    [barber, selectedServiceId]
+    ALL_SERVICES.find((service) => service.id === selectedServiceId) || null,
+    [selectedServiceId]
   );
   const eligibleSpecialists = useMemo(() =>
     Object.values(barbersDB).filter((item) =>
-      item.services.some((service) => barber?.services.some((own) => own.id === service.id)) &&
-      (!selectedService || item.services.some((service) => service.id === selectedService.id))
-    ), [barber, selectedService]
+      selectedService && item.services.some((service) => service.id === selectedService.id)
+    ), [selectedService]
   );
-  const changeService = (serviceId) => {
-    firstSearchRequestRef.current += 1; // ignoră răspunsurile căutărilor anterioare
-    setSearchingFirst(false);
-    setSelectedServiceId(serviceId);
-    setSelectedDate(null);
-    setSelectedTime(null);
-    setChosenBarberId(null);
-    setPendingQuickPick(null);
-    setFirstAvailableMessage('');
-    setSlotsError('');
-    setSelectedBarberId((current) => {
-      const currentSpecialist = barbersDB[current];
-      return current === 'any' || currentSpecialist?.services.some((service) => service.id === serviceId)
-        ? current
-        : barber.barberId;
-    });
-    setErrors((prev) => ({...prev, service: false, time: false, date: false}));
-  };
-  const changeSpecialist = (specialistId) => {
-    firstSearchRequestRef.current += 1;
-    setSearchingFirst(false);
-    setSelectedBarberId(specialistId);
-    setSelectedDate(null);
-    setSelectedTime(null);
-    setChosenBarberId(null);
-    setPendingQuickPick(null);
-    setFirstAvailableMessage('');
-    setSlotsError('');
-    setErrors((prev) => ({...prev, date: false, time: false}));
-  };
   const currentBookBarber = chosenBarberId ? barbersDB[chosenBarberId] :
     (selectedBarberId === 'any' ? null : barbersDB[selectedBarberId]);
   const visibleTimeSlots = useMemo(() =>
@@ -440,8 +407,6 @@ function BarberProfile() {
   }, [selectedDate, selectedService, selectedBarberId, barber, visibleTimeSlots]);
 
   useEffect(() => {
-    firstSearchRequestRef.current += 1;
-    setSearchingFirst(false);
     setSelectedBarberId(id);
     setChosenBarberId(null);
     setSelectedDate(null);
@@ -482,14 +447,10 @@ function BarberProfile() {
       })
       .then((slots) => {
         if (controller.signal.aborted) return;
-        // Folosim doar intervalele pentru specialiștii care oferă serviciul ales.
-        const validIds = new Set(eligibleSpecialists.map((item) => item.barberId));
-        const safeSlots = slots.filter((slot) => validIds.has(slot.barberId) &&
-          (selectedBarberId === 'any' || slot.barberId === selectedBarberId));
-        setAvailableSlots(safeSlots);
+        setAvailableSlots(slots);
         setLoadingSlots(false);
         if (pendingQuickPick && pendingQuickPick.data === selectedDate.fullDate) {
-          const chosen = safeSlots.find((slot) =>
+          const chosen = slots.find((slot) =>
             slot.ora === pendingQuickPick.ora && slot.barberId === pendingQuickPick.barberId
           );
           if (chosen) {
@@ -506,35 +467,22 @@ function BarberProfile() {
         setPendingQuickPick(null);
       });
     return () => controller.abort();
-  }, [selectedDate, selectedService, selectedBarberId, eligibleSpecialists, refreshSlotsKey]);
+  }, [selectedDate, selectedService, selectedBarberId, refreshSlotsKey]);
 
   const handleFirstAvailable = async () => {
     if (!selectedService || searchingFirst) return;
-    // Căutăm doar la specialistul ales. „Oricare” rămâne valabil
-    // exclusiv între specialiștii care oferă acest serviciu (filtrare server).
-    const requestId = ++firstSearchRequestRef.current;
-    const requestedSpecialist = selectedBarberId;
     setSearchingFirst(true);
     setFirstAvailableMessage('');
     try {
-      const params = new URLSearchParams({
-        serviciu: selectedService.name,
-        barberId: requestedSpecialist
-      });
-      const res = await fetch(`${API_BASE}/api/primul-loc-disponibil?${params}`, {cache: 'no-store'});
+      const params = new URLSearchParams({serviciu: selectedService.name, barberId: 'any'});
+      const res = await fetch(`${API_BASE}/api/primul-loc-disponibil?${params}`);
       const body = await res.json().catch(() => ({}));
-      if (requestId !== firstSearchRequestRef.current) return;
       if (!res.ok || !body.succes) throw new Error(body.mesaj || 'Căutarea nu a reușit.');
       if (!body.loc) {
         setFirstAvailableMessage('Nu am găsit loc liber în următoarele 30 de zile.');
         return;
       }
       const {data, ora, barberId} = body.loc;
-      // Apărare împotriva unui răspuns incompatibil cu categoria curentă.
-      if (!eligibleSpecialists.some((item) => item.barberId === barberId) ||
-          (requestedSpecialist !== 'any' && requestedSpecialist !== barberId)) {
-        throw new Error('Specialistul returnat nu corespunde selecției.');
-      }
       const [year, month, day] = data.split('-').map(Number);
       const foundDate = new Date(year, month - 1, day);
       const targetMonth = monthsList.findIndex((m) =>
@@ -542,18 +490,16 @@ function BarberProfile() {
       );
       if (targetMonth >= 0) setSelectedMonthIndex(targetMonth);
       setPendingQuickPick({data, ora, barberId});
-      // Nu modificăm selectedBarberId: păstrăm exact alegerea utilizatorului.
+      setSelectedBarberId('any');
       setSelectedDate({
         fullDate: data, dayNumber: day,
         dayName: foundDate.toLocaleString('ro-RO', {weekday: 'short'}).toUpperCase()
       });
       setFirstAvailableMessage(`Primul loc liber: ${formatDateRo(data)}, ora ${ora}, la ${barbersDB[barberId]?.name || 'specialist'}.`);
     } catch (err) {
-      if (requestId === firstSearchRequestRef.current) {
-        setFirstAvailableMessage(err.message || 'Eroare de conexiune.');
-      }
+      setFirstAvailableMessage(err.message || 'Eroare de conexiune.');
     } finally {
-      if (requestId === firstSearchRequestRef.current) setSearchingFirst(false);
+      setSearchingFirst(false);
     }
   };
 
@@ -839,97 +785,86 @@ function BarberProfile() {
 
             <form onSubmit={handleSubmit} className="booking-form-supreme">
               <div className="selector-section-supreme">
-                <div className="bp-section-head">
-                  <label className={`section-label-supreme ${errors.service ? 'error-pulse' : ''}`} id="gc-services-label">
-                    1. ALEGE SERVICIUL
-                  </label>
-                  <span className="bp-section-count">{barber.services.length} servicii disponibile</span>
+                <label className={`section-label-supreme ${errors.service ? 'error-pulse' : ''}`}>
+                  1. ALEGE SERVICIUL
+                </label>
+                <div className={`service-dropdown-supreme ${errors.service ? 'border-error-supreme' : ''}`}>
+                  <select
+                    value={selectedServiceId}
+                    onChange={(e) => {
+                      const serviceId = e.target.value;
+                      setSelectedServiceId(serviceId);
+                      setSelectedDate(null);
+                      setSelectedTime(null);
+                      setChosenBarberId(null);
+                      setPendingQuickPick(null);
+                      setFirstAvailableMessage('');
+                      if (serviceId && !barbersDB[selectedBarberId]?.services.some(
+                        (item) => item.id === serviceId
+                      )) setSelectedBarberId('any');
+                      setErrors((prev) => ({...prev, service: false}));
+                    }}
+                  >
+                    <option value="">Alege serviciul dorit</option>
+                    {barber.services.map((service) => (
+                      <option key={service.id} value={service.id}>
+                        {service.name} — {formatPrice(service.price)}
+                        {service.durationMinutes ? ` · ${service.durationMinutes} min` : ''}
+                      </option>
+                    ))}
+                  </select>
+                  <span className="service-select-arrow">⌄</span>
                 </div>
-                <div
-                  role="group"
-                  aria-labelledby="gc-services-label"
-                  className={`bp-services-grid ${errors.service ? 'bp-selection-error' : ''}`}
-                >
-                  {barber.services.map((service) => {
-                    const selected = selectedServiceId === service.id;
-                    return (
-                      <button
-                        type="button"
-                        key={service.id}
-                        aria-pressed={selected}
-                        className={`bp-service-option ${selected ? 'is-selected' : ''} ${service.vip ? 'is-vip' : ''}`}
-                        onClick={() => changeService(service.id)}
-                      >
-                        <span className="bp-service-top">
-                          <span className="bp-service-selection" aria-hidden="true">{selected ? '✓' : '+'}</span>
-                          {service.vip && <span className="bp-vip-tag">PREMIUM</span>}
-                        </span>
-                        <strong className="bp-service-name">{service.name}</strong>
-                        <span className="bp-service-description">{service.desc}</span>
-                        <span className="bp-service-bottom">
-                          <span className="bp-service-price">{formatPrice(service.price)}</span>
-                          <span className="bp-service-duration">
-                            {service.durationMinutes ? `${service.durationMinutes} min` : 'Durata la salon'}
-                          </span>
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
+                {selectedService && (
+                  <div className={`selected-service-card-supreme ${selectedService.vip ? 'vip' : ''}`}>
+                    <div>
+                      <span>Serviciu selectat</span>
+                      <strong>{selectedService.name}</strong>
+                      <p>{selectedService.desc}</p>
+                      <p>{selectedService.durationMinutes
+                        ? `Durată: ${selectedService.durationMinutes} minute`
+                        : 'Durata exactă se confirmă la salon.'}</p>
+                    </div>
+                    <em>{formatPrice(selectedService.price)}</em>
+                  </div>
+                )}
               </div>
 
               <div className="selector-section-supreme">
-                <label className="section-label-supreme" id="gc-specialists-label">2. ALEGE SPECIALISTUL</label>
-                <div role="group" aria-labelledby="gc-specialists-label" className="bp-specialists-grid">
-                  {eligibleSpecialists.map((item) => (
+                <label className="section-label-supreme">2. ALEGE SPECIALISTUL</label>
+                {!selectedService ? (
+                  <p className="hint-text-supreme">Mai întâi alege serviciul.</p>
+                ) : (
+                  <>
+                    <div className="service-dropdown-supreme">
+                      <select value={selectedBarberId} onChange={(e) => {
+                        setSelectedBarberId(e.target.value);
+                        setSelectedDate(null);
+                        setSelectedTime(null);
+                        setChosenBarberId(null);
+                        setPendingQuickPick(null);
+                      }}>
+                        {eligibleSpecialists.length > 1 && (
+                          <option value="any">Oricare specialist disponibil</option>
+                        )}
+                        {eligibleSpecialists.map((item) => (
+                          <option key={item.barberId} value={item.barberId}>{item.name}</option>
+                        ))}
+                      </select>
+                      <span className="service-select-arrow">⌄</span>
+                    </div>
                     <button
-                      key={item.barberId}
                       type="button"
-                      className={`bp-specialist-option ${selectedBarberId === item.barberId ? 'is-selected' : ''}`}
-                      aria-pressed={selectedBarberId === item.barberId}
-                      onClick={() => changeSpecialist(item.barberId)}
+                      onClick={handleFirstAvailable}
+                      disabled={searchingFirst}
+                      style={{marginTop: 12, width: '100%', cursor: 'pointer', padding: '13px', background: 'rgba(212,175,55,.14)', border: '1px solid #d4af37', borderRadius: 8, color: '#e8cc77', fontWeight: 700}}
                     >
-                      <img src={item.image} alt="" className="bp-specialist-avatar" loading="lazy" />
-                      <span className="bp-specialist-label">
-                        <strong>{item.name}</strong>
-                        <small>{item.role}</small>
-                      </span>
-                      <span className="bp-specialist-radio" aria-hidden="true" />
+                      {searchingFirst ? 'CĂUTĂM LOCUL LIBER...' : '⚡ GĂSEȘTE PRIMUL LOC DISPONIBIL'}
                     </button>
-                  ))}
-                  {eligibleSpecialists.length > 1 && (
-                    <button
-                      type="button"
-                      className={`bp-specialist-option bp-any-specialist ${selectedBarberId === 'any' ? 'is-selected' : ''}`}
-                      aria-pressed={selectedBarberId === 'any'}
-                      onClick={() => changeSpecialist('any')}
-                    >
-                      <span className="bp-specialist-any-icon" aria-hidden="true">✦</span>
-                      <span className="bp-specialist-label">
-                        <strong>Oricare specialist</strong>
-                        <small>Primul dintre cei disponibili</small>
-                      </span>
-                      <span className="bp-specialist-radio" aria-hidden="true" />
-                    </button>
-                  )}
-                </div>
-                {eligibleSpecialists.length === 1 && (
-                  <p className="bp-specialist-note">Pentru aceste servicii, programările se fac exclusiv la {eligibleSpecialists[0].name}.</p>
-                )}
-                <button
-                  type="button"
-                  className="bp-first-available"
-                  onClick={handleFirstAvailable}
-                  disabled={!selectedService || searchingFirst}
-                >
-                  <span aria-hidden="true">⚡</span>
-                  {searchingFirst ? 'CĂUTĂM LOCUL LIBER...' : 'GĂSEȘTE PRIMUL LOC DISPONIBIL'}
-                </button>
-                {firstAvailableMessage && (
-                  <p className="bp-first-available-message" role="status">{firstAvailableMessage}</p>
-                )}
-                {!selectedService && (
-                  <p className="bp-specialist-note">Alege un serviciu pentru a căuta orele disponibile.</p>
+                    {firstAvailableMessage && (
+                      <p className="hint-text-supreme" style={{marginTop: 10}}>{firstAvailableMessage}</p>
+                    )}
+                  </>
                 )}
               </div>
 
