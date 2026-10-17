@@ -456,7 +456,37 @@ const ORE_PROGRAM_EXTINS_HALF_HOUR = [
   '22:00'
 ];
 
+// Menținem aceleași ore de început; durata determină ce ore mai sunt libere.
 const BARBERI_PROGRAM_EXTINS = [];
+
+// Prețuri și durate comunicate de salon. Pentru serviciile fără durată
+// confirmată rezervăm preventiv 60 min, fără a prezenta 60 min ca durată oficială.
+const SERVICE_DETAILS = [
+  ['Tuns', 65, 40],
+  ['Tuns + barbă', 95, 60],
+  ['Spălat', 25, 10],
+  ['Vopsit barbă', 35, 15],
+  ["Pachet Gentleman's Club", 250, 70],
+  ['Barbă', 35, 20],
+  ['Contur / aranjat barbă', 30, null],
+  ['Styling', null, null],
+  ['Pensat', 35, null],
+  ['Pensat + vopsit', 50, null],
+  ['Pensat + păr nas', 45, null],
+  ['Tratament facial', 50, null],
+  ['Pachet complet', 100, null],
+  ['Șuvițe', 300, null],
+  ['Global / total — o culoare', 300, null],
+  ['Global / total — model', 400, null]
+];
+const DEFAULT_BOOKING_MINUTES = 60;
+const SERVICE_DETAILS_MAP = new Map(
+  SERVICE_DETAILS.map(([name, price, minutes]) => [
+    String(name).toLocaleLowerCase('ro-RO').normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(),
+    { name, price, minutes }
+  ])
+);
+
 const getOreProgramPentruBarber = (barberId) => {
   return BARBERI_PROGRAM_EXTINS.includes(barberId)
     ? ORE_PROGRAM_EXTINS_HALF_HOUR
@@ -560,6 +590,166 @@ const getAppointmentBarberQuery = (barberId) => {
       { frizer: { $in: [...new Set(names)] } }
     ]
   };
+};
+
+// === BOOKING V2: intervale, programare rapidă, verificare concurență ===
+const BOOKING_TIME_ZONE = 'Europe/Bucharest';
+const localClockFormat = new Intl.DateTimeFormat('en-GB', {
+  timeZone: BOOKING_TIME_ZONE,
+  year: 'numeric', month: '2-digit', day: '2-digit',
+  hour: '2-digit', minute: '2-digit', hourCycle: 'h23'
+});
+
+const getBucharestNow = () => {
+  const parts = Object.fromEntries(
+    localClockFormat.formatToParts(new Date())
+      .filter((p) => p.type !== 'literal')
+      .map((p) => [p.type, p.value])
+  );
+  return {
+    date: `${parts.year}-${parts.month}-${parts.day}`,
+    minutes: Number(parts.hour) * 60 + Number(parts.minute)
+  };
+};
+
+const toBookingMinutes = (clock) => {
+  if (!/^(?:[01]\d|2[0-3]):[0-5]\d$/.test(String(clock || ''))) return NaN;
+  const [hour, minute] = clock.split(':').map(Number);
+  return hour * 60 + minute;
+};
+
+const isCalendarDateValid = (date) => {
+  if (!isValidDateString(date)) return false;
+  const [y, m, d] = date.split('-').map(Number);
+  const value = new Date(Date.UTC(y, m - 1, d));
+  return value.getUTCFullYear() === y &&
+    value.getUTCMonth() === m - 1 && value.getUTCDate() === d;
+};
+const isSundayBooking = (date) => {
+  const [y, m, d] = date.split('-').map(Number);
+  return new Date(Date.UTC(y, m - 1, d)).getUTCDay() === 0;
+};
+const advanceBookingDate = (date, offsetDays) => {
+  const [y, m, d] = date.split('-').map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d + offsetDays));
+  return dt.toISOString().slice(0, 10);
+};
+const isFutureBookingStart = (date, time) => {
+  const now = getBucharestNow();
+  return date > now.date || (date === now.date && toBookingMinutes(time) > now.minutes);
+};
+
+const getServiceDetails = (service) => {
+  const normalized = normalizeText(service);
+  const key = normalized === 'pachet vip' ? normalizeText("Pachet Gentleman's Club") : normalized;
+  return SERVICE_DETAILS_MAP.get(key) || null;
+};
+const getBookingDuration = (service, storedDuration, type) => {
+  const duration = Number(storedDuration);
+  if (Number.isInteger(duration) && duration >= 5 && duration <= 360) return duration;
+  if (type === 'blocat') return DEFAULT_BOOKING_MINUTES;
+  return getServiceDetails(service)?.minutes || DEFAULT_BOOKING_MINUTES;
+};
+const getInterval = (appointment) => {
+  const start = toBookingMinutes(appointment.ora);
+  if (!Number.isFinite(start)) return null;
+  return {start, end: start + getBookingDuration(
+    appointment.serviciu, appointment.durataMinute, appointment.tip
+  )};
+};
+const hasBookingConflict = (appointments, time, duration, excludedId = null) => {
+  const start = toBookingMinutes(time);
+  const end = start + duration;
+  return appointments.some((item) => {
+    if (excludedId && String(item._id) === String(excludedId)) return false;
+    if (item.status === 'anulata') return false;
+    const occupied = getInterval(item);
+    return occupied && start < occupied.end && end > occupied.start;
+  });
+};
+const isWithinSchedule = (barberId, time, duration) => {
+  const minutes = toBookingMinutes(time);
+  const starts = getOreProgramPentruBarber(barberId);
+  if (!starts.includes(time) || !Number.isFinite(minutes)) return false;
+  // Ultima oră permisă inițial (22:00) este tratată ca slot de o oră.
+  const endOfWork = toBookingMinutes(starts[starts.length - 1]) + 60;
+  return minutes + duration <= endOfWork;
+};
+const getActiveBookingDocs = (barberId, date, extra = {}) => Programare.find({
+  ...getAppointmentBarberQuery(barberId),
+  data: date,
+  status: { $ne: 'anulata' },
+  ...extra
+}).select('_id barberId frizer data ora serviciu durataMinute status tip').lean();
+
+const getEligibleSpecialists = async (service, requestedBarberId = 'any') => {
+  const detail = getServiceDetails(service);
+  if (!detail) return [];
+  const chosen = requestedBarberId === 'any' || requestedBarberId === 'all'
+    ? null : normalizeBarberId(requestedBarberId);
+  const team = TEAM_BARBERS.filter((item) =>
+    (!chosen || item.barberId === chosen) &&
+    item.services.some((name) => normalizeText(name) === normalizeText(detail.name))
+  );
+  if (team.length === 0) return [];
+  const active = await Barber.find({
+    activ: true, barberId: {$in: team.map((item) => item.barberId)}
+  }).select('barberId').lean();
+  const ids = new Set(active.map((item) => item.barberId));
+  return team.filter((item) => ids.has(item.barberId));
+};
+
+const findAvailableTimeOptions = (specialists, date, service, appointmentsByBarber = {}) => {
+  if (isSundayBooking(date)) return [];
+  const duration = getBookingDuration(service, null, 'client');
+  const result = [];
+  for (const barber of specialists) {
+    const entries = appointmentsByBarber[barber.barberId] || [];
+    for (const ora of getOreProgramPentruBarber(barber.barberId)) {
+      if (!isWithinSchedule(barber.barberId, ora, duration) ||
+          !isFutureBookingStart(date, ora) ||
+          hasBookingConflict(entries, ora, duration)) continue;
+      result.push({ora, barberId: barber.barberId, frizer: barber.nume});
+    }
+  }
+  result.sort((a, b) => a.ora.localeCompare(b.ora) ||
+    specialists.findIndex((x) => x.barberId === a.barberId) -
+    specialists.findIndex((x) => x.barberId === b.barberId));
+  // Pentru „primul liber” afișăm un specialist disponibil pentru fiecare oră.
+  const seen = new Set();
+  return result.filter((item) => seen.has(item.ora) ? false : (seen.add(item.ora), true));
+};
+
+// Blocare scurtă distribuită în MongoDB: două cereri simultane pentru același
+// specialist și aceeași zi nu pot verifica și salva în paralel.
+const bookingDayLockSchema = new mongoose.Schema({
+  key: {type: String, required: true, unique: true},
+  owner: {type: String, required: true},
+  expiresAt: {type: Date, required: true}
+});
+const BookingDayLock = mongoose.model('BookingDayLock', bookingDayLockSchema);
+const withBookingDayLock = async (barberId, date, callback) => {
+  await BookingDayLock.init(); // asigurăm indexul unic înainte de prima utilizare
+  const key = `${barberId}|${date}`;
+  const owner = crypto.randomUUID();
+  const now = new Date();
+  try {
+    await BookingDayLock.findOneAndUpdate(
+      {key, expiresAt: {$lte: now}},
+      {$set: {owner, expiresAt: new Date(now.getTime() + 60000)}},
+      {upsert: true, new: true, runValidators: true}
+    );
+  } catch (err) {
+    if (err?.code === 11000) return {busy: true};
+    throw err;
+  }
+  try {
+    return {value: await callback()};
+  } finally {
+    await BookingDayLock.updateOne(
+      {key, owner}, {$set: {expiresAt: new Date(0)}}
+    ).catch((err) => console.error('Release booking lock:', err.message));
+  }
 };
 
 const publicBarberFields = '-__v -createdAt -updatedAt';
@@ -799,6 +989,8 @@ const programareSchema = new mongoose.Schema(
       type: Number,
       default: null
     },
+    // Salvat la creare, ca schimbările viitoare din catalog să nu modifice rezervări vechi.
+    durataMinute: {type: Number, default: null, min: 5, max: 360},
     status: {
       type: String,
       enum: STATUS_PROGRAMARE,
@@ -1745,142 +1937,152 @@ app.delete('/api/admin/reviews/:id', verificaToken, verificaAdmin, async (req, r
    PROGRAMĂRI
 ===================================================== */
 
+// Disponibilitate ținând cont de durata serviciului și de toate rezervările existente.
+app.get('/api/disponibilitate', async (req, res) => {
+  try {
+    const data = sanitizeText(req.query.data, 20);
+    const serviciu = sanitizeText(req.query.serviciu, 180);
+    const requested = sanitizeText(req.query.barberId || 'any', 80);
+    if (!isCalendarDateValid(data) || !getServiceDetails(serviciu)) {
+      return res.status(400).json({succes: false, mesaj: 'Data sau serviciul sunt invalide.'});
+    }
+    const specialists = await getEligibleSpecialists(serviciu, requested);
+    if (specialists.length === 0) {
+      return res.json({succes: true, slots: [], mesaj: 'Nu există specialiști pentru acest serviciu.'});
+    }
+    const entries = await Promise.all(specialists.map(async (specialist) => [
+      specialist.barberId,
+      await getActiveBookingDocs(specialist.barberId, data)
+    ]));
+    const slots = findAvailableTimeOptions(specialists, data, serviciu, Object.fromEntries(entries));
+    return res.json({
+      succes: true, slots,
+      durataMinute: getServiceDetails(serviciu).minutes,
+      durataRezervataMinute: getBookingDuration(serviciu, null, 'client')
+    });
+  } catch (err) {
+    console.error('GET disponibilitate:', err);
+    return res.status(500).json({succes: false, mesaj: 'Nu am putut verifica disponibilitatea.'});
+  }
+});
+
+// Alege automat primul interval disponibil în următoarele 30 de zile.
+app.get('/api/primul-loc-disponibil', async (req, res) => {
+  try {
+    const serviciu = sanitizeText(req.query.serviciu, 180);
+    const requested = sanitizeText(req.query.barberId || 'any', 80);
+    if (!getServiceDetails(serviciu)) {
+      return res.status(400).json({succes: false, mesaj: 'Serviciu invalid.'});
+    }
+    const specialists = await getEligibleSpecialists(serviciu, requested);
+    if (!specialists.length) return res.json({succes: true, loc: null});
+    const today = getBucharestNow().date;
+    const maxDate = advanceBookingDate(today, 29);
+    const all = await Programare.find({
+      data: {$gte: today, $lte: maxDate}, status: {$ne: 'anulata'}
+    }).select('barberId frizer data ora serviciu durataMinute status tip').lean();
+    for (let i = 0; i < 30; i++) {
+      const date = advanceBookingDate(today, i);
+      const byBarber = Object.fromEntries(specialists.map((specialist) => [
+        specialist.barberId,
+        all.filter((item) => item.data === date && (
+          item.barberId === specialist.barberId ||
+          (LEGACY_BARBER_NAMES[specialist.barberId] || []).includes(item.frizer)
+        ))
+      ]));
+      const slots = findAvailableTimeOptions(specialists, date, serviciu, byBarber);
+      if (slots.length) return res.json({succes: true, loc: {data: date, ...slots[0]}});
+    }
+    return res.json({succes: true, loc: null});
+  } catch (err) {
+    console.error('GET primul-loc-disponibil:', err);
+    return res.status(500).json({succes: false, mesaj: 'Nu am putut verifica primul loc liber.'});
+  }
+});
+
 app.post('/api/programari', optionalToken, async (req, res) => {
   try {
     const finalBarberId = normalizeBarberId(req.body.barberId || req.body.frizer);
     const data = sanitizeText(req.body.data, 20);
     const ora = sanitizeText(req.body.ora, 20);
-
     const requestedTip = sanitizeText(req.body.tip, 30);
     const tip = req.user && requestedTip === 'blocat' ? 'blocat' : 'client';
 
-    if (!finalBarberId || !data || !ora) {
-      return res.status(400).json({
-        succes: false,
-        mesaj: 'Date incomplete.'
-      });
+    if (!finalBarberId || !isCalendarDateValid(data) || !isOraValidaPentruBarber(finalBarberId, ora)) {
+      return res.status(400).json({succes: false, mesaj: 'Specialist, dată sau oră invalidă.'});
+    }
+    const barber = await Barber.findOne({barberId: finalBarberId, activ: true});
+    if (!barber) return res.status(404).json({succes: false, mesaj: 'Specialistul nu există.'});
+    if (req.user && !canAccessBarberResource(req.user, finalBarberId)) {
+      return res.status(403).json({succes: false, mesaj: 'Nu poți programa alt specialist.'});
+    }
+    if (tip === 'blocat' && !req.user) {
+      return res.status(401).json({succes: false, mesaj: 'Autentificare necesară.'});
+    }
+    if (!req.user && !isFutureBookingStart(data, ora)) {
+      return res.status(400).json({succes: false, mesaj: 'Data sau ora au trecut.'});
+    }
+    if (isSundayBooking(data)) {
+      return res.status(400).json({succes: false, mesaj: 'Duminica nu sunt programări.'});
     }
 
-    if (!isValidDateString(data)) {
-      return res.status(400).json({
-        succes: false,
-        mesaj: 'Data este invalidă.'
-      });
+    const rawService = sanitizeText(req.body.serviciu, 180);
+    const serviceDetail = getServiceDetails(rawService);
+    const serviceName = serviceDetail?.name || rawService;
+    // Pentru public, acceptăm numai servicii oferite de specialist; admin poate
+    // păstra servicii personalizate în programările introduse manual.
+    const team = getTeamBarberById(finalBarberId);
+    if (!req.user && (!serviceDetail || !team?.services.some(
+      (item) => normalizeText(item) === normalizeText(serviceName)
+    ))) {
+      return res.status(400).json({succes: false, mesaj: 'Serviciul ales nu este oferit de specialist.'});
     }
-
-    if (!isOraValidaPentruBarber(finalBarberId, ora)) {
-      return res.status(400).json({
-        succes: false,
-        mesaj: 'Ora este invalidă.'
-      });
+    const duration = getBookingDuration(serviceName, null, tip);
+    if (!isWithinSchedule(finalBarberId, ora, duration)) {
+      return res.status(400).json({succes: false, mesaj: 'Serviciul depășește programul disponibil.'});
     }
-
-    const barber = await Barber.findOne({
-      barberId: finalBarberId,
-      activ: true
-    });
-
-    if (!barber) {
-      return res.status(404).json({
-        succes: false,
-        mesaj: 'Specialistul ales nu există.'
-      });
-    }
-
-    if (tip === 'blocat') {
-      if (!req.user) {
-        return res.status(401).json({
-          succes: false,
-          mesaj: 'Trebuie să fii autentificat pentru blocări.'
-        });
-      }
-
-      if (!canAccessBarberResource(req.user, finalBarberId)) {
-        return res.status(403).json({
-          succes: false,
-          mesaj: 'Nu poți bloca programul altui specialist.'
-        });
-      }
-    }
-
-    if (tip === 'client' && req.user && !canAccessBarberResource(req.user, finalBarberId)) {
-      return res.status(403).json({
-        succes: false,
-        mesaj: 'Nu poți adăuga programări pentru alt specialist.'
-      });
-    }
-
     const numeClient = tip === 'blocat'
       ? sanitizeText(req.body.nume_client || 'PAUZĂ / BLOCAT', 120)
       : sanitizeText(req.body.nume_client, 120);
-
-    const telefon = tip === 'blocat'
-      ? 'N/A'
-      : cleanPhone(req.body.telefon);
-
-    if (!numeClient || !telefon) {
-      return res.status(400).json({
-        succes: false,
-        mesaj: 'Numele și telefonul sunt obligatorii.'
-      });
+    const telefon = tip === 'blocat' ? 'N/A' : cleanPhone(req.body.telefon);
+    if (!numeClient || !telefon || (tip === 'client' && !isValidPhone(telefon))) {
+      return res.status(400).json({succes: false, mesaj: 'Nume sau telefon invalid.'});
     }
 
-    if (tip === 'client' && !isValidPhone(telefon)) {
-      return res.status(400).json({
-        succes: false,
-        mesaj: 'Telefon invalid. Folosește 07xxxxxxxx sau +407xxxxxxxx.'
+    const lock = await withBookingDayLock(finalBarberId, data, async () => {
+      const appointments = await getActiveBookingDocs(finalBarberId, data);
+      if (hasBookingConflict(appointments, ora, duration)) return null;
+      const fixedPrice = serviceDetail ? serviceDetail.price : parseOptionalNumber(req.body.pretValoare);
+      return Programare.create({
+        nume_client: numeClient,
+        telefon,
+        barberId: finalBarberId,
+        frizer: barber.nume,
+        data, ora,
+        mesaj: sanitizeText(req.body.mesaj, 700),
+        serviciu: serviceName,
+        pret: serviceDetail ? (fixedPrice == null ? 'LA SALON' : `${fixedPrice} LEI`)
+          : sanitizeText(req.body.pret, 60),
+        pretValoare: fixedPrice,
+        durataMinute: duration,
+        tip,
+        status: tip === 'blocat' ? 'blocat' : 'noua',
+        notifyOnLogin: tip === 'client' && req.body.notifyOnLogin !== false,
+        loginNotifiedFor: []
       });
+    });
+    if (lock.busy || !lock.value) {
+      return res.status(409).json({succes: false, mesaj: 'Intervalul nu mai este disponibil. Reîncearcă.'});
     }
-
-    const dejaExista = await Programare.findOne({
-  ...getAppointmentBarberQuery(finalBarberId),
-  data,
-  ora,
-  status: { $ne: 'anulata' }
-});
-
-    if (dejaExista) {
-      return res.status(409).json({
-        succes: false,
-        mesaj: 'Ora este deja ocupată.'
-      });
-    }
-
-    const pret = sanitizeText(req.body.pret, 60);
-    const pretValoare = parseOptionalNumber(req.body.pretValoare);
-
-    const nouaProgramare = await Programare.create({
-  nume_client: numeClient,
-  telefon,
-  barberId: finalBarberId,
-  frizer: barber.nume,
-  data,
-  ora,
-  mesaj: sanitizeText(req.body.mesaj, 700),
-  serviciu: sanitizeText(req.body.serviciu, 180),
-  pret,
-  pretValoare,
-  tip,
-  status: tip === 'blocat' ? 'blocat' : 'noua',
-  notifyOnLogin: tip === 'client' && req.body.notifyOnLogin !== false,
-  loginNotifiedFor: []
-});
-
-    res.status(201).json({
+    return res.status(201).json({
       succes: true,
       mesaj: tip === 'blocat' ? 'Ora a fost blocată.' : 'Programare reușită!',
-      programare: nouaProgramare
+      programare: lock.value
     });
   } catch (err) {
     console.error('EROARE PROGRAMARE:', err);
-
-    res.status(500).json({
-      succes: false,
-      mesaj: 'Eroare server la programare.'
-    });
+    return res.status(500).json({succes: false, mesaj: 'Eroare server la programare.'});
   }
-
-  
 });
 
 app.get('/api/programari', verificaToken, async (req, res) => {
@@ -2031,205 +2233,111 @@ app.post('/api/notificari-login/vazute', verificaToken, async (req, res) => {
 
 app.get('/api/ocupate', async (req, res) => {
   try {
-    const finalBarberId = normalizeBarberId(req.query.barberId || req.query.frizer);
+    const barberId = normalizeBarberId(req.query.barberId || req.query.frizer);
     const data = sanitizeText(req.query.data, 20);
-
-    if (!finalBarberId || !data || !isValidDateString(data)) {
-      return res.json([]);
-    }
-
-    const ocupate = await Programare.find({
-  ...getAppointmentBarberQuery(finalBarberId),
-  data,
-  status: { $ne: 'anulata' }
-}).select('ora');
-
-    res.json(ocupate.map((p) => p.ora));
+    if (!barberId || !isCalendarDateValid(data)) return res.json([]);
+    const all = await getActiveBookingDocs(barberId, data);
+    // Compatibilitate cu agenda veche: un slot de 60 minute este ocupat
+    // dacă se suprapune cu oricare interval, nu doar dacă ora coincide.
+    const occupied = getOreProgramPentruBarber(barberId).filter((time) =>
+      hasBookingConflict(all, time, DEFAULT_BOOKING_MINUTES)
+    );
+    return res.json(occupied);
   } catch (err) {
-    res.status(500).json({
-      succes: false,
-      mesaj: 'Eroare la citirea orelor ocupate.'
-    });
+    return res.status(500).json({succes: false, mesaj: 'Eroare la citirea orelor ocupate.'});
   }
 });
 
 app.patch('/api/programari/:id/status', verificaToken, async (req, res) => {
   try {
-    if (!isValidObjectId(req.params.id)) {
-      return res.status(400).json({
-        succes: false,
-        mesaj: 'ID invalid.'
-      });
-    }
-
+    if (!isValidObjectId(req.params.id)) return res.status(400).json({succes: false, mesaj: 'ID invalid.'});
     const status = sanitizeText(req.body.status, 30);
-
-    if (!STATUS_PROGRAMARE.includes(status)) {
-      return res.status(400).json({
-        succes: false,
-        mesaj: 'Status invalid.'
-      });
-    }
-
+    if (!STATUS_PROGRAMARE.includes(status)) return res.status(400).json({succes: false, mesaj: 'Status invalid.'});
     const programare = await Programare.findById(req.params.id);
-
-    if (!programare) {
-      return res.status(404).json({
-        succes: false,
-        mesaj: 'Programarea nu există.'
-      });
-    }
-
+    if (!programare) return res.status(404).json({succes: false, mesaj: 'Programarea nu există.'});
     if (!canAccessBarberResource(req.user, programare.barberId)) {
-      return res.status(403).json({
-        succes: false,
-        mesaj: 'Nu ai voie să modifici această programare.'
-      });
+      return res.status(403).json({succes: false, mesaj: 'Nu poți modifica programarea.'});
     }
-
-    programare.status = status;
-    await programare.save();
-
-    res.json({
-      succes: true,
-      mesaj: 'Status actualizat.',
-      programare
-    });
+    if (programare.status === 'anulata' && status !== 'anulata') {
+      const result = await withBookingDayLock(programare.barberId, programare.data, async () => {
+        const all = await getActiveBookingDocs(programare.barberId, programare.data);
+        const duration = getBookingDuration(programare.serviciu, programare.durataMinute, programare.tip);
+        if (hasBookingConflict(all, programare.ora, duration, programare._id)) return null;
+        programare.status = status;
+        return programare.save();
+      });
+      if (result.busy || !result.value) {
+        return res.status(409).json({succes: false, mesaj: 'Intervalul este ocupat. Nu se poate reactiva.'});
+      }
+    } else {
+      programare.status = status;
+      await programare.save();
+    }
+    return res.json({succes: true, mesaj: 'Status actualizat.', programare});
   } catch (err) {
     console.error('Eroare status programare:', err);
-
-    res.status(500).json({
-      succes: false,
-      mesaj: 'Eroare la actualizarea statusului.'
-    });
+    return res.status(500).json({succes: false, mesaj: 'Eroare la actualizarea statusului.'});
   }
 });
 
 app.patch('/api/programari/:id', verificaToken, async (req, res) => {
   try {
-    if (!isValidObjectId(req.params.id)) {
-      return res.status(400).json({
-        succes: false,
-        mesaj: 'ID invalid.'
-      });
-    }
-
+    if (!isValidObjectId(req.params.id)) return res.status(400).json({succes: false, mesaj: 'ID invalid.'});
     const programare = await Programare.findById(req.params.id);
-
-    if (!programare) {
-      return res.status(404).json({
-        succes: false,
-        mesaj: 'Programarea nu există.'
-      });
-    }
-
+    if (!programare) return res.status(404).json({succes: false, mesaj: 'Programarea nu există.'});
     if (!canAccessBarberResource(req.user, programare.barberId)) {
-      return res.status(403).json({
-        succes: false,
-        mesaj: 'Nu ai voie să modifici această programare.'
-      });
+      return res.status(403).json({succes: false, mesaj: 'Nu poți modifica programarea.'});
     }
-
-    const nextData = req.body.data !== undefined
-      ? sanitizeText(req.body.data, 20)
-      : programare.data;
-
-    const nextOra = req.body.ora !== undefined
-      ? sanitizeText(req.body.ora, 20)
-      : programare.ora;
-
-    if (!isValidDateString(nextData)) {
-      return res.status(400).json({
-        succes: false,
-        mesaj: 'Data este invalidă.'
-      });
+    const nextData = req.body.data !== undefined ? sanitizeText(req.body.data, 20) : programare.data;
+    const nextOra = req.body.ora !== undefined ? sanitizeText(req.body.ora, 20) : programare.ora;
+    const nextServiciu = req.body.serviciu !== undefined
+      ? sanitizeText(req.body.serviciu, 180) : programare.serviciu;
+    if (!isCalendarDateValid(nextData) || !isOraValidaPentruBarber(programare.barberId, nextOra)) {
+      return res.status(400).json({succes: false, mesaj: 'Data sau ora sunt invalide.'});
     }
-
-    if (!isOraValidaPentruBarber(programare.barberId, nextOra)) {
-      return res.status(400).json({
-        succes: false,
-        mesaj: 'Ora este invalidă.'
-      });
+    const changedService = req.body.serviciu !== undefined && nextServiciu !== programare.serviciu;
+    const duration = changedService
+      ? getBookingDuration(nextServiciu, null, programare.tip)
+      : getBookingDuration(programare.serviciu, programare.durataMinute, programare.tip);
+    if (!isWithinSchedule(programare.barberId, nextOra, duration)) {
+      return res.status(400).json({succes: false, mesaj: 'Serviciul depășește programul disponibil.'});
     }
-
-    if (nextData !== programare.data || nextOra !== programare.ora) {
-      const exista = await Programare.findOne({
-        _id: { $ne: programare._id },
-        barberId: programare.barberId,
-        data: nextData,
-        ora: nextOra,
-        status: { $ne: 'anulata' }
-      });
-
-      if (exista) {
-        return res.status(409).json({
-          succes: false,
-          mesaj: 'Ora aleasă este deja ocupată.'
-        });
+    const result = await withBookingDayLock(programare.barberId, nextData, async () => {
+      if (programare.status !== 'anulata') {
+        const all = await getActiveBookingDocs(programare.barberId, nextData);
+        if (hasBookingConflict(all, nextOra, duration, programare._id)) return null;
       }
-    }
-
-    if (req.body.nume_client !== undefined) {
-      const numeClient = sanitizeText(req.body.nume_client, 120);
-
-      if (!numeClient) {
-        return res.status(400).json({
-          succes: false,
-          mesaj: 'Numele clientului este obligatoriu.'
-        });
+      if (req.body.nume_client !== undefined) {
+        const nume = sanitizeText(req.body.nume_client, 120);
+        if (!nume) return {invalid: 'Numele clientului este obligatoriu.'};
+        programare.nume_client = nume;
       }
-
-      programare.nume_client = numeClient;
-    }
-
-    if (req.body.telefon !== undefined) {
-      const telefon = programare.tip === 'blocat'
-        ? 'N/A'
-        : cleanPhone(req.body.telefon);
-
-      if (programare.tip !== 'blocat' && !isValidPhone(telefon)) {
-        return res.status(400).json({
-          succes: false,
-          mesaj: 'Telefon invalid. Folosește 07xxxxxxxx sau +407xxxxxxxx.'
-        });
+      if (req.body.telefon !== undefined) {
+        const phone = programare.tip === 'blocat' ? 'N/A' : cleanPhone(req.body.telefon);
+        if (programare.tip !== 'blocat' && !isValidPhone(phone)) {
+          return {invalid: 'Telefon invalid.'};
+        }
+        programare.telefon = phone;
       }
-
-      programare.telefon = telefon;
-    }
-
-    programare.data = nextData;
-    programare.ora = nextOra;
-
-    if (req.body.mesaj !== undefined) {
-      programare.mesaj = sanitizeText(req.body.mesaj, 700);
-    }
-
-    if (req.body.serviciu !== undefined) {
-      programare.serviciu = sanitizeText(req.body.serviciu, 180);
-    }
-
-    if (req.body.pret !== undefined) {
-      programare.pret = sanitizeText(req.body.pret, 60);
-    }
-
-    if (req.body.pretValoare !== undefined) {
-      programare.pretValoare = parseOptionalNumber(req.body.pretValoare);
-    }
-
-    await programare.save();
-
-    res.json({
-      succes: true,
-      mesaj: 'Programare actualizată.',
-      programare
+      programare.data = nextData;
+      programare.ora = nextOra;
+      programare.serviciu = nextServiciu;
+      programare.durataMinute = duration;
+      if (req.body.mesaj !== undefined) programare.mesaj = sanitizeText(req.body.mesaj, 700);
+      if (req.body.pret !== undefined) programare.pret = sanitizeText(req.body.pret, 60);
+      if (req.body.pretValoare !== undefined) programare.pretValoare = parseOptionalNumber(req.body.pretValoare);
+      return programare.save();
     });
+    if (result.busy || !result.value) {
+      return res.status(409).json({succes: false, mesaj: 'Intervalul este deja ocupat.'});
+    }
+    if (result.value.invalid) {
+      return res.status(400).json({succes: false, mesaj: result.value.invalid});
+    }
+    return res.json({succes: true, mesaj: 'Programare actualizată.', programare: result.value});
   } catch (err) {
     console.error('Eroare editare programare:', err);
-
-    res.status(500).json({
-      succes: false,
-      mesaj: 'Eroare la editarea programării.'
-    });
+    return res.status(500).json({succes: false, mesaj: 'Eroare la editarea programării.'});
   }
 });
 

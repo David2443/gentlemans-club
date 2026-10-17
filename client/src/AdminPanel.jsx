@@ -74,14 +74,14 @@ const BARBERS = [
 ];
 
 const BARBER_SERVICES = [
-  { id: 'tuns', name: 'Tuns', price: 65 },
-  { id: 'tuns-barba', name: 'Tuns + barbă', price: 95 },
-  { id: 'barba', name: 'Barbă', price: 35 },
-  { id: 'vopsit-barba', name: 'Vopsit barbă', price: 35 },
-  { id: 'spalat', name: 'Spălat', price: 25 },
+  { id: 'tuns', name: 'Tuns', price: 65, durationMinutes: 40 },
+  { id: 'tuns-barba', name: 'Tuns + barbă', price: 95, durationMinutes: 60 },
+  { id: 'barba', name: 'Barbă', price: 35, durationMinutes: 20 },
+  { id: 'vopsit-barba', name: 'Vopsit barbă', price: 35, durationMinutes: 15 },
+  { id: 'spalat', name: 'Spălat', price: 25, durationMinutes: 10 },
   { id: 'contur-barba', name: 'Contur / aranjat barbă', price: 30 },
   { id: 'styling', name: 'Styling', price: null },
-  { id: 'pachet-vip', name: "Pachet Gentleman's Club", price: 250 }
+  { id: 'pachet-vip', name: "Pachet Gentleman's Club", price: 250, durationMinutes: 70 }
 ];
 
 const BROW_SERVICES = [
@@ -150,6 +150,31 @@ const formatPrice = (price) => {
 
   return `${price} LEI`;
 };
+const getServiceDurationLabel = (service) => {
+  return Number.isFinite(service?.durationMinutes) && service.durationMinutes > 0
+    ? `${service.durationMinutes} min`
+    : 'Durată la confirmare';
+};
+
+const getAppointmentDurationLabel = (programare) => {
+  const saved = Number(programare?.durataMinute);
+  const wanted = normalizeText(programare?.serviciu);
+  const normalizedWanted = wanted === 'pachet vip'
+    ? normalizeText("Pachet Gentleman's Club")
+    : wanted;
+  const matched = [...BARBER_SERVICES, ...BROW_SERVICES].find(
+    (service) => normalizeText(service.name) === normalizedWanted
+  );
+
+  // Pentru serviciile fără durată confirmată, serverul poate rezerva
+  // preventiv 60 min. Nu le prezentăm clienților drept durată oficială.
+  if (!matched?.durationMinutes) return 'Durată la confirmare';
+
+  return Number.isFinite(saved) && saved > 0
+    ? `${saved} min`
+    : getServiceDurationLabel(matched);
+};
+
 const getAppointmentPriceLabel = (programare) => {
   if (!programare || isBlockedEntry(programare)) return '';
 
@@ -282,7 +307,8 @@ const oreProgramCurent = useMemo(() => {
 }, [currentBarber.id]);
 
   const serviceOptions = useMemo(() => {
-return BARBER_SERVICES;  }, [currentBarber.id]);
+    return currentBarber.id === 'tracy-pensat' ? BROW_SERVICES : BARBER_SERVICES;
+  }, [currentBarber.id]);
 
   const [programari, setProgramari] = useState([]);
   const [isBoss, setIsBoss] = useState(false);
@@ -1175,7 +1201,7 @@ const closeLoginNotifications = async () => {
   </span>
 
   <span className="compact-client-price">
-    {getAppointmentPriceLabel(app)}
+    {getAppointmentPriceLabel(app)} · {getAppointmentDurationLabel(app)}
   </span>
 </button>
     )}
@@ -1364,7 +1390,7 @@ const closeLoginNotifications = async () => {
 
                 {serviceOptions.map((service) => (
                   <option key={service.id} value={service.id}>
-                    {service.name} — {formatPrice(service.price)}
+                    {service.name} — {formatPrice(service.price)} — {getServiceDurationLabel(service)}
                   </option>
                 ))}
               </select>
@@ -1390,7 +1416,7 @@ const closeLoginNotifications = async () => {
               <div className="admin-selected-service">
                 <span>Serviciu ales</span>
                 <strong>
-                  {selectedService.name} — {formatPrice(selectedService.price)}
+                  {selectedService.name} — {formatPrice(selectedService.price)} · {getServiceDurationLabel(selectedService)}
                 </strong>
               </div>
             )}
@@ -1517,7 +1543,7 @@ const closeLoginNotifications = async () => {
 
             {serviceOptions.map((service) => (
               <option key={service.id} value={service.id}>
-                {service.name} — {formatPrice(service.price)}
+                {service.name} — {formatPrice(service.price)} — {getServiceDurationLabel(service)}
               </option>
             ))}
           </select>
@@ -1551,6 +1577,13 @@ const closeLoginNotifications = async () => {
               ? formatPrice(selectedEditService.price)
               : getAppointmentPriceLabel(activeAppointment)}
           </strong>
+        </article>
+
+        <article>
+          <span>Durată</span>
+          <strong>{selectedEditService
+            ? getServiceDurationLabel(selectedEditService)
+            : getAppointmentDurationLabel(activeAppointment)}</strong>
         </article>
 
         <article>

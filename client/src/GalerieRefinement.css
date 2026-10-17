@@ -1,0 +1,54 @@
+/* Gentleman's Club — gallery continuity and responsive refinement.
+   The original gallery interactions, gallery data and lightbox remain intact. */
+.gs-root {
+  font-family:'Roboto',sans-serif;
+  background:radial-gradient(circle at 50% 4%,rgba(212,175,55,.045),transparent 32%),#070707;
+}
+.gs-brand-name, .gs-hero-title, .gs-stat-num {
+  font-family:'Oswald',sans-serif;
+}
+.gs-hero { padding-top:clamp(115px,11vw,145px); padding-bottom:clamp(48px,6vw,76px); }
+.gs-hero-title { font-size:clamp(2.8rem,7vw,5.3rem); line-height:1.08; letter-spacing:.035em; }
+.gs-gold-shimmer {font-family:'Playfair Display',serif; font-style:italic; letter-spacing:.015em;}
+.gs-hero-desc {max-width:570px; font-family:'Roboto',sans-serif; font-size:.98rem;letter-spacing:normal;line-height:1.75;color:#c5bdb0;}
+.gs-gallery-wrapper {max-width:1250px;}
+.gs-masonry-grid {column-gap:14px;}
+.gs-gallery-item {border:1px solid rgba(212,175,55,.17);border-radius:12px;margin-bottom:14px;}
+.gs-gallery-item img {border-radius:11px;filter:grayscale(12%) brightness(.96);}
+.gs-gallery-overlay {border-radius:11px;}
+.gs-root .gs-filter-btn:focus-visible, .gs-root button:focus-visible, .gs-root a:focus-visible {outline:2px solid #e8c676;outline-offset:3px;}
+@media(max-width:900px) {
+  .gs-hero {padding-inline:22px;}
+  .gs-gallery-wrapper {padding-inline:22px;}
+}
+@media(max-width:768px) {
+  .gs-root .gs-navbar {padding-inline:16px;height:67px;}
+  .gs-root .gs-navbar-center {display:none;}
+  .gs-root .gs-brand-name {font-size:14px;letter-spacing:.08em;}
+  .gs-root .gs-brand-sub {letter-spacing:2px;}
+  .gs-root .gs-navbar-back {padding:8px 12px;font-size:11px;}
+  .gs-root .gs-hero {padding:112px 16px 48px;}
+  .gs-root .gs-hero-title {font-size:clamp(2.65rem,11vw,4.6rem);}
+  .gs-root .gs-hero-desc {font-size:.92rem;}
+  .gs-root .gs-hero-stats {gap:clamp(10px,4vw,25px);flex-wrap:wrap;}
+  .gs-root .gs-stat-num {font-size:clamp(1.2rem,4.3vw,2rem);}
+  .gs-root .gs-filters-section {top:67px;padding:10px 12px;}
+  .gs-root .gs-gallery-wrapper {padding:0 14px 95px;}
+  .gs-root .gs-masonry-grid {columns:2;column-gap:10px;}
+  .gs-root .gs-gallery-item {margin-bottom:10px;border-radius:9px;}
+  .gs-root .gs-gallery-item img {border-radius:8px;}
+  .gs-root .gs-gallery-overlay {padding:10px;}
+  .gs-root .gs-overlay-title {font-size:clamp(.8rem,3.4vw,1.05rem);line-height:1.25;}
+  .gs-root .gs-overlay-index {display:none;}
+  .gs-root .gs-footer {padding-bottom:110px;}
+  .gs-root .gs-lightbox-overlay {z-index:1200;}
+}
+@media(max-width:385px) {
+  .gs-root .gs-brand-sub {display:none;}
+  .gs-root .gs-hero {padding-top:95px;}
+  .gs-root .gs-masonry-grid {columns:2;}
+  .gs-root .gs-filter-btn {padding:10px 12px;}
+}
+@media(prefers-reduced-motion:reduce) {
+  .gs-root .gs-hero-title,.gs-root .gs-hero-eyebrow,.gs-root .gs-hero-desc,.gs-root .gs-hero-stats,.gs-root .gs-hero-line,.gs-root .gs-reveal {animation:none!important; transition:none!important; opacity:1!important;transform:none!important;}
+}

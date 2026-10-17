@@ -1,0 +1,181 @@
+/* Gentleman’s Club — recruitment. Scoped styles, aligned to original salon UI. */
+.gc-careers {
+  --careers-gold: #d4af37;
+  --careers-light: #f0d48f;
+  --careers-edge: rgba(212,175,55,.26);
+  background:#050505;
+  color:#f4f1ea;
+  min-height:100vh;
+  overflow-x:clip;
+}
+.gc-careers * { box-sizing:border-box; }
+.gc-careers__header {
+  width:min(1320px,calc(100% - 48px));
+  margin-inline:auto;
+  min-height:88px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+}
+.gc-careers__brand {
+  font-family:'Oswald',sans-serif;
+  color:#fff;
+  font-weight:800;
+  font-size:clamp(.85rem,1.5vw,1.1rem);
+  letter-spacing:.13em;
+  text-decoration:none;
+}
+.gc-careers__brand span {color:var(--careers-gold);}
+.gc-careers__back {
+  color:#c5bdb0;
+  font-size:.86rem;
+  border-bottom:1px solid var(--careers-edge);
+  padding-bottom:6px;
+  text-decoration:none;
+}
+.gc-careers__back:hover {color:var(--careers-light);}
+.gc-careers__hero {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  width:min(1380px,100%);
+  margin:0 auto;
+  min-height:620px;
+  overflow:hidden;
+  border-block:1px solid rgba(212,175,55,.12);
+  background: radial-gradient(ellipse at 70% 18%,rgba(212,175,55,.075),transparent 50%), #090909;
+}
+.gc-careers__image-wrap {position:relative; min-height:570px; overflow:hidden;}
+.gc-careers__hero-image {
+  display:block;
+  position:absolute;inset:0;
+  height:100%;width:100%;
+  object-fit:cover;
+  object-position:center;
+  filter:brightness(.84) contrast(1.03);
+}
+.gc-careers__image-wrap::after {
+  content:'';
+  position:absolute;inset:0;
+  background:linear-gradient(90deg,transparent 45%,rgba(5,5,5,.62)),linear-gradient(0deg,rgba(0,0,0,.65),transparent 40%);
+  pointer-events:none;
+}
+.gc-careers__image-mark {
+  position:absolute; z-index:1; bottom:25px; left:28px;
+  color:#f8f1df;font-size:.69rem;letter-spacing:.12em;font-weight:700;
+  padding-left:13px;border-left:2px solid var(--careers-gold);
+}
+.gc-careers__hero-content {
+  position:relative;
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:center;
+  min-width:0;
+  padding:clamp(35px,5vw,88px);
+}
+.gc-careers__eyebrow {
+  color:var(--careers-light); font-size:.72rem; font-weight:800;
+  letter-spacing:.15em; text-transform:uppercase;
+  display:flex;align-items:center;gap:10px;
+}
+.gc-careers__dot {height:7px;width:7px;flex:0 0 7px;background:var(--careers-gold);border-radius:50%;}
+.gc-careers__hero h1,
+.gc-careers__details-title h2,
+.gc-careers__dani-content h2 {
+  font-family:'Oswald',sans-serif;
+  text-transform:uppercase;
+  font-weight:700;
+  line-height:1.15;
+  overflow-wrap:break-word;
+}
+.gc-careers__hero h1 {
+  font-size:clamp(2rem,3.75vw,3.9rem);
+  letter-spacing:.02em;
+  margin:26px 0 18px;
+  text-shadow:0 10px 28px rgba(0,0,0,.7);
+}
+.gc-careers__hero h1 em {font-style:normal;color:var(--careers-light);}
+.gc-careers__lead {
+  color:#c5beb2;
+  font-size:clamp(.94rem,1.25vw,1.08rem);
+  line-height:1.8;
+  margin:0 0 27px;
+  max-width:560px;
+}
+.gc-careers__hero-buttons {display:flex;gap:12px;flex-wrap:wrap;}
+.gc-careers__primary,.gc-careers__secondary {
+  display:inline-flex; align-items:center;justify-content:center;
+  min-height:50px; padding:13px 22px;
+  font-size:.83rem; font-weight:800;letter-spacing:.035em;
+  border-radius:999px;
+  text-decoration:none!important;
+  transition:background .2s,border-color .2s,color .2s;
+  gap:12px;
+}
+.gc-careers__primary {
+  color:#201706!important;
+  background:linear-gradient(115deg,#edd28c,#d4af37);
+  border:1px solid #d4af37;
+}
+.gc-careers__secondary {color:#f2e7d0!important;background:transparent;border:1px solid rgba(212,175,55,.5);}
+.gc-careers__primary:hover {background:#f4da98;}
+.gc-careers__secondary:hover {background:rgba(212,175,55,.1);}
+.gc-careers__note {margin:18px 0 0;max-width:480px;color:#a9a095;font-size:.81rem;line-height:1.65;}
+.gc-careers__details {width:min(1210px,calc(100% - 48px));margin:0 auto;padding:95px 0 110px;}
+.gc-careers__details-title {display:grid;grid-template-columns:1fr 1fr;align-items:end;gap:20px 65px;margin-bottom:42px;}
+.gc-careers__details-title .gc-careers__eyebrow {grid-column:1/-1;}
+.gc-careers__details-title h2 {font-size:clamp(2rem,4.1vw,3.6rem);margin:0;}
+.gc-careers__details-title h2 span,.gc-careers__dani-content h2 span {color:var(--careers-light);}
+.gc-careers__details-title>p {max-width:500px;line-height:1.8;color:#beb6aa;margin:0;}
+.gc-careers__detail-grid {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;}
+.gc-careers__detail-card {
+  padding:31px;min-width:0;min-height:230px;
+  border:1px solid var(--careers-edge);border-radius:16px;
+  background:radial-gradient(circle at top left,rgba(212,175,55,.075),transparent 60%),#101010;
+}
+.gc-careers__detail-number {font-weight:800;color:var(--careers-light);font-size:.85rem;}
+.gc-careers__detail-card h3 {margin:25px 0 13px;color:#fff;font-family:'Oswald',sans-serif;font-size:1.16rem;line-height:1.4;}
+.gc-careers__detail-card p {color:#bdb5a9;line-height:1.75;font-size:.93rem;margin:0;}
+.gc-careers__dani {
+  width:min(1210px,calc(100% - 48px));
+  margin:0 auto 80px;display:grid;grid-template-columns: .8fr 1.2fr;
+  overflow:hidden;border:1px solid var(--careers-edge);border-radius:18px;
+  background:#111;
+}
+.gc-careers__dani-visual {position:relative;min-height:385px;}
+.gc-careers__dani-visual img {display:block;position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center 20%;filter:contrast(1.04) brightness(.9);}
+.gc-careers__dani-content {display:flex;flex-direction:column;align-items:flex-start;justify-content:center;padding:clamp(32px,5vw,78px);}
+.gc-careers__dani-content h2 {font-size:clamp(2rem,4.1vw,3.5rem);margin:18px 0 22px;}
+.gc-careers__dani-content p {font-size:1rem;line-height:1.75;color:#c5bfb5;max-width:500px;margin:0;}
+.gc-careers__location {color:#ddc17d;font-size:.78rem;letter-spacing:.1em;font-weight:800;margin:22px 0 25px;}
+.gc-careers__location span {color:#7d7056;}
+.gc-careers__closing {border-top:1px solid var(--careers-edge);padding:46px 24px 115px;text-align:center;background:#080808;}
+.gc-careers__closing span {color:var(--careers-gold);font-size:.73rem;letter-spacing:.16em;}
+.gc-careers__closing p {margin:12px 0 16px;color:#fff;font-family:'Oswald',sans-serif;font-size:clamp(.9rem,2.1vw,1.25rem);}
+.gc-careers__closing a {color:#e5cc91;text-decoration:underline;text-underline-offset:4px;font-size:.88rem;}
+.gc-careers :focus-visible {outline:3px solid #e5cc91;outline-offset:3px;}
+@media(max-width:950px) {
+  .gc-careers__hero {grid-template-columns:1fr;}
+  .gc-careers__image-wrap {height:340px;min-height:340px;}
+  .gc-careers__image-wrap::after {background:linear-gradient(to bottom,transparent,rgba(0,0,0,.6));}
+  .gc-careers__hero-content {padding:48px 32px 65px;}
+  .gc-careers__details-title {grid-template-columns:1fr;gap:17px;}
+  .gc-careers__detail-grid {grid-template-columns:1fr;}
+  .gc-careers__detail-card {min-height:0;}
+}
+@media(max-width:620px) {
+  .gc-careers__header {width:calc(100% - 32px);min-height:73px;}
+  .gc-careers__back {font-size:.7rem;}
+  .gc-careers__image-wrap {height:255px;min-height:255px;}
+  .gc-careers__image-mark {left:17px;bottom:18px;font-size:.57rem;}
+  .gc-careers__hero-content {padding:37px 20px 56px;}
+  .gc-careers__hero h1 {font-size:clamp(1.85rem,8.7vw,2.8rem);}
+  .gc-careers__hero-buttons {width:100%;flex-direction:column;}
+  .gc-careers__hero-buttons a {width:100%;}
+  .gc-careers__details {width:calc(100% - 34px);padding:63px 0 72px;}
+  .gc-careers__details-title h2 {font-size:2rem;}
+  .gc-careers__detail-card {padding:25px;}
+  .gc-careers__dani {width:calc(100% - 34px);grid-template-columns:1fr;margin-bottom:60px;}
+  .gc-careers__dani-visual {height:260px;min-height:260px;}
+  .gc-careers__dani-content {padding:35px 24px 44px;}
+  .gc-careers__closing {padding-bottom:128px;}
+}
+@media(prefers-reduced-motion:reduce) { .gc-careers__primary,.gc-careers__secondary {transition:none;} }

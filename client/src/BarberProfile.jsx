@@ -1,4 +1,4 @@
-﻿import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import './BarberProfile.css';
 import { setPageSeo } from './seo';
@@ -11,12 +11,14 @@ const BARBER_SERVICES = [
     id: 'tuns',
     name: 'Tuns',
     price: 65,
+    durationMinutes: 40,
     desc: 'Tuns curat, finisat atent și adaptat stilului tău.'
   },
   {
     id: 'tuns-barba',
     name: 'Tuns + barbă',
     price: 95,
+    durationMinutes: 60,
     desc: 'Tuns complet plus barbă aranjată și finisată.',
     vip: true
   },
@@ -24,18 +26,21 @@ const BARBER_SERVICES = [
     id: 'barba',
     name: 'Barbă',
     price: 35,
+    durationMinutes: 20,
     desc: 'Aranjare barbă pentru un aspect curat și îngrijit.'
   },
   {
     id: 'vopsit-barba',
     name: 'Vopsit barbă',
     price: 35,
+    durationMinutes: 15,
     desc: 'Vopsit barbă pentru un aspect uniform și definit.'
   },
   {
     id: 'spalat',
     name: 'Spălat',
     price: 25,
+    durationMinutes: 10,
     desc: 'Spălat profesional pentru prospețime și confort.'
   },
   {
@@ -54,6 +59,7 @@ const BARBER_SERVICES = [
     id: 'pachet-vip',
     name: "Pachet Gentleman's Club",
     price: 250,
+    durationMinutes: 70,
     desc: 'Tuns + barbă + spălat + finisaj premium.',
     vip: true
   }
@@ -112,6 +118,8 @@ const BROW_SERVICES = [
     vip: true
   }
 ];
+
+const ALL_SERVICES = [...BARBER_SERVICES, ...BROW_SERVICES];
 
 const barbersDB = {
   'tracy-pensat': {
@@ -340,8 +348,16 @@ function BarberProfile() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState(null);
   const [selectedServiceId, setSelectedServiceId] = useState('');
+  const [selectedBarberId, setSelectedBarberId] = useState(id);
+  const [chosenBarberId, setChosenBarberId] = useState(null);
+  const [availableSlots, setAvailableSlots] = useState([]);
+  const [loadingSlots, setLoadingSlots] = useState(false);
+  const [slotsError, setSlotsError] = useState('');
+  const [refreshSlotsKey, setRefreshSlotsKey] = useState(0);
+  const [searchingFirst, setSearchingFirst] = useState(false);
+  const [firstAvailableMessage, setFirstAvailableMessage] = useState('');
+  const [pendingQuickPick, setPendingQuickPick] = useState(null);
 
-  const [occupiedSlots, setOccupiedSlots] = useState([]);
   const [galleryExpanded, setGalleryExpanded] = useState(false);
   const [galleryImages, setGalleryImages] = useState([]);
 
@@ -353,48 +369,116 @@ function BarberProfile() {
   const [successDetails, setSuccessDetails] = useState(null);
   const [errors, setErrors] = useState({});
 
-  const selectedService = useMemo(() => {
-    return barber?.services?.find((service) => service.id === selectedServiceId) || null;
-  }, [barber, selectedServiceId]);
-
-  const visibleTimeSlots = useMemo(() => {
-  if (!selectedDate || !barber) return [];
-
-  return getTimeSlotsForBarber(barber.barberId).filter((time) =>
-    isTimeSlotInFuture(selectedDate.fullDate, time)
+  const selectedService = useMemo(() =>
+    ALL_SERVICES.find((service) => service.id === selectedServiceId) || null,
+    [selectedServiceId]
   );
-}, [selectedDate, barber]);
+  const eligibleSpecialists = useMemo(() =>
+    Object.values(barbersDB).filter((item) =>
+      selectedService && item.services.some((service) => service.id === selectedService.id)
+    ), [selectedService]
+  );
+  const currentBookBarber = chosenBarberId ? barbersDB[chosenBarberId] :
+    (selectedBarberId === 'any' ? null : barbersDB[selectedBarberId]);
+  const visibleTimeSlots = useMemo(() =>
+    availableSlots.filter((slot) =>
+      selectedDate && isTimeSlotInFuture(selectedDate.fullDate, slot.ora)
+    ), [availableSlots, selectedDate]
+  );
 
   useEffect(() => {
+    setSelectedBarberId(id);
+    setChosenBarberId(null);
     setSelectedDate(null);
     setSelectedTime(null);
     setSelectedServiceId('');
     setSuccessDetails(null);
     setSubmitStatus('');
+    setFirstAvailableMessage('');
+    setPendingQuickPick(null);
     setErrors({});
   }, [id]);
 
   useEffect(() => {
-    setOccupiedSlots([]);
+    setAvailableSlots([]);
+    setLoadingSlots(false);
+    setSlotsError('');
     setSelectedTime(null);
+    setChosenBarberId(null);
+    if (!selectedDate || !selectedService) return;
 
-    if (!selectedDate || !barber) {
-      return;
-    }
-
-    const url = `${API_BASE}/api/ocupate?barberId=${encodeURIComponent(
-      barber.barberId
-    )}&data=${encodeURIComponent(selectedDate.fullDate)}`;
-
-    fetch(url)
-      .then((res) => (res.ok ? res.json() : []))
-      .then((data) => {
-        setOccupiedSlots(Array.isArray(data) ? data : []);
+    const controller = new AbortController();
+    setLoadingSlots(true);
+    const params = new URLSearchParams({
+      barberId: selectedBarberId,
+      data: selectedDate.fullDate,
+      serviciu: selectedService.name
+    });
+    fetch(`${API_BASE}/api/disponibilitate?${params}`, {signal: controller.signal})
+      .then(async (res) => {
+        const body = await res.json().catch(() => ({}));
+        if (!res.ok || body.succes !== true || !Array.isArray(body.slots)) {
+          throw new Error(body.mesaj || 'Nu am putut verifica orele disponibile.');
+        }
+        return body.slots;
       })
-      .catch(() => {
-        setOccupiedSlots([]);
+      .then((slots) => {
+        if (controller.signal.aborted) return;
+        setAvailableSlots(slots);
+        setLoadingSlots(false);
+        if (pendingQuickPick && pendingQuickPick.data === selectedDate.fullDate) {
+          const chosen = slots.find((slot) =>
+            slot.ora === pendingQuickPick.ora && slot.barberId === pendingQuickPick.barberId
+          );
+          if (chosen) {
+            setSelectedTime(chosen.ora);
+            setChosenBarberId(chosen.barberId);
+          }
+          setPendingQuickPick(null);
+        }
+      })
+      .catch((err) => {
+        if (controller.signal.aborted) return;
+        setLoadingSlots(false);
+        setSlotsError(err.message || 'Eroare de conexiune.');
+        setPendingQuickPick(null);
       });
-  }, [selectedDate, barber]);
+    return () => controller.abort();
+  }, [selectedDate, selectedService, selectedBarberId, refreshSlotsKey]);
+
+  const handleFirstAvailable = async () => {
+    if (!selectedService || searchingFirst) return;
+    setSearchingFirst(true);
+    setFirstAvailableMessage('');
+    try {
+      const params = new URLSearchParams({serviciu: selectedService.name, barberId: 'any'});
+      const res = await fetch(`${API_BASE}/api/primul-loc-disponibil?${params}`);
+      const body = await res.json().catch(() => ({}));
+      if (!res.ok || !body.succes) throw new Error(body.mesaj || 'Căutarea nu a reușit.');
+      if (!body.loc) {
+        setFirstAvailableMessage('Nu am găsit loc liber în următoarele 30 de zile.');
+        return;
+      }
+      const {data, ora, barberId} = body.loc;
+      const [year, month, day] = data.split('-').map(Number);
+      const foundDate = new Date(year, month - 1, day);
+      const targetMonth = monthsList.findIndex((m) =>
+        m.dateObj.getFullYear() === year && m.dateObj.getMonth() === month - 1
+      );
+      if (targetMonth >= 0) setSelectedMonthIndex(targetMonth);
+      setPendingQuickPick({data, ora, barberId});
+      setSelectedBarberId('any');
+      setSelectedDate({
+        fullDate: data, dayNumber: day,
+        dayName: foundDate.toLocaleString('ro-RO', {weekday: 'short'}).toUpperCase()
+      });
+      setFirstAvailableMessage(`Primul loc liber: ${formatDateRo(data)}, ora ${ora}, la ${barbersDB[barberId]?.name || 'specialist'}.`);
+    } catch (err) {
+      setFirstAvailableMessage(err.message || 'Eroare de conexiune.');
+    } finally {
+      setSearchingFirst(false);
+    }
+  };
 
   useEffect(() => {
     const today = new Date();
@@ -496,6 +580,12 @@ function BarberProfile() {
       newErrors.service = true;
       hasError = true;
     }
+    if (!currentBookBarber || !visibleTimeSlots.some((slot) =>
+      slot.ora === selectedTime && slot.barberId === currentBookBarber.barberId
+    )) {
+      newErrors.time = true;
+      hasError = true;
+    }
 
     if (!clientName.trim()) {
       newErrors.name = true;
@@ -528,8 +618,8 @@ function BarberProfile() {
     const appointmentData = {
       nume_client: clientName.trim(),
       telefon: cleanPhone,
-      barberId: barber.barberId,
-      frizer: barber.name,
+      barberId: currentBookBarber.barberId,
+      frizer: currentBookBarber.name,
       data: selectedDate.fullDate,
       ora: selectedTime,
       serviciu: selectedService.name,
@@ -553,20 +643,23 @@ function BarberProfile() {
 
       if (!response.ok) {
         setSubmitStatus(data.mesaj || '❌ Ora a fost ocupată între timp. Alege altă oră.');
+        setSelectedTime(null);
+        setChosenBarberId(null);
+        setRefreshSlotsKey((key) => key + 1);
         return;
       }
 
       const details = {
         name: clientName.trim(),
         phone: cleanPhone,
-        barber: barber.name,
+        barber: currentBookBarber.name,
         service: selectedService.name,
         price: formatPrice(selectedService.price),
         date: selectedDate.fullDate,
         time: selectedTime,
         whatsappLink: createWhatsAppLink({
           name: clientName.trim(),
-          barber: barber.name,
+          barber: currentBookBarber.name,
           service: selectedService.name,
           date: selectedDate.fullDate,
           time: selectedTime
@@ -575,13 +668,13 @@ function BarberProfile() {
 
       setSuccessDetails(details);
       setSubmitStatus('✅ Programarea a fost trimisă!');
-      setOccupiedSlots((prev) => [...prev, selectedTime]);
+      setRefreshSlotsKey((key) => key + 1);
 
       setClientName('');
       setClientPhone('');
       setClientMessage('');
-      setSelectedServiceId('');
       setSelectedTime(null);
+      setChosenBarberId(null);
       setErrors({});
     } catch {
       setSubmitStatus('❌ Eroare conexiune server.');
@@ -664,141 +757,174 @@ function BarberProfile() {
           <div className="booking-card-supreme">
             <div className="booking-header-supreme">
               <h2>PROGRAMEAZĂ-TE ACUM</h2>
-              <p>Alege ziua, ora și serviciul dorit</p>
+              <p>Alege serviciul, specialistul, ziua și ora</p>
             </div>
 
             <form onSubmit={handleSubmit} className="booking-form-supreme">
-              <div className="month-tabs-wrapper-supreme">
-                <div className="month-tabs-scroll-supreme">
-                  {monthsList.map((m) => (
-                    <button
-                      key={m.index}
-                      type="button"
-                      className={`month-tab-supreme ${
-                        selectedMonthIndex === m.index ? 'active' : ''
-                      }`}
-                      onClick={() => {
-                        setSelectedMonthIndex(m.index);
-                        setSelectedDate(null);
-                        setSelectedTime(null);
-                        setErrors((prev) => ({ ...prev, date: false, time: false }));
-                      }}
-                    >
-                      {m.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="selector-section-supreme">
-                <label className={`section-label-supreme ${errors.date ? 'error-pulse' : ''}`}>
-                  1. SELECTEAZĂ ZIUA
-                </label>
-
-                <div className={`dates-scroller-supreme ${errors.date ? 'border-error-supreme' : ''}`}>
-                  {daysInMonth.map((date) => (
-                    <button
-                      key={date.fullDate}
-                      type="button"
-                      className={`date-card-supreme ${
-                        selectedDate?.fullDate === date.fullDate ? 'active' : ''
-                      }`}
-                      onClick={() => {
-                        setSelectedDate(date);
-                        setSelectedTime(null);
-                        setErrors((prev) => ({ ...prev, date: false }));
-                      }}
-                    >
-                      <span className="day-name-supreme">{date.dayName}</span>
-                      <span className="day-number-supreme">{date.dayNumber}</span>
-
-                      {selectedDate?.fullDate === date.fullDate && (
-                        <div className="active-dot"></div>
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              <div className="selector-section-supreme">
-                <label className={`section-label-supreme ${errors.time ? 'error-pulse' : ''}`}>
-                  2. SELECTEAZĂ ORA
-                </label>
-
-                {!selectedDate ? (
-                  <p className="hint-text-supreme">
-                    Te rugăm să alegi o zi din calendarul de mai sus.
-                  </p>
-                ) : visibleTimeSlots.length === 0 ? (
-                  <p className="hint-text-supreme">
-                    Pentru azi nu mai sunt ore disponibile. Alege o altă zi.
-                  </p>
-                ) : (
-                  <div className={`time-grid-supreme ${errors.time ? 'border-error-supreme' : ''}`}>
-                    {visibleTimeSlots.map((time) => {
-                      const isTaken = occupiedSlots.includes(time);
-
-                      return (
-                        <button
-                          key={time}
-                          type="button"
-                          disabled={isTaken}
-                          className={`time-btn-supreme ${
-                            selectedTime === time ? 'active' : ''
-                          } ${isTaken ? 'occupied' : ''}`}
-                          onClick={() => {
-                            setSelectedTime(time);
-                            setErrors((prev) => ({ ...prev, time: false }));
-                          }}
-                        >
-                          {isTaken ? 'Ocupat' : time}
-                        </button>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
-
               <div className="selector-section-supreme">
                 <label className={`section-label-supreme ${errors.service ? 'error-pulse' : ''}`}>
-                  3. ALEGE SERVICIUL
+                  1. ALEGE SERVICIUL
                 </label>
-
                 <div className={`service-dropdown-supreme ${errors.service ? 'border-error-supreme' : ''}`}>
                   <select
                     value={selectedServiceId}
                     onChange={(e) => {
-                      setSelectedServiceId(e.target.value);
-                      setErrors((prev) => ({ ...prev, service: false }));
+                      const serviceId = e.target.value;
+                      setSelectedServiceId(serviceId);
+                      setSelectedDate(null);
+                      setSelectedTime(null);
+                      setChosenBarberId(null);
+                      setPendingQuickPick(null);
+                      setFirstAvailableMessage('');
+                      if (serviceId && !barbersDB[selectedBarberId]?.services.some(
+                        (item) => item.id === serviceId
+                      )) setSelectedBarberId('any');
+                      setErrors((prev) => ({...prev, service: false}));
                     }}
                   >
                     <option value="">Alege serviciul dorit</option>
-
-                    {barber.services.map((service) => (
+                    {ALL_SERVICES.map((service) => (
                       <option key={service.id} value={service.id}>
                         {service.name} — {formatPrice(service.price)}
+                        {service.durationMinutes ? ` · ${service.durationMinutes} min` : ''}
                       </option>
                     ))}
                   </select>
-
                   <span className="service-select-arrow">⌄</span>
                 </div>
-
                 {selectedService && (
                   <div className={`selected-service-card-supreme ${selectedService.vip ? 'vip' : ''}`}>
                     <div>
                       <span>Serviciu selectat</span>
                       <strong>{selectedService.name}</strong>
                       <p>{selectedService.desc}</p>
+                      <p>{selectedService.durationMinutes
+                        ? `Durată: ${selectedService.durationMinutes} minute`
+                        : 'Durata exactă se confirmă la salon.'}</p>
                     </div>
-
                     <em>{formatPrice(selectedService.price)}</em>
                   </div>
                 )}
               </div>
 
+              <div className="selector-section-supreme">
+                <label className="section-label-supreme">2. ALEGE SPECIALISTUL</label>
+                {!selectedService ? (
+                  <p className="hint-text-supreme">Mai întâi alege serviciul.</p>
+                ) : (
+                  <>
+                    <div className="service-dropdown-supreme">
+                      <select value={selectedBarberId} onChange={(e) => {
+                        setSelectedBarberId(e.target.value);
+                        setSelectedDate(null);
+                        setSelectedTime(null);
+                        setChosenBarberId(null);
+                        setPendingQuickPick(null);
+                      }}>
+                        <option value="any">Oricare specialist disponibil</option>
+                        {eligibleSpecialists.map((item) => (
+                          <option key={item.barberId} value={item.barberId}>{item.name}</option>
+                        ))}
+                      </select>
+                      <span className="service-select-arrow">⌄</span>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={handleFirstAvailable}
+                      disabled={searchingFirst}
+                      style={{marginTop: 12, width: '100%', cursor: 'pointer', padding: '13px', background: 'rgba(212,175,55,.14)', border: '1px solid #d4af37', borderRadius: 8, color: '#e8cc77', fontWeight: 700}}
+                    >
+                      {searchingFirst ? 'CĂUTĂM LOCUL LIBER...' : '⚡ GĂSEȘTE PRIMUL LOC DISPONIBIL'}
+                    </button>
+                    {firstAvailableMessage && (
+                      <p className="hint-text-supreme" style={{marginTop: 10}}>{firstAvailableMessage}</p>
+                    )}
+                  </>
+                )}
+              </div>
+
+              {selectedService && (
+                <>
+                  <div className="month-tabs-wrapper-supreme">
+                    <div className="month-tabs-scroll-supreme">
+                      {monthsList.map((m) => (
+                        <button
+                          key={m.index}
+                          type="button"
+                          className={`month-tab-supreme ${selectedMonthIndex === m.index ? 'active' : ''}`}
+                          onClick={() => {
+                            setSelectedMonthIndex(m.index);
+                            setSelectedDate(null);
+                            setSelectedTime(null);
+                            setChosenBarberId(null);
+                            setPendingQuickPick(null);
+                            setErrors((prev) => ({...prev, date: false, time: false}));
+                          }}
+                        >{m.label}</button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="selector-section-supreme">
+                    <label className={`section-label-supreme ${errors.date ? 'error-pulse' : ''}`}>
+                      3. SELECTEAZĂ ZIUA
+                    </label>
+                    <div className={`dates-scroller-supreme ${errors.date ? 'border-error-supreme' : ''}`}>
+                      {daysInMonth.map((date) => (
+                        <button
+                          key={date.fullDate}
+                          type="button"
+                          className={`date-card-supreme ${selectedDate?.fullDate === date.fullDate ? 'active' : ''}`}
+                          onClick={() => {
+                            setSelectedDate(date);
+                            setSelectedTime(null);
+                            setChosenBarberId(null);
+                            setPendingQuickPick(null);
+                            setErrors((prev) => ({...prev, date: false}));
+                          }}
+                        >
+                          <span className="day-name-supreme">{date.dayName}</span>
+                          <span className="day-number-supreme">{date.dayNumber}</span>
+                          {selectedDate?.fullDate === date.fullDate && <div className="active-dot"></div>}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="selector-section-supreme">
+                    <label className={`section-label-supreme ${errors.time ? 'error-pulse' : ''}`}>
+                      4. SELECTEAZĂ ORA
+                    </label>
+                    {!selectedDate ? (
+                      <p className="hint-text-supreme">Alege o zi din calendar.</p>
+                    ) : loadingSlots ? (
+                      <p className="hint-text-supreme">Verificăm orele disponibile...</p>
+                    ) : slotsError ? (
+                      <p className="hint-text-supreme" role="alert">{slotsError} Încearcă altă zi.</p>
+                    ) : visibleTimeSlots.length === 0 ? (
+                      <p className="hint-text-supreme">Nu sunt ore disponibile în ziua aleasă.</p>
+                    ) : (
+                      <div className={`time-grid-supreme ${errors.time ? 'border-error-supreme' : ''}`}>
+                        {visibleTimeSlots.map((slot) => (
+                          <button
+                            key={`${slot.ora}-${slot.barberId}`}
+                            type="button"
+                            className={`time-btn-supreme ${selectedTime === slot.ora && chosenBarberId === slot.barberId ? 'active' : ''}`}
+                            onClick={() => {
+                              setSelectedTime(slot.ora);
+                              setChosenBarberId(slot.barberId);
+                              setErrors((prev) => ({...prev, time: false}));
+                            }}
+                          >
+                            {slot.ora}{selectedBarberId === 'any' ? ` · ${barbersDB[slot.barberId]?.name || slot.frizer}` : ''}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
               <div className="final-inputs-supreme">
-                <label className="section-label-supreme">4. DATE DE CONTACT</label>
+                <label className="section-label-supreme">5. DATE DE CONTACT</label>
 
                 <div className="input-wrapper-supreme">
                   <input
